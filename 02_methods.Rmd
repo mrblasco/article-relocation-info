@@ -1,4 +1,10 @@
-# Methods 
+```{r methods, include = FALSE}
+source("analysis_1_methods.R")
+```
+
+# Methods and Data
+
+## Experimental design
 
 A sample representative of the general population (18 years and over) in eight countries (Bulgaria, France, Germany, Greece, Italy, Poland, Spain and Sweden) was drawn from Ipsos online panels by means of stratified random probability sampling, based on the available profile data, age, gender and geographic region (NUTS 1), and pre-defined sub-sample sizes (i.e. quota) based on official population statistics provided by Eurostat. The overall sample size of the project included 8,122 participants. The main fieldwork took place between 30 September 2024 and 21 October 2024. Details of the field work and survey design are available elsewhere [@blasco2025fairness]. 
 
@@ -18,88 +24,43 @@ For illustrative purposes, Table \@ref(tab:example) presents an hypothetical exa
 
 Specifically, participants from Country A assigned to the Absolute information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A), receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B), receive fewer, becoming “net senders”.
 
-```{r example}
-library(dplyr)
-library(knitr)
-library(kableExtra)
 
-tbl_example <- data.frame(
-  Category = c(
-    "Average yearly asylum applications (2014-23)",
-    "Most recent population",
-    "Most recent GDP",
-    "No relocation",
-    "Relocation by population",
-    "Relocation by GDP"
-  ),
-  country_a = c(
-    15000,
-    15e6,
-    1000e6,
-    15000,
-    30000,
-    25000
-  ),
-  country_b = c(
-    35000,
-    10e6,
-    1000e6,
-    35000,
-    20000,
-    25000
-  ),
-  check.names = FALSE
-)
-
-format_numbers <- function(x) {
-    dplyr::case_when(
-        x >= 1e9 ~ sprintf("%.1fB", x / 1e9),
-        x >= 1e6 ~ sprintf("%.1fM", x / 1e6),
-        x >= 1e3 ~ sprintf("%.1fK", x / 1e3),
-        TRUE ~ as.character(round(x, 1))
-    )
-}
-
-tbl_example <- tbl_example %>% 
-    mutate(
-        total = country_a + country_b,
-        per_capita_a = country_a / (country_a[Category == "Most recent population"] / 1e5),
-        per_capita_b = country_b / (country_b[Category == "Most recent population"] / 1e5),
-        across(where(is.numeric), format_numbers),
-    )
-
-tbl_example %>% 
-    dplyr::select(
-        Category = Category,
-        "Country A" = country_a,
-        "Country A (per 100k)" = per_capita_a,
-        "Country B" = country_b,
-        "Country B (per 100k)" = per_capita_b,
-        "Total" = total
-    ) %>%
-    kbl(
-        caption = "Example",
-        align = c("l", "r", "r", "r", "r", "r"),
-        booktabs = TRUE,
-        linesep = "",
-    ) %>% 
-    kable_styling(full_width = TRUE) %>%
-    row_spec(0, bold = TRUE, background = "#f2f2f2") %>%
-    column_spec(1, width = "5cm") %>%
-    add_header_above(
-        c(" " = 1, "Country A" = 2, "Country B" = 2, " " = 1)
-    ) %>%
-    footnote(
-        general = "Values formatted for readability. Per capita = per 100,000 population.",
-        general_title = "",
-        footnote_as_chunk = TRUE
-    )
-
+```{r example, echo = FALSE}
+kbl_example
 ```
 
+In Table \@ref(tab:asylum-per-capita), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
 
-In the appendix (TABLE XXX), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
+```{r asylum-per-capita, echo = FALSE}
+kbl_asylum_rel
+```
+
 
 The experimental design and pre-analysis plan were pre-registered within the AEA RCT Registry (REF NUMBER).
 
 The survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix [NEED REF]. A descriptive analysis of the responses is reported elsewhere [@blasco2025fairness]. We included variables such as trust or political affiliation, as these are associated with attitudes towards migration (Canetti et al., 2016). We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives (Berlinschi and Harutyunyan, 2019).
+
+## Data 
+
+Table \@ref(tab:assignment-summary) illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
+
+```{r assignment-summary}
+kbl_assignment
+```
+
+Table \@ref(tab:summary) illustrates the distribution of key pre-treatment characteristics, including sex, age, education, trust, and perceptions across the three treatment groups. On average, respondents were 50 years old (with 16 years SD), with about half (47%) identifying as male. Educational attainment was distributed with 32% reporting high education (ISCED 5-8), 48% medium education (ISCED 3-4), and 19% low education. On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
+
+Knowledge of the EU asylum system averaged 2.0 (SD = 0.7) on a 1-4 scale, thus the majority expresses no or basic knowledge. Most respondents reported there were "too many" asylum seekers in their country, with a mean of 2.6 on 1-3 scale from 1 = too few and 3 = too many. Similarly, on average, respondents view an unbalanced distribution of asylum seekers in the EU, reporting an average score of 3.1 (SD = 2.4) on 0-10 scale for the question about evenness across the EU. Yet, respondents reported broad consensus on the support on the importance of burden sharing among countries, providing equal rights, equal treatment, and having an equal distribution of asylum seekers relatively high, with means ranging from 6.9 to 7.4 on 0–10 scales. 
+
+Table \@ref(tab:summary) also reports mean differences between the control group and the other treatment groups, with the standardised difference in parenthesis (the difference divided by the pooled standard deviation). For all these variables, the standardised differences between control and other groups is small, suggesting the distributions overlap well across treatment groups.^[These differences were estimated using OLS controlling for country fixed effets, thus accounting for the stratified randomisation.]
+
+```{r summary}
+kbl_balance
+```
+
+As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful.
+
+
+```{r}
+# TABLE TBA 
+```

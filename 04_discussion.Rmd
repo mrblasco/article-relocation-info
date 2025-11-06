@@ -1,0 +1,23 @@
+# Discussion
+
+This study used an experimental survey to examine Europeans’ perceptions of the fairness of different mechanisms for distributing asylum applications among EU countries. By varying the information provided about the consequences of these mechanisms, it explored the extent to which public perceptions of fairness are driven by concerns about outcomes versus principles of fairness.
+
+Consistent with prior research [@bansak2017europeans], we find that a substantial majority, nearly three quarters (76%), of respondents across eight EU countries view some form of proportional relocation of applicants as *fairer* than no relocation at all. Moreover, most people view proportional relocation systems as *fairer* even when it would result in their own country receiving more asylum applications, as the share of those ranking relocation as fairer than no relocation exceeds 50% in all countries. This finding suggests that the recent EU Pact’s proposed regulations are broadly aligned with EU citizens’ perceptions of what constitutes a fair system. 
+
+Yet, the cross-country variation in fairness perceptions was substantial. In the control group, where no information about the outcomes was provided, we find that between 58% respondents in Germany to 87% respondents in Greece view some form of within-EU relocation as fairer than no relocation at all. This gap could be partly explained by concerns about the outcomes, as Germany would receive more applications under relocation, while Greece would receive fewer. This finding underscores the importance of disentangling concerns about outcomes versus fairness. 
+
+As @bansak2017europeans finds that varying the information available about outcomes significantly affects people's support for different relocation systems, we find that providing information about the consequences plays a key role in shaping public perceptions of the fairness of these systems. Thus, our study establishes a direct link between political support, as identified by @bansak2017europeans, and perceptions of the fairness of different policy options. 
+
+Specifically, by providing information about the consequences of the allocation schemes, we find that once individuals are informed about these outcomes, the "premium" placed on proportional schemes is offset when they would lead to more than one standard deviation increase in asylum applications. In other words, Europeans are more likely to perceive allocation systems as fair when the differences in outcomes across countries are not too large.
+
+This finding highlights a clear pathway to influence perceptions of fairness and, consequently, support for different allocation systems. That is, one can influence public opiion by shaping how large or small outcome differences are perceived. However, differences that appear large in absolute terms may seem small in relative terms. Thus, another important finding is that by expressing outcomes of different relocation systems in absolute terms, some people react more strongly to this ifnormation. 
+
+
+This finding extends @bansak2017europeans's information provision experiment. 
+
+Specifcally, we find that [...]
+
+
+Our findings suggest that, when no information is provided about the expected number of asylum applications under each regime, a regime associated with a one–standard deviation increase in expected asylum applications is 13% less likely to be perceived as fair. However, once information is revealed, this effect becomes stronger: the probability of being perceived as fair drops by 40% when relative information is shown, and by 56% when absolute levels of expected asylum applications are presented. Thus, providing absolute information produces an additional 16–percentage point decrease in perceived fairness compared to relative information. 
+
+This evidence adds to a growing literature exploring the role of public perceptions of fairness in regulation [e.g., @brick2015fair for climate regulation]. 
