@@ -7,23 +7,19 @@ geometry: "margin=0.5in"
 papersize: a4
 fontsize: 12pt
 linestretch: 1.5
-mainfont: Helvetica
+mainfont: Helvetica Neue
 csl: [https://www.zotero.org/styles/the-quarterly-journal-of-economics]
 header-includes: |
     ```{=latex}
     \usepackage{endfloat}
     ```
 always_allow_html: true
+colorlinks: true
 abstract: |
     Despite intense political debate over reforming the EU asylum system, there is little evidence on what drives public support for alternative solutions. Using an experimental survey, we examine Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to the resident populations. By varying the information provided about the consequences of these mechanisms, we explored how much public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider relocation as the fairest option. However, there are large country differences, with proportional relocation schemes perceived fair by 58% in Germany versus 87% in Greece, which suggest a “self-serving” bias (people tend to rank as fairer the method that results in a lower intake of asylum seekers for their own country). Moreover, when we explicitly communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. By varing how the information is presented, we find a stronger effect when the communication uses _absolute_ instead of _per capita_ figures. These findings shed new light on how public perceptions of fairness of the EU asylum system can be shaped by information.
 ---
 
-```{r}
-cat("abstract.txt")
-```
-
-
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 library(dplyr)
 library(knitr)
 library(kableExtra)
@@ -58,12 +54,13 @@ theme_update(
 
 ```
 
-```{r, include = FALSE, cache = TRUE}
+```{r rologit, include = FALSE, cache = TRUE}
 source("analysis_rologit.R")
 ```
 
-```{r, child = "01_intro.Rmd"}
+```{r, child = c("01_intro.Rmd", "02_methods.Rmd")}
 ```
+
 
 
 # Results 

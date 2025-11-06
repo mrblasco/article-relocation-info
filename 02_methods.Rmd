@@ -1,0 +1,105 @@
+# Methods 
+
+A sample representative of the general population (18 years and over) in eight countries (Bulgaria, France, Germany, Greece, Italy, Poland, Spain and Sweden) was drawn from Ipsos online panels by means of stratified random probability sampling, based on the available profile data, age, gender and geographic region (NUTS 1), and pre-defined sub-sample sizes (i.e. quota) based on official population statistics provided by Eurostat. The overall sample size of the project included 8,122 participants. The main fieldwork took place between 30 September 2024 and 21 October 2024. Details of the field work and survey design are available elsewhere [@blasco2025fairness]. 
+
+The experiment tested how different types of information affected participants' ranking of the fairness of three relocation rules for asylum seekers across EU countries: 
+
+- **No relocation** (the baseline): asylum seekers remain in the country where they first arrive
+- Allocation **proportional to each country's population**: relocations ensure equity with population as a proxy for capacity
+- Allocation **proportional to each country's GDP**: relocations ensure equity with GDP as proxy for capacity.
+
+Respondents were asked to rank these allocation rules from the fairest (rank = 1) to the least fair (rank = 3). Before they did so, we varied the type and amount of information available across three conditions: 
+
+- **No information** (the Control),
+- **Absolute** information: the expected number of asylum applications under each relocation scheme,
+- **Relative** information: the expected number of asylum applications under each relocation scheme per 100,000 citizens.
+
+For illustrative purposes, Table \@ref(tab:example) presents an hypothetical example with only two EU countries. In this scenario (not used in the experiment), both countries have the same GDP, but Country A has more residents, while Country B received more than twice as many average asylum applications in the past ten years (2014-2023). Then, Country A will experience more asylum applications under Proportional relocation than under No Relocation. However, the difference will be greater under population-based relocation than under GDP-based relocation, because countries are equally rich but Country A is more populous.
+
+Specifically, participants from Country A assigned to the Absolute information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A), receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B), receive fewer, becoming “net senders”.
+
+```{r example}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+tbl_example <- data.frame(
+  Category = c(
+    "Average yearly asylum applications (2014-23)",
+    "Most recent population",
+    "Most recent GDP",
+    "No relocation",
+    "Relocation by population",
+    "Relocation by GDP"
+  ),
+  country_a = c(
+    15000,
+    15e6,
+    1000e6,
+    15000,
+    30000,
+    25000
+  ),
+  country_b = c(
+    35000,
+    10e6,
+    1000e6,
+    35000,
+    20000,
+    25000
+  ),
+  check.names = FALSE
+)
+
+format_numbers <- function(x) {
+    dplyr::case_when(
+        x >= 1e9 ~ sprintf("%.1fB", x / 1e9),
+        x >= 1e6 ~ sprintf("%.1fM", x / 1e6),
+        x >= 1e3 ~ sprintf("%.1fK", x / 1e3),
+        TRUE ~ as.character(round(x, 1))
+    )
+}
+
+tbl_example <- tbl_example %>% 
+    mutate(
+        total = country_a + country_b,
+        per_capita_a = country_a / (country_a[Category == "Most recent population"] / 1e5),
+        per_capita_b = country_b / (country_b[Category == "Most recent population"] / 1e5),
+        across(where(is.numeric), format_numbers),
+    )
+
+tbl_example %>% 
+    dplyr::select(
+        Category = Category,
+        "Country A" = country_a,
+        "Country A (per 100k)" = per_capita_a,
+        "Country B" = country_b,
+        "Country B (per 100k)" = per_capita_b,
+        "Total" = total
+    ) %>%
+    kbl(
+        caption = "Example",
+        align = c("l", "r", "r", "r", "r", "r"),
+        booktabs = TRUE,
+        linesep = "",
+    ) %>% 
+    kable_styling(full_width = TRUE) %>%
+    row_spec(0, bold = TRUE, background = "#f2f2f2") %>%
+    column_spec(1, width = "5cm") %>%
+    add_header_above(
+        c(" " = 1, "Country A" = 2, "Country B" = 2, " " = 1)
+    ) %>%
+    footnote(
+        general = "Values formatted for readability. Per capita = per 100,000 population.",
+        general_title = "",
+        footnote_as_chunk = TRUE
+    )
+
+```
+
+
+In the appendix (TABLE XXX), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
+
+The experimental design and pre-analysis plan were pre-registered within the AEA RCT Registry (REF NUMBER).
+
+The survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix [NEED REF]. A descriptive analysis of the responses is reported elsewhere [@blasco2025fairness]. We included variables such as trust or political affiliation, as these are associated with attitudes towards migration (Canetti et al., 2016). We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives (Berlinschi and Harutyunyan, 2019).
