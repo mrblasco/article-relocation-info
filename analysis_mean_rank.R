@@ -11,7 +11,7 @@ library(here)
 
 opts_chunk$set(error = TRUE, echo = FALSE)
 
-source("analysis/_theme.R")
+source("R/theme.R")
 
 # ---- functions, include = FALSE -----
 

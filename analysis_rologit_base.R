@@ -24,7 +24,7 @@ pretty_table <- function(...) {
     kableExtra::column_spec(1, bold = TRUE)
 }
 
-source("analysis/_theme.R")
+source("R/theme.R")
 
 # ----- data -----
 
