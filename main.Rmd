@@ -13,9 +13,15 @@ header-includes: |
     ```{=latex}
     \usepackage{endfloat}
     ```
+always_allow_html: true
 abstract: |
-    Despite intense political debate surrounding the reform of the EU asylum system, there is little evidence on what drives public support for alternative solutions. We used an experimental survey to examine Europeans' perceptions of the fairness of different mechanisms for distributing asylum applications among EU countries: no relocation, proportional to GDP, and proportional to the residents. By varying the information provided about the consequences of these mechanisms, we explored how much public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider some form of relocation as the fairest option. However, there are large country differences, with the perceived fairness of proportional relocation schemes ranging from 58% in Germany to 87% in Greece with evidence of a “self-serving” bias: people tend to rank as fairer the method that results in a lower intake of asylum seekers for their own country. Moreover, when we explicitly communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. Furthermore, by varing how the information is presented, we find a stronger effect when the communication uses absolute instead of per capita figures. These findings shed new light on how public perceptions of fairness of the EU asylum system can be shaped by information.
+    Despite intense political debate over reforming the EU asylum system, there is little evidence on what drives public support for alternative solutions. Using an experimental survey, we examine Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to the resident populations. By varying the information provided about the consequences of these mechanisms, we explored how much public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider relocation as the fairest option. However, there are large country differences, with proportional relocation schemes perceived fair by 58% in Germany versus 87% in Greece, which suggest a “self-serving” bias (people tend to rank as fairer the method that results in a lower intake of asylum seekers for their own country). Moreover, when we explicitly communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. By varing how the information is presented, we find a stronger effect when the communication uses _absolute_ instead of _per capita_ figures. These findings shed new light on how public perceptions of fairness of the EU asylum system can be shaped by information.
 ---
+
+```{r}
+cat("abstract.txt")
+```
+
 
 ```{r, include = FALSE}
 library(dplyr)
@@ -55,6 +61,10 @@ theme_update(
 ```{r, include = FALSE, cache = TRUE}
 source("analysis_rologit.R")
 ```
+
+```{r, child = "01_intro.Rmd"}
+```
+
 
 # Results 
 
