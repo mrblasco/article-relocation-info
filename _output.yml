@@ -1,0 +1,6 @@
+bookdown::html_document2:
+  toc: false
+
+bookdown::pdf_document2:
+  toc: false
+  latex_engine: xelatex
