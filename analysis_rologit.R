@@ -141,7 +141,7 @@ plot_coeffs <- function(coeffs) {
 # ======================================================
 
 data_path <- file.path(
-    "analysis", "data", 
+    "data", 
     "processed", "fairness_survey_idx.rds"
 )
 
