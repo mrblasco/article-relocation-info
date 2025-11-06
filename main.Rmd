@@ -1,0 +1,223 @@
+---
+title: |
+    Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System
+date: "This version: `r format(Sys.Date(), '%b %d, %Y')`"
+bibliography: [refs.bib]
+geometry: "margin=0.5in"
+papersize: a4
+fontsize: 12pt
+linestretch: 1.5
+mainfont: Helvetica
+csl: [https://www.zotero.org/styles/the-quarterly-journal-of-economics]
+header-includes: |
+    ```{=latex}
+    \usepackage{endfloat}
+    ```
+abstract: |
+    Despite intense political debate surrounding the reform of the EU asylum system, there is little evidence on what drives public support for alternative solutions. We used an experimental survey to examine Europeans' perceptions of the fairness of different mechanisms for distributing asylum applications among EU countries: no relocation, proportional to GDP, and proportional to the residents. By varying the information provided about the consequences of these mechanisms, we explored how much public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider some form of relocation as the fairest option. However, there are large country differences, with the perceived fairness of proportional relocation schemes ranging from 58% in Germany to 87% in Greece with evidence of a “self-serving” bias: people tend to rank as fairer the method that results in a lower intake of asylum seekers for their own country. Moreover, when we explicitly communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. Furthermore, by varing how the information is presented, we find a stronger effect when the communication uses absolute instead of per capita figures. These findings shed new light on how public perceptions of fairness of the EU asylum system can be shaped by information.
+---
+
+```{r, include = FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+
+opts_chunk$set(error = TRUE, echo = FALSE)
+
+table_latex <- function(x, ...) {
+    kableExtra::kbl(x, booktabs = TRUE, ...) |>
+    kableExtra::kable_styling(full_width = TRUE)
+}
+source("analysis_balance.R")
+source("analysis_mean_rank.R")
+
+theme_set(theme_minimal(base_size = 12, base_family = "Helvetica"))
+theme_update(
+    panel.background = element_rect(color = 'gray85'),
+    #panel.grid.major.y = element_blank(),
+    #panel.grid.minor.y = element_blank(),
+    #panel.grid.major.x = element_line(color = "gray85", linewidth = 0.3),
+    strip.background = element_rect(fill = "gray95", color = NA),
+    strip.text = element_text(face = "bold", size = 11, hjust = 0),
+    axis.text = element_text(color = "black", size = 10),
+    axis.title.x = element_text(size = 11, margin = margin(t = 6)),
+    axis.title.y = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_text(size = 10, face = "bold"),
+    legend.text = element_text(size = 9),
+    plot.caption = element_text(size = 9, hjust = 0, color = "gray40", margin = margin(t = 10)),
+    plot.margin = margin(1, 1, 1, 1, unit = "lines"),
+)
+
+```
+
+```{r, include = FALSE, cache = TRUE}
+source("analysis_rologit.R")
+```
+
+# Results 
+
+## Data 
+
+Table \@ref(tab:assignment) illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
+
+```{r assignment}
+kableExtra::kbl(
+    tbl_assignment,
+    caption = "Random assignment by country",
+    format.args = list(big.mark = " "),
+    toprule = "\\hline\\hline",
+    linesep = c(rep("", 7), "\\addlinespace")
+) %>% 
+kableExtra::kable_styling(full_width = TRUE) %>%
+column_spec(1, bold = TRUE)
+```
+
+Table \@ref(tab:summary) illustrates the distribution of key pre-treatment characteristics, including sex, age, education, trust, and perceptions across the three treatment groups. On average, respondents were 50 years old (with 16 years SD), with about half (47%) identifying as male. Educational attainment was distributed with 32% reporting high education (ISCED 5-8), 48% medium education (ISCED 3-4), and 19% low education. On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
+
+Knowledge of the EU asylum system averaged 2.0 (SD = 0.7) on a 1-4 scale, thus the majority expresses no or basic knowledge. Most respondents reported there were "too many" asylum seekers in their country, with a mean of 2.6 on 1-3 scale from 1 = too few and 3 = too many. Similarly, on average, respondents view an unbalanced distribution of asylum seekers in the EU, reporting an average score of 3.1 (SD = 2.4) on 0-10 scale for the question about evenness across the EU. Yet, respondents reported broad consensus on the support on the importance of burden sharing among countries, providing equal rights, equal treatment, and having an equal distribution of asylum seekers relatively high, with means ranging from 6.9 to 7.4 on 0–10 scales. 
+
+Table \@ref(tab:summary) also reports mean differences between the control group and the other treatment groups, with the standardised difference in parenthesis (the difference divided by the pooled standard deviation). For all these variables, the standardised differences between control and other groups is small, suggesting the distributions overlap well across treatment groups.^[These differences were estimated using OLS controlling for country fixed effets, thus accounting for the stratified randomisation.]
+
+```{r summary, eval = is_latex_output() | is_html_output()}
+kable(
+    table_balance,
+    booktabs = TRUE,
+    digits = 1,
+    caption = "Means and standard deviations for the Control group, and mean differences between the Control group and other groups (standardized differences in square brackets). AS = asylum seekers."
+)
+```
+
+As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the ‘No Info’ group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful.
+
+## Treatment Effects 
+
+### Perceived fairness in the control group
+
+Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the ‘No Info’ group), 76% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options. Therefore, this evidence supports our hypothesis (H1) that the public perceives proportional relocation schemes as fairest. 
+
+```{r toprank, fig.cap = "Perceptions of the fairest relocation scheme under no information provided about the corresponding asylum applications (N = 2 703, Control treatment)", fig.asp = .5, fig.width = 7}
+plot_top_rank + theme(axis.text.x = element_blank())
+```
+
+However, there was considerable variation across countries. In Germany, only 58% in the ‘No info’ group ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. These stark differences suggest that country-specific conditions, such as the political climate, refugee situation, and socio-economic differences, play a significant role in shaping public perceptions of fairness.
+
+### Treatment effects on Perceived Fairness
+
+Table XX shows highly significant associations between the top ranked relocation option and treatment assignment from separate Chi-squared tests within each country. Only the association within Greece and France was statistically insignificant (p = 0.13, for both). After applying Bonferroni correction, the result for Spain remains only marginally significant (p. = 0.073). Overall, however, these results confirm a robust treatment effect in most countries, as hypothesized. 
+
+
+## Heterogenous effects 
+
+### Political orientation 
+
+Figure \@ref(fig:political) illustrates that the magnitude of the information effect on perceived fairness is heavily influenced by respondents' political orientation. The figure presents the intercepts and slopes of the rank-ordered logit model discussed above for each treatment condition. Since we centered the expected number of asylum seekers for each alternative, the model's intercepts for the type of relocation (by GDP or by population) represent the average treatment effect on the probability of ranking the scheme as fairer than having no relocation at all.
+
+Looking at the intercepts, which compare alternative schemes at the average number of asylum seekers, we find that respondents consistently assign a "premium" to relocation: the intercept is significantly greater than zero in all conditions. This premium is largest for left-leaning respondents, followed by center-leaning, and smallest for right-leaning respondents. Moreover, intercepts do not differ significantly across treatments, except in the case of relocation by population, where the Absolute condition reduces the effect of proportional relocation by population compared to no relocation. 
+
+Conversely, we observe significant heterogeneity in the size of the effect of the provided information about expected conseuqneces of each regime (i.e., the slope). In all models, alternatives with higher numbers of asylum seekers were associated with lower fairness. However, absolute and relative information significantly amplified sensitivity to the number of asylum seekers, particularly among centre and right respondents. The differences in responses between left- and right-leaning respondents were particularly pronounced in the absolute information condition. Here, right-leaning respondents showed the strongest negative reaction to higher numbers of asylum seekers (−0.76), while left-leaning respondents were much less sensitive (−0.35), highlighting a stark partisan gap in fairness perceptions.
+
+```{r political, fig.cap = "Political orientation", fig.asp = 1}
+results[["political_right_cut"]]$plot
+```
+
+## Fair share 
+
+Figure \@ref(fig:fair) illustrates the heteogeneity of the effects between individuals who reported the number of migrants in their own country as "fair" or "too low" vs those perceiving it as "too high". 
+
+Both groups show higher perceived fairness for relocation schemes compared to no relocation, with all intercepts significantly positive. However, among respondents reporting that the current share is “fair or too low,” we do not detect a meaningful average treatment effect of framing: support is lowest under the Absolute condition, particularly for relocation by population (Estimate = 0.56, SE = 0.08) compared with GDP-based relocation (Estimate = 0.73, SE = 0.08). By contrast, in the group perceiving the share as “too high,” the Absolute framing significantly reduced support relative to Control for both GDP and population schemes (GDP: 0.29 vs. 0.61; Population: 0.38 vs. 0.65), with Relative framing falling in between and not significantly different from Control.
+
+At the same time, for respondents reporting a “too high” share, we observe strong and significant heterogeneous effects of the expected number of asylum seekers on each relocation scheme. The negative impact of a one standard deviation increase in asylum seekers was largest under the Absolute condition (Estimate = -0.79, SE = 0.04), followed by the Relative condition (-0.56, SE = 0.04), and smallest in the Control group (-0.19, SE = 0.04). This corresponds to a difference of approximately 0.60 between Absolute and Control, substantially larger than the corresponding difference in the “fair or too low” group, which is 0.26.
+
+```{r fair, fig.cap = "Fair share", fig.asp = 1}
+results[["fair_share"]]$plot
+```
+
+```{r}
+results[["fair_share"]]$coeffs %>% 
+    mutate(cis = sprintf("[%.2f, %.2f]", conf.low, conf.high)) %>%
+    arrange(group, term, condition) %>%
+    select(group, term, condition, Estimate = estimate, SE = std.error, "95% CI" = cis) %>%
+    mutate(term = ifelse(row_number() == 1, as.character(term), ""), 
+            .by = c(group, term)) %>%
+    mutate(group = ifelse(row_number() == 1, as.character(group), ""), .by = group) %>%
+    kbl(
+        digits = 2,
+        caption = "Regression coefficients and 95% CIs",
+        caption.short = "Fair share heterogeneity"
+    ) %>% 
+    kable_styling() %>% 
+    column_spec(1:2, bold = TRUE)
+```
+
+### Trust in the EU
+
+Figure \@ref(fig:trust) illustrates ... 
+
+```{r trust, fig.cap = "Fair share", fig.asp = 1}
+results[["trust_eu_cut"]]$plot
+```
+
+```{r}
+results[["trust_eu_cut"]]$coeffs %>% 
+    mutate(cis = sprintf("[%.2f, %.2f]", conf.low, conf.high)) %>%
+    arrange(group, term, condition) %>%
+    select(group, term, condition, Estimate = estimate, SE = std.error, "95% CI" = cis) %>%
+    mutate(term = ifelse(row_number() == 1, as.character(term), ""), 
+            .by = c(group, term)) %>%
+    mutate(group = ifelse(row_number() == 1, as.character(group), ""), .by = group) %>%
+    kbl(
+        digits = 2,
+        caption = "Regression coefficients and 95% CIs",
+        caption.short = "Fair share heterogeneity"
+    ) %>% 
+    kable_styling() %>% 
+    column_spec(1:2, bold = TRUE)
+```
+
+# Discussion 
+
+This study used an experimental survey to examine Europeans’ perceptions of the fairness of different mechanisms for distributing asylum applications among EU countries. By varying the information provided about the consequences of these mechanisms, it explored the extent to which public perceptions of fairness are driven by concerns about outcomes versus principles of fairness.
+
+Consistent with prior research [@bansak2017europeans], we find that a substantial majority, nearly three quarters (76%), of respondents across eight EU countries view some form of proportional relocation of applicants as *fairer* than no relocation at all. Moreover, most people view proportional relocation systems as *fairer* even when it would result in their own country receiving more asylum applications, as the share of those ranking relocation as fairer than no relocation exceeds 50% in all countries. This finding suggests that the recent EU Pact’s proposed regulations are broadly aligned with EU citizens’ perceptions of what constitutes a fair system. 
+
+Yet, the cross-country variation in fairness perceptions was substantial. In the control group, where no information about the outcomes was provided, we find that between 58% respondents in Germany to 87% respondents in Greece view some form of within-EU relocation as fairer than no relocation at all. This gap could be partly explained by concerns about the outcomes, as Germany would receive more applications under relocation, while Greece would receive fewer. This finding underscores the importance of disentangling concerns about outcomes versus fairness. 
+
+As @bansak2017europeans finds that varying the information available about outcomes significantly affects people's support for different relocation systems, we find that providing information about the consequences plays a key role in shaping public perceptions of the fairness of these systems. Thus, our study establishes a direct link between political support, as identified by @bansak2017europeans, and perceptions of the fairness of different policy options. 
+
+Specifically, by providing information about the consequences of the allocation schemes, we find that once individuals are informed about these outcomes, the "premium" placed on proportional schemes is offset when they would lead to more than one standard deviation increase in asylum applications. In other words, Europeans are more likely to perceive allocation systems as fair when the differences in outcomes across countries are not too large.
+
+This finding highlights a clear pathway to influence perceptions of fairness and, consequently, support for different allocation systems. That is, one can influence public opiion by shaping how large or small outcome differences are perceived. However, differences that appear large in absolute terms may seem small in relative terms. Thus, another important finding is that by expressing outcomes of different relocation systems in absolute terms, some people react more strongly to this ifnormation. 
+
+
+This finding extends @bansak2017europeans's information provision experiment. 
+
+Specifcally, we find that [...]
+
+
+Our findings suggest that, when no information is provided about the expected number of asylum applications under each regime, a regime associated with a one–standard deviation increase in expected asylum applications is 13% less likely to be perceived as fair. However, once information is revealed, this effect becomes stronger: the probability of being perceived as fair drops by 40% when relative information is shown, and by 56% when absolute levels of expected asylum applications are presented. Thus, providing absolute information produces an additional 16–percentage point decrease in perceived fairness compared to relative information. 
+
+This evidence adds to a growing literature exploring the role of public perceptions of fairness in regulation [e.g., @brick2015fair for climate regulation]. 
+
+
+# (APPENDIX) Appendix {-}
+
+```{r}
+tbl_relocation %>%
+    kbl(
+        caption = "Expected asylum applications (per 100 000 locals) under no relocation, relocation by GDP, and relocation by population", 
+        caption.short = "Expected asylum applications",
+        booktabs = TRUE,
+        linesep = "",
+        toprule = "\\addlinespace[1em]\\toprule",
+    ) %>%
+    kable_styling(
+        full_width = TRUE,
+        position = "center",
+        latex_options = c("hold_position"),
+        font_size = 12,
+        stripe_color = "gray!10"
+    ) %>%
+    column_spec(1, bold = TRUE)
+```
