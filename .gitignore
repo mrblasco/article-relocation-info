@@ -1,5 +1,9 @@
 .DS_Store
 
+_output/
 *_cache/
 *_files/
 data/raw
+
+*.fff
+*.ttt
