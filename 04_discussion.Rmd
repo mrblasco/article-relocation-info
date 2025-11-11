@@ -21,3 +21,7 @@ Specifcally, we find that [...]
 Our findings suggest that, when no information is provided about the expected number of asylum applications under each regime, a regime associated with a one–standard deviation increase in expected asylum applications is 13% less likely to be perceived as fair. However, once information is revealed, this effect becomes stronger: the probability of being perceived as fair drops by 40% when relative information is shown, and by 56% when absolute levels of expected asylum applications are presented. Thus, providing absolute information produces an additional 16–percentage point decrease in perceived fairness compared to relative information. 
 
 This evidence adds to a growing literature exploring the role of public perceptions of fairness in regulation [e.g., @brick2015fair for climate regulation]. 
+
+
+
+# References

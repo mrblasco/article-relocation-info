@@ -15,7 +15,6 @@ linkcolor: blue
 citecolor: blue
 urlcolor: blue
 
-
 papersize: a4
 fontsize: 12pt
 linestretch: 1.5
@@ -46,7 +45,6 @@ table_latex <- function(x, ...) {
     kableExtra::kbl(x, booktabs = TRUE, ...) |>
     kableExtra::kable_styling(full_width = TRUE)
 }
-#source("analysis_balance.R")
 
 theme_set(theme_minimal(base_size = 12, base_family = "Helvetica"))
 theme_update(
@@ -66,29 +64,8 @@ theme_update(
     plot.margin = margin(1, 1, 1, 1, unit = "lines"),
 )
 
+children <- c("01_intro.Rmd", "02_methods.Rmd", "03_results.Rmd", "04_discussion.Rmd", "90_appendix.Rmd")
 ```
 
-```{r sections, child = c("01_intro.Rmd", "02_methods.Rmd", "03_results.Rmd", "04_discussion.Rmd")}
-```
-
-
-# (APPENDIX) Appendix {-}
-
-```{r}
-tbl_relocation %>%
-    kbl(
-        caption = "Expected asylum applications (per 100 000 locals) under no relocation, relocation by GDP, and relocation by population", 
-        caption.short = "Expected asylum applications",
-        booktabs = TRUE,
-        linesep = "",
-        toprule = "\\addlinespace[1em]\\toprule",
-    ) %>%
-    kable_styling(
-        full_width = TRUE,
-        position = "center",
-        latex_options = c("hold_position"),
-        font_size = 12,
-        stripe_color = "gray!10"
-    ) %>%
-    column_spec(1, bold = TRUE)
+```{r sections, child = children}
 ```
