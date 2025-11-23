@@ -2,6 +2,13 @@
 title: |
     Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System
 date: "This version: `r format(Sys.Date(), '%b %d, %Y')`"
+author: 
+    - (Alphabetical Order)
+    - Andrea Blasco
+    - Rossella Icardi
+    - Michal Krawczyk
+    - Begona Cabeza Martinez
+
 bibliography: [refs.bib]
 geometry: "margin=0.5in"
 papersize: a4
@@ -15,6 +22,7 @@ header-includes: |
     ```
 always_allow_html: true
 colorlinks: true
+description: Research paper
 abstract: |
     Despite intense political debate over reforming the EU asylum system, there is little evidence on what drives public support for alternative solutions. Using an experimental survey, we examine Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to the resident populations. By varying the information provided about the consequences of these mechanisms, we explored how much public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider relocation as the fairest option. However, there are large country differences, with proportional relocation schemes perceived fair by 58% in Germany versus 87% in Greece, which suggest a “self-serving” bias (people tend to rank as fairer the method that results in a lower intake of asylum seekers for their own country). Moreover, when we explicitly communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. By varing how the information is presented, we find a stronger effect when the communication uses _absolute_ instead of _per capita_ figures. These findings shed new light on how public perceptions of fairness of the EU asylum system can be shaped by information.
 ---
@@ -25,32 +33,20 @@ library(knitr)
 library(kableExtra)
 library(ggplot2)
 
-opts_chunk$set(error = TRUE, echo = FALSE)
+debug <- TRUE
+
+opts_chunk$set(
+    error = debug,
+    echo = debug,
+    message = debug,
+    warning = debug
+)
 
 table_latex <- function(x, ...) {
     kableExtra::kbl(x, booktabs = TRUE, ...) |>
     kableExtra::kable_styling(full_width = TRUE)
 }
-#source("analysis_balance.R")
-
-theme_set(theme_minimal(base_size = 12, base_family = "Helvetica"))
-theme_update(
-    panel.background = element_rect(color = 'gray85'),
-    #panel.grid.major.y = element_blank(),
-    #panel.grid.minor.y = element_blank(),
-    #panel.grid.major.x = element_line(color = "gray85", linewidth = 0.3),
-    strip.background = element_rect(fill = "gray95", color = NA),
-    strip.text = element_text(face = "bold", size = 11, hjust = 0),
-    axis.text = element_text(color = "black", size = 10),
-    axis.title.x = element_text(size = 11, margin = margin(t = 6)),
-    axis.title.y = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_text(size = 10, face = "bold"),
-    legend.text = element_text(size = 9),
-    plot.caption = element_text(size = 9, hjust = 0, color = "gray40", margin = margin(t = 10)),
-    plot.margin = margin(1, 1, 1, 1, unit = "lines"),
-)
-
+source("R/theme.R")
 ```
 
 ```{r sections, child = c("01_intro.Rmd", "02_methods.Rmd", "03_results.Rmd", "04_discussion.Rmd")}

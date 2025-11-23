@@ -3,8 +3,9 @@ library(dplyr)
 library(tidyr)
 library(knitr)
 library(kableExtra)
+library(flextable)
 
-knitr::opts_chunk$set(error = TRUE)
+source("R/tables.R")
 
 data_path <- file.path("data", "processed", "fairness_survey_clean.rds")
 
@@ -53,9 +54,7 @@ tbl_example <- tbl_example %>%
         per_capita_a = country_a / (country_a[Category == "Most recent population"] / 1e5),
         per_capita_b = country_b / (country_b[Category == "Most recent population"] / 1e5),
         across(where(is.numeric), format_numbers),
-    )
-
-kbl_example <- tbl_example %>% 
+    ) %>%
     dplyr::select(
         Category = Category,
         "Country A (absolute)" = country_a,
@@ -63,9 +62,15 @@ kbl_example <- tbl_example %>%
         "Country B (absolute)" = country_b,
         "Country B (per 100k)" = per_capita_b,
         "Total" = total
-    ) %>%
+    )
+
+caption_example <- paste(
+    "Illustrative example of asylum applications for two hypothetical countries"
+)
+
+kbl_example <- tbl_example %>% 
     kbl(
-        caption = "Illustrative example of asylum applications for two hypothetical countries",
+        caption = caption_example,
         align = c("l", "r", "r", "r", "r", "r"),
         booktabs = TRUE,
         linesep = "",
@@ -73,11 +78,14 @@ kbl_example <- tbl_example %>%
     kable_styling(full_width = TRUE) %>%
     row_spec(0, bold = TRUE) %>%
     column_spec(1, width = "5cm") %>%
-    footnote(
+    kableExtra::footnote(
         general = "Values formatted for readability. Per capita = per 100,000 population.",
         general_title = "",
         footnote_as_chunk = TRUE
     )
+
+ft_example <- tbl_example %>% 
+    make_flextable(caption = caption_example)
 
 # ---- eurostat ------------------------ 
 
@@ -103,6 +111,15 @@ kbl_asylum_rel <- tbl_asylum_rel %>%
     ) %>% 
     kable_styling(full_width = TRUE)
 
+
+ft_asylum_rel <- tbl_asylum_rel %>% 
+    dplyr::select(
+      Country = country,
+      "No relocation (per 100k)" = no_relocation,
+      "By population (per 100k)" = population,
+      "By GDP (per 100k)" = gdp
+    ) %>%
+    make_flextable(caption = "Allocation rules per capita")
 
 # ---- data ------------------------
 ds <- readRDS(data_path)
@@ -160,6 +177,9 @@ kbl_assignment <- tbl_assignment %>%
     kableExtra::kable_styling(full_width = TRUE) %>%
     column_spec(1, bold = TRUE)
 
+ft_assignment <- tbl_assignment %>% 
+    as.data.frame.table() %>%
+    make_flextable("Random assignment by country")
 
 # ---- covariate-balance ------------------------
 
@@ -180,7 +200,7 @@ sd_pooled <- ds %>%
     summarise(across(all_of(covariates), \(x) sd(x, na.rm = TRUE))) %>%
     pivot_longer(everything(), names_to = "variable", values_to = "sd_pooled")
 
-table_balance <- lapply(covariates, \(v) {
+tbl_balance <- lapply(covariates, \(v) {
     form <- reformulate("relocation_treatment + country", v)
     fit <- lm(
         form,
@@ -240,10 +260,16 @@ table_balance <- lapply(covariates, \(v) {
         "Diff. Relative" = Relative
     )
 
+caption_balance <- paste(
+    "Means and standard deviations for the Control group, and mean differences between the Control group and other groups (standardized differences in square brackets). AS = asylum seekers."
+)
 
-kbl_balance <- table_balance %>% 
+kbl_balance <- tbl_balance %>% 
     kable(
         booktabs = TRUE,
         digits = 1,
-        caption = "Means and standard deviations for the Control group, and mean differences between the Control group and other groups (standardized differences in square brackets). AS = asylum seekers."
+        caption = caption_balance
     )
+
+ft_balance <- tbl_balance %>% 
+    make_flextable(caption = caption_balance)
