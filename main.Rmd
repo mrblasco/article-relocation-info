@@ -1,4 +1,6 @@
 ---
+params: 
+    debug: false
 title: |
     Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System
 date: "This version: `r format(Sys.Date(), '%b %d, %Y')`"
@@ -33,7 +35,7 @@ library(knitr)
 library(kableExtra)
 library(ggplot2)
 
-debug <- TRUE
+debug <- params$debug
 
 opts_chunk$set(
     error = debug,
