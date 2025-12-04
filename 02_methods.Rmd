@@ -26,7 +26,29 @@ Specifically, participants from Country A assigned to the Absolute information c
 
 
 ```{r example, echo = FALSE}
-kbl_example
+tbl_example %>% 
+    dplyr::select(
+        Category = Category,
+        "Country A (absolute)" = country_a,
+        "Country A (per 100k)" = per_capita_a,
+        "Country B (absolute)" = country_b,
+        "Country B (per 100k)" = per_capita_b,
+        "Total" = total
+    ) %>%
+    kbl(
+        caption = "Illustrative example of asylum applications for two hypothetical countries",
+        align = c("l", "r", "r", "r", "r", "r"),
+        booktabs = TRUE,
+        linesep = "",
+    ) %>%
+    kable_styling(full_width = TRUE) %>%
+    row_spec(0, bold = TRUE) %>%
+    column_spec(1, width = "5cm") %>%
+    footnote(
+        general = "Values formatted for readability. Per capita = per 100,000 population.",
+        general_title = "",
+        footnote_as_chunk = TRUE
+    )
 ```
 
 In Table \@ref(tab:asylum-per-capita), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
@@ -35,17 +57,24 @@ In Table \@ref(tab:asylum-per-capita), we report the actual figures for the expe
 kbl_asylum_rel
 ```
 
-
 The experimental design and pre-analysis plan were pre-registered within the AEA RCT Registry (REF NUMBER).
 
-The survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix [NEED REF]. A descriptive analysis of the responses is reported elsewhere [@blasco2025fairness]. We included variables such as trust or political affiliation, as these are associated with attitudes towards migration (Canetti et al., 2016). We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives (Berlinschi and Harutyunyan, 2019).
+The survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix [NEED REF]. A descriptive analysis of the responses is reported elsewhere [@blasco2025fairness]. We included variables such as trust or political affiliation, as these are associated with attitudes towards migration (Canetti et al., 2016). We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives [@berlinschi2019do].
 
 ## Data 
 
 Table \@ref(tab:assignment-summary) illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
 
 ```{r assignment-summary}
-kbl_assignment
+tbl_assignment %>% 
+    kableExtra::kbl(
+        caption = "Random assignment by country",
+        format.args = list(big.mark = " "),
+        booktabs = TRUE,
+        linesep = c(rep("", 7), "\\addlinespace")
+    ) %>% 
+    kableExtra::kable_styling(full_width = TRUE) %>%
+    kableExtra::column_spec(1, bold = TRUE)
 ```
 
 Table \@ref(tab:summary) illustrates the distribution of key pre-treatment characteristics, including sex, age, education, trust, and perceptions across the three treatment groups. On average, respondents were 50 years old (with 16 years SD), with about half (47%) identifying as male. Educational attainment was distributed with 32% reporting high education (ISCED 5-8), 48% medium education (ISCED 3-4), and 19% low education. On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
@@ -58,7 +87,7 @@ Table \@ref(tab:summary) also reports mean differences between the control group
 kbl_balance
 ```
 
-As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful.
+As reported in Table XXXXXX, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful.
 
 
 ```{r}
