@@ -1,0 +1,14 @@
+# Hi!
+
+```{r}
+library(kableExtra)
+
+tables <- readRDS("descriptives_all_tables.rds")
+str(tables, 2)
+```
+
+
+```{r}
+tables$latex$kbl_assignment
+tables$latex$kbl_covariates
+```

@@ -1,15 +1,15 @@
 # ----- setup, include = FALSE
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(patchwork)
-library(yaml)
-library(knitr)
-library(kableExtra)
-library(fairMigrate)
-library(here)
-
-opts_chunk$set(error = TRUE, echo = FALSE)
+suppressWarnings({
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(patchwork)
+  library(yaml)
+  library(knitr)
+  library(kableExtra)
+  library(fairMigrate)
+  library(here)
+})
 
 source("R/theme.R")
 
@@ -172,7 +172,6 @@ ds_mean_rank <- ds_long %>%
   )
 
 g <- ds_mean_rank %>%
-  filter(grepl("treatment", term)) %>%
   ggplot(
     aes(
       x = estimate,
@@ -190,6 +189,7 @@ g <- ds_mean_rank %>%
   geom_linerange() +
   geom_point()  
 
+g %+% filter(ds_mean_rank, grepl("No info", term))
 
 
 # ----- combined plot, fig.asp = 1, eval = FALSE -----
@@ -568,4 +568,3 @@ ds_interact %>%
   geom_vline(xintercept = 0) +
   geom_linerange() +
   geom_point()
-
