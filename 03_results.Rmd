@@ -3,8 +3,8 @@
 library(dplyr)
 library(kableExtra)
 library(ggplot2)
-knitr::opts_chunk$set(error = TRUE)
-source("R/theme.R")
+#source("R/theme.R")
+theme_set(theme_minimal(base_size = 11))
 ```
 
 ```{r rologit, include = FALSE, cache = TRUE}
@@ -12,16 +12,19 @@ source("analysis_mean_rank.R")
 source("analysis_rologit.R")
 ```
 
-# Results 
+# Results
 
 ## Treatment Effects 
 
 ### Perceived fairness in the control group
 
-Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the ‘No Info’ group), 76% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options. 
+Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the 'No Info' group), 76% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options. Therefore, this evidence supports our hypothesis (H1) that the public perceives proportional relocation schemes as fairest. 
 
-```{r toprank, fig.cap = "Perceptions of the fairest relocation scheme under no information provided about the corresponding asylum applications (N = 2 703, Control treatment)", fig.asp = .5, fig.width = 7}
-plot_top_rank + theme(axis.text.x = element_blank())
+```{r toprank, fig.cap = cap, fig.width = 7, fig.height = 3.5}
+cap <- paste(
+    "Perceptions of the fairest relocation scheme in the Control treatment, with no information about the corresponding asylum applications"
+)
+readRDS(file.path("results", "figures", "top_rank_no_info.rds"))
 ```
 
 However, there was considerable variation across countries. In Germany, only 58% in the ‘No info’ group ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. These stark differences suggest that country-specific conditions, such as the political climate, refugee situation, and socio-economic differences, play a significant role in shaping public perceptions of fairness.
@@ -30,6 +33,11 @@ However, there was considerable variation across countries. In Germany, only 58%
 
 Table XX shows highly significant associations between the top ranked relocation option and treatment assignment from separate Chi-squared tests within each country. Only the association within Greece and France was statistically insignificant (p = 0.13, for both). After applying Bonferroni correction, the result for Spain remains only marginally significant (p. = 0.073). Overall, however, these results confirm a robust treatment effect in most countries, as hypothesized. 
 
+
+```{r, fig.width = 7, fig.height = 5, fig.cap = cap}
+cap <- "TBA"
+readRDS(file.path("results", "figures", "mean_rank.rds"))
+```
 
 ## Heterogenous effects 
 
@@ -57,7 +65,7 @@ At the same time, for respondents reporting a “too high” share, we observe s
 results[["fair_share"]]$plot
 ```
 
-```{r}
+```{r eval = FALSE}
 results[["fair_share"]]$coeffs %>% 
     mutate(cis = sprintf("[%.2f, %.2f]", conf.low, conf.high)) %>%
     arrange(group, term, condition) %>%
@@ -82,7 +90,7 @@ Figure \@ref(fig:trust) illustrates ...
 results[["trust_eu_cut"]]$plot
 ```
 
-```{r}
+```{r, eval = FALSE}
 results[["trust_eu_cut"]]$coeffs %>% 
     mutate(cis = sprintf("[%.2f, %.2f]", conf.low, conf.high)) %>%
     arrange(group, term, condition) %>%
