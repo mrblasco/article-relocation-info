@@ -7,6 +7,9 @@ library(flextable)
 
 source("R/tables.R")
 
+results_dir <- "results"
+if (!dir.exists(results_dir)) dir.create(results_dir)
+
 data_path <- file.path("data", "processed", "fairness_survey_clean.rds")
 
 # ---- illustration ------------------------
@@ -273,3 +276,20 @@ kbl_balance <- tbl_balance %>%
 
 ft_balance <- tbl_balance %>% 
     make_flextable(caption = caption_balance)
+
+
+
+# ---- Save each table as an RDS file ------- 
+
+
+# Collect all tables in a named list
+tables_list <- list(
+  tbl_example = tbl_example,
+  tbl_asylum_rel = tbl_asylum_rel,
+  tbl_assignment = tbl_assignment,
+  tbl_balance = tbl_balance
+)
+
+lapply(names(tables_list), function(name) {
+  saveRDS(tables_list[[name]], file = file.path(results_dir, paste0(name, ".rds")))
+})
