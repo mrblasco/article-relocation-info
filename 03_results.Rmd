@@ -3,7 +3,7 @@
 library(dplyr)
 library(kableExtra)
 library(ggplot2)
-
+knitr::opts_chunk$set(error = TRUE)
 source("R/theme.R")
 ```
 
@@ -18,7 +18,7 @@ source("analysis_rologit.R")
 
 ### Perceived fairness in the control group
 
-Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the ‘No Info’ group), 76% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options. Therefore, this evidence supports our hypothesis (H1) that the public perceives proportional relocation schemes as fairest. 
+Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the ‘No Info’ group), 76% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options. 
 
 ```{r toprank, fig.cap = "Perceptions of the fairest relocation scheme under no information provided about the corresponding asylum applications (N = 2 703, Control treatment)", fig.asp = .5, fig.width = 7}
 plot_top_rank + theme(axis.text.x = element_blank())
