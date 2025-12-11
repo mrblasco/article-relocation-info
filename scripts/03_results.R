@@ -17,7 +17,7 @@ source("R/theme.R")
 # ----------------------------------------------------
 
 results_dir <- file.path("results", c("figures", "tables", "models"))
-sapply(results_dir, dir.create, recursive = TRUE, showWarnings = FALSE)
+#sapply(results_dir, dir.create, recursive = TRUE, showWarnings = FALSE)
 
 data_dir <- file.path("data", "processed")
 ds_survey_filename <- file.path(data_dir, "fair_survey_clean.rds")
