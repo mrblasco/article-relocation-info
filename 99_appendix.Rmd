@@ -1,0 +1,49 @@
+# (APPENDIX) Appendix 
+
+## Regression model
+
+We estimate a rank-ordered logit model for the probability of ranking each relocation scheme higher in the fairness ranking. 
+
+As explanatory variables, we include the (z-scored) number of asylum seekers (AS) under each relocation scheme, an indicator for the type of proportional relocation mechanism, either by GDP or by population, and a treatment assignment indicator. The base alternative is the no-relocation scheme, and the reference group is the absolute-information group, so we can test for differences in control vs absolute but also absolute vs relative in one single model. 
+
+The model assumes respondents evaluate a latent “fairness” variable in any treatment group k for each relocation alternative j:
+
+$$
+    equation
+$$
+
+Where:
+
+- $\alpha_j$ is the intercept for each alternative
+- $\beta$ is the effect of a change in the asylum seekers, 〖"AS" 〗_j under the relocation scheme j
+- β_k is the change in the effect of asylum seekers AS associated with the information condition k
+- τ_jk is a shift in the intercept of each alternative associated with the information condition k
+- "Info" 〗_k is an indicator variable for the individual being assigned to the information condition k
+- "Alt" 〗_j is an indicator variable for the considered relocation scheme or alternative j
+- γ⋅X captures the effect of individual pre-treatment characteristics, with some random error ϵ.
+
+
+## Tables
+
+```{r}
+require(dplyr)
+require(kableExtra)
+
+tbl_relocation %>%
+    kbl(
+        caption = "Expected asylum applications (per 100 000 locals) under no relocation, relocation by GDP, and relocation by population", 
+        caption.short = "Expected asylum applications",
+        booktabs = TRUE,
+        linesep = "",
+        toprule = "\\addlinespace[1em]\\toprule",
+    ) %>%
+    kable_styling(
+        full_width = TRUE,
+        position = "center",
+        latex_options = c("hold_position"),
+        font_size = 12,
+        stripe_color = "gray!10"
+    ) %>%
+    column_spec(1, bold = TRUE)
+```
+

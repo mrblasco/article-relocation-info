@@ -289,4 +289,8 @@ tables <- list(
   )
 )
 
-saveRDS(tables, "descriptives_all_tables.rds")
+
+tab_dir <- file.path("results", "tables")
+dir.create(tab_dir)
+
+saveRDS(tables, file.path(tab_dir, "descriptives_all_tables.rds"))

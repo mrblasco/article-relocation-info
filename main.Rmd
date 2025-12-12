@@ -11,8 +11,6 @@ author:
     - Michal Krawczyk
     - Begona Cabeza Martinez
 
-toc: true
-
 bibliography: [refs.bib]
 geometry: "margin=1in"
 papersize: a4
@@ -22,6 +20,7 @@ mainfont: Arial
 csl: [https://www.zotero.org/styles/the-quarterly-journal-of-economics]
 header-includes: |
     ```{=latex}
+    \usepackage{pdflscape}
     \usepackage{endfloat}
     ```
 always_allow_html: true
@@ -60,24 +59,11 @@ source("R/theme.R")
 ```{r sections, child = c("01_intro.Rmd", "02_methods.Rmd", "03_results.Rmd", "04_discussion.Rmd")}
 ```
 
+# References {-}
 
-# (APPENDIX) Appendix {-}
+::: {#refs}
+:::
 
-```{r}
-tbl_relocation %>%
-    kbl(
-        caption = "Expected asylum applications (per 100 000 locals) under no relocation, relocation by GDP, and relocation by population", 
-        caption.short = "Expected asylum applications",
-        booktabs = TRUE,
-        linesep = "",
-        toprule = "\\addlinespace[1em]\\toprule",
-    ) %>%
-    kable_styling(
-        full_width = TRUE,
-        position = "center",
-        latex_options = c("hold_position"),
-        font_size = 12,
-        stripe_color = "gray!10"
-    ) %>%
-    column_spec(1, bold = TRUE)
+
+```{r, child = "99_appendix.Rmd"}
 ```

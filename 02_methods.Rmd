@@ -3,7 +3,7 @@ library(dplyr)
 library(knitr)
 library(kableExtra)
 library(flextable)
-tables <- readRDS("descriptives_all_tables.rds")
+tables <- readRDS("results/tables/descriptives_all_tables.rds")
 ```
 
 # Methods and Data
@@ -32,18 +32,30 @@ Table \@ref(tab:example) illustrates the experiment with a simplified scenario i
 
 Under this scenario, study participants from Country A assigned to the Absolute information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A), receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B), receive fewer, becoming “net senders”.
 
-```{r example, echo = FALSE}
+```{r example}
 tables$raw$tbl_example %>%
-    kbl(caption = "Illustrative example", booktabs = TRUE, align = "lrrrrr") %>% 
-    kable_classic() %>%
-    column_spec(1, bold = TRUE)
+    kableExtra::kbl(caption = "Illustrative example", booktabs = TRUE, align = "lrrrrr") %>% 
+    kableExtra::kable_styling(full_width = FALSE) %>%
+    kableExtra::column_spec(1, bold = TRUE, width = "20em") 
 ```
 
 
 In Table \@ref(tab:asylum-per-capita), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
 
 ```{r asylum-per-capita}
-tables$latex$kbl_asylum_rel
+tables$raw$tbl_asylum_rel %>% 
+    dplyr::select(
+      Country = country,
+      "No relocation (per 100k)" = no_relocation,
+      "By population (per 100k)" = population,
+      "By GDP (per 100k)" = gdp
+    ) %>%
+    kableExtra::kbl(
+        caption = "Expected asylum seekers per capita, by allocation rules",
+        booktabs = TRUE,
+        linesep = "",
+    ) %>% 
+    kableExtra::kable_styling(full_width = TRUE)
 ```
 
 The experimental design and pre-analysis plan were pre-registered within the AEA RCT Registry (AEARCTR-0014194). The Ethics Research Board of the JRC approved the experimental protocol.
@@ -55,17 +67,43 @@ The survey included several modules that asked respondents about their socio-dem
 Table \@ref(tab:assignment-summary) illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
 
 ```{r assignment-summary}
-tables$latex$kbl_assignment
+tables$raw$tbl_assignment %>% 
+    kableExtra::kbl(
+        caption = "Random assignment of respondents, by country",
+        format.args = list(big.mark = " "),
+        booktabs = TRUE,
+        linesep = c(rep("", 7), "\\addlinespace")
+    ) %>% 
+    kableExtra::kable_styling(full_width = TRUE) %>%
+    kableExtra::column_spec(1, bold = TRUE)
 ```
 
 Table \@ref(tab:summary) illustrates the distribution of key pre-treatment characteristics, including sex, age, education, trust, and perceptions across the three treatment groups. On average, respondents were 50 years old (with 16 years SD), with about half (47%) identifying as male. Educational attainment was distributed with 32% reporting high education (ISCED 5-8), 48% medium education (ISCED 3-4), and 19% low education. On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
 
 Knowledge of the EU asylum system averaged 2.0 (SD = 0.7) on a 1-4 scale, thus the majority expresses no or basic knowledge. Most respondents reported there were "too many" asylum seekers in their country, with a mean of 2.6 on 1-3 scale from 1 = too few and 3 = too many. Similarly, on average, respondents view an unbalanced distribution of asylum seekers in the EU, reporting an average score of 3.1 (SD = 2.4) on 0-10 scale for the question about evenness across the EU. Yet, respondents reported broad consensus on the support on the importance of burden sharing among countries, providing equal rights, equal treatment, and having an equal distribution of asylum seekers relatively high, with means ranging from 6.9 to 7.4 on 0–10 scales. 
 
-Table \@ref(tab:summary) also reports mean differences between the control group and the other treatment groups, with the standardised difference in parenthesis (the difference divided by the pooled standard deviation). For all these variables, the standardised differences between control and other groups is small, suggesting the distributions overlap well across treatment groups.^[These differences were estimated using OLS controlling for country fixed effets, thus accounting for the stratified randomisation.]
+Table \@ref(tab:summary) also reports mean differences between the control group and the other treatment groups, with the standardised difference in parenthesis (the difference divided by the pooled standard deviation). For all these variables, the standardised differences between control and other groups is small, suggesting the distributions overlap well across treatment groups.^[
+    These differences were estimated using OLS controlling for country fixed effets, thus accounting for the stratified randomisation.
+]
 
 ```{r summary}
-tables$latex$kbl_covariates
+tbl_covariates <- tables$raw$tbl_covariates
+tbl_covariates %>%
+    dplyr::select(
+        Variable = variable,
+        "Control" = "(Intercept)",
+        "Diff. Relative" = "relocation_treatmentRelative",
+        "Diff. Absolute" = "relocation_treatmentAbsolute",
+    ) |>
+    kableExtra::kbl(
+        booktabs = TRUE, digits = 1,
+        caption = "Summary statistics (standardized mean difference in square brackets)"
+    ) |>
+    kableExtra::column_spec(1, width = "20em") |>
+    kableExtra::kable_styling(full_width = FALSE) |>
+    kableExtra::pack_rows("Sociodemographics", 1, 5) |>
+    kableExtra::pack_rows("Political attitudes", 6, 5 + 4) |>
+    kableExtra::pack_rows("Other", 1 + 5 + 4, nrow(tbl_covariates)) 
 ```
 
 <!-- As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful. -->

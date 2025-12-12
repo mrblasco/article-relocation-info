@@ -38,6 +38,18 @@ ds_long_count <- ds_long %>%
     mutate(percent = 100 * n / sum(n),
          .by = c(country, rank, relocation_treatment))
 
+# ----------------------------------------------------
+# Statistical association
+# ----------------------------------------------------
+
+xtabs(~  relocation_treatment + relocation + rank, data = ds_long) %>% 
+    apply("rank", function(x) chisq.test(x)$p.value)
+
+xtabs(~  relocation_treatment + relocation + country, data = ds_long, subset = rank == 1) %>% 
+    apply("country", function(x) chisq.test(x)$p.value) %>% 
+    p.adjust() %>% 
+    sprintf('%.2f', .)
+
 
 # ----------------------------------------------------
 # Fig.1 Fairness mechanisms under no information
@@ -110,32 +122,29 @@ ds_asylum_rel <- data.frame(
 ds_mean_rank <- ds_long %>% 
     reframe(
         {
-            broom::tidy(lm(rank ~ relocation), conf.int = TRUE)
+            broom::tidy(lm(rank ~ relocation_treatment), conf.int = TRUE)
         },
-        .by = c(country, relocation_treatment)
+        .by = c(country, relocation)
     )
 
 col_width <- 0.7
 
-p_mean_ran <- ds_mean_rank %>% 
-    left_join(ds_asylum_rel, by = "country") %>% 
-    mutate(
-        country_lab = ifelse(
-            grepl("GDP", term),
-            sprintf("<strong>%s</strong><br>(Relocated by GDP = %d)", country, gdp - no_relocation),
-            sprintf("<strong>%s</strong><br>(Relocated by Pop. = %d)", country, population - no_relocation)
-        ),
-        term_lab = sprintf("No relocation vs. %s", gsub("relocation", "", term)),
-    ) %>% 
+ds_plot <- ds_mean_rank %>%
+    filter(term != "(Intercept)") %>% 
+    left_join(ds_asylum_rel, by = "country")
+
+p_mean_rank <- ds_plot %>% 
     ggplot(
         aes(
             x = estimate,
             xmin = conf.low, 
             xmax = conf.high,
-            y = relocation_treatment,
+            fill = term, 
+            y = term,
+            alpha = abs(estimate) > 2 * std.error
         )
     ) +
-    facet_wrap(~reorder(country_lab, gdp-no_relocation), ncol = 2) + 
+    facet_grid(country ~ relocation) + 
     geom_vline(xintercept = 0, linetype = 2, color = "red") +
     geom_col(
         position = position_dodge(col_width),
@@ -145,23 +154,25 @@ p_mean_ran <- ds_mean_rank %>%
         position = position_dodge(col_width),
         width = 0.2
     ) + 
+    geom_point() +
     scale_fill_brewer(palette = "Blues", name = "Treatment") + 
+    scale_y_discrete(labels = function(x) gsub("relocation_treatment", "", x)) +
+    scale_x_continuous(limits = c(-1, 1) * 0.7) +
+    scale_alpha_manual(values = c(0.2, 1)) + 
     theme(
-        legend.position = "bottom",
+        legend.position = "none",
         panel.grid.major.y = element_blank(),
         panel.grid.minor = element_blank(),
         plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
         axis.title = element_blank(),
+        strip.text.x = ggtext::element_markdown(lineheight = 1.2),
+        panel.spacing = unit(.1, "lines"),
+        panel.background = element_rect(color = "gray75"),
     ) +
     labs(
-        title = "Mean Rank Difference vs. No relocation"
-    ) + 
-    scale_x_continuous(
-        limits = c(-1, 1) * 1.5, 
-        breaks = c(-0.5, 0, 0.5), 
-    ) + 
-    theme(
-        strip.text.x = ggtext::element_markdown(lineheight = 1.2)
+        title = "Mean Fairness Rank Difference",
+        subtitle = "Baseline = Absolute Info"
     )
 
 
@@ -173,4 +184,3 @@ ggsave(
 system(paste("open", file.path(fig_dir, "mean_rank.png")))
 
 saveRDS(p_mean_rank, file.path(fig_dir, "mean_rank.rds"))
-
