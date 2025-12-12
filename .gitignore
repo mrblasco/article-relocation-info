@@ -1,10 +1,44 @@
-.DS_Store
+# RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
 
-_output/
+# knitr / rmarkdown
 *_cache/
-*_files/
-data/raw
+cache/
+*.utf8.md
+*.knit.md
 
+# outputs
+_output/
+docs/*.html
+docs/*.pdf
+docs/*.docx
+docs/*_files/
+main_cache/
+report_cache/
+
+# logs and temp
 *.log
 *.fff
 *.ttt
+
+# LaTeX aux files
+*.aux
+*.out
+*.toc
+*.synctex.gz
+
+# data outputs
+data/processed/
+data/results/
+results/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# python/virtual env (if ever used)
+.env
+venv/
