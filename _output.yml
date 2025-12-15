@@ -2,7 +2,7 @@ distill::distill_article:
   toc: true
 
 bookdown::pdf_document2:
-  toc: true
+  toc: false
   keep_tex: true
   latex_engine: xelatex
 

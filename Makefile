@@ -19,3 +19,8 @@ $(OUTDIR)/report.docx: main.Rmd $(SECTIONS) $(ASSETS)
 
 view:
 	open $(OUTDIR)/index.html
+
+
+copy:
+	cp ./docs/report.pdf ./2025-12-12-fairness-asylum.pdf
+	cp ./docs/report.docx ./2025-12-12-fairness-asylum.docx

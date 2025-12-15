@@ -3,11 +3,12 @@
 library(dplyr)
 library(kableExtra)
 library(ggplot2)
+library(ggtext)
 #source("R/theme.R")
 theme_set(theme_minimal(base_size = 11))
 
 tab_dir <- file.path("results", "tables")
-tables_rologit <- readRDS(file.path(tab_dir, "rologit_base.rds"))
+tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
 ```
 
 ```{r rologit, include = FALSE, cache = TRUE}
@@ -50,26 +51,103 @@ readRDS(file.path("results", "figures", "mean_rank.rds"))
 
 We further investigate the role of the expected asylum seekers under each relocation scheme using a rank-ordered logit model for the probability of ranking each relocation scheme higher in the fairness ranking (see the Appendix).
 
-Table \@ref(tab:coeffs) presents the results of the baseline rank-ordered logit model, where we assume the effect of asylum seekers does not vary by treatments. The coefficients show that proportional schemes were generally ranked as fairer, as indicated by the positive and significant intercept interactions for GDP (0.64, p<0.05) and population (0.57, p<0.05). The negative coefficient for asylum seekers (−0.35, p<0.05) suggests that schemes assigning more asylum seekers were perceived as less fair. These findings confirm our hypotheses and earlier analysis. Among the interaction terms, the effect of relocation by population under the control condition (0.13, p<0.05) reached significance, indicating that fairness perceptions were sensitive to information about asylum seekers  differences, while other interaction effects were not statistically significant.
+Table \@ref(tab:coeffs) presents the results of the baseline rank-ordered logit model, where we assume the effect of asylum seekers does not vary by treatments. The coefficients show that proportional schemes were generally ranked as fairer, as indicated by the positive and significant intercept interactions for GDP (0.64, p<0.05) and population (0.57, p<0.05). The negative coefficient for asylum seekers (−0.35, p<0.05) suggests that schemes assigning more asylum seekers were perceived as less fair. These findings confirm our hypotheses and earlier analysis. Among the interaction terms, the effect of relocation by population under the control condition (0.13, p<0.05) is positive and statistically significant, indicating that fairness perceptions were sensitive to information about asylum seekers differences, while other interaction effects were not statistically significant.
 
 ```{r coeffs}
-head(mtcars) %>% 
-    kableExtra::kbl(caption = "PLACEHOLDER")
-#tables_rologit$tbl_base_coeffs
-    #kableExtra::kbl(booktabs = TRUE, col.names = c("Coefficient", "Estimate", "SE", "CI"))
+tables_rologit %>%
+    mutate(
+        term = gsub("^info", "", term) %>%
+            gsub("relocation_(.*)_ranking", "Alt (\\1)", .) %>% 
+            gsub("scale.*", "Asylum seekers (standard)", .) %>%
+            dplyr::case_match(
+                ., 
+                .default = .,
+                "(Intercept):Alt (GDP)" ~ "Relocation by GDP",
+                "(Intercept):Alt (population)" ~ "Relocation by population",
+                "Asylum seekers (standard)" ~ "Asylum seekers (std.)",
+                "No info:Alt (GDP)" ~ "No info x reloc. by GDP",
+                "No info:Alt (population)" ~ "No info x reloc. by population",
+                "Relative:Alt (GDP)" ~ "Info per capita x reloc. by GDP",
+                "Relative:Alt (population)" ~ "Info per capita x reloc. by population",
+            )
+    ) %>% 
+    mutate(
+        stars = dplyr::case_when(
+            p.value < 0.01 ~ "***",
+            p.value < 0.05 ~ "**",
+            p.value < 0.1 ~ "*",
+            TRUE ~ ""
+        ),
+        cis = sprintf("[%.2f,%.2f]", conf.low, conf.high),
+        std.error = sprintf("(%.2f)", std.error),
+        estimate = sprintf("%.2f%s", estimate, stars),
+    ) %>% 
+    dplyr::select(
+        term, estimate, std.error, cis, relocation_treatment
+    ) %>%
+    tidyr::pivot_longer(
+        c(estimate, std.error, cis), 
+        names_to = "statistic"
+    ) %>%
+    tidyr::pivot_wider(
+        names_from = relocation_treatment,
+        values_fill = "",
+    ) %>%
+    dplyr::mutate(
+        term = ifelse(row_number()==1, term, ""),
+        .by = term 
+    ) %>% 
+    dplyr::rename(Coefficient = term) %>%
+    dplyr::select(-statistic) %>%
+    kableExtra::kbl(
+        booktabs = TRUE, 
+        caption = "Regression coefficients, standard errors in parenthesis, and 95\\% confidence intervals in square brackets.",
+        align = "lcccc",
+    )
 ```
 
-Figure \@ref(fig:coeffs) reports the results of the rank-ordered logit model estimated separately for each information condition, thus all coefficients to vary across the treatment conditions. Across all groups, alternatives with proportional relocation, either by GDP or by populations, were consistently ranked as fairer, with positive and significant coefficients in each condition, again confirming earlier results. However, the strength of these effects varied: the control group showed the largest by-GDP and by-population effects (0.74 and 0.75, respectively), while these effects were smaller under the absolute and relative information conditions. 
-
-As in Figure \@ref(fig:treat-coeffs), the negative coefficients for asylum seekers indicate that schemes allocating more asylum seekers were viewed as less fair, though the magnitude of this effect differed significantly across groups. It was strongest in the absolute-information condition (−0.57, 95% CI: -0.62, -0.52), moderate in the relative-information condition (−0.40, 95% CI: -.45, -.35), and weakest in the control group (−0.13, 95% CI: -.17, -0.08). This pattern confirms that providing information, particularly absolute information, heightened sensitivity to the number of asylum seekers when evaluating fairness. 
+Figure \@ref(fig:coeffs) reports the results of the rank-ordered logit model estimated separately for each information condition, thus all coefficients to vary across the treatment conditions. Across all groups, alternatives with proportional relocation, either by GDP or by populations, were consistently ranked as fairer, with positive and significant coefficients in each condition, again confirming earlier results. However, the strength of these effects varied: the control group showed the largest by-GDP and by-population effects (0.74 and 0.75, respectively), while these effects were smaller under the absolute and relative information conditions. The negative coefficients for asylum seekers indicate that schemes allocating more asylum seekers were viewed as less fair, though the magnitude of this effect differed significantly across groups. It was strongest in the absolute-information condition (−0.57, 95% CI: -0.62, -0.52), moderate in the relative-information condition (−0.40, 95% CI: -.45, -.35), and weakest in the control group (−0.13, 95% CI: -.17, -0.08). This pattern confirms that providing information, particularly absolute information, heightened sensitivity to the number of asylum seekers when evaluating fairness. 
 
 When considering the size of this effect, our results show that the tendency to perceive as fairer the schemes that imply fewer asylum seekers, a “self-serving” bias, does not by itself fully offset the proportional relocation effects. Indeed, as Figure 3 shows, a one SD increase in the expected asylum seekers is necessary to completely offset the proportional allocation effect, implying that a sizeable deviation is needed to favour no relocation over a proportional scheme.
 
-```{r treat-coeffs, fig.cap = "TBA"}
-plot(0, 1)
+```{r treat-coeffs, fig.cap = "Estimates and 95% confidence intervals from separate rank-ordered logit regressions on the probability of ranking an alternative relocation scheme as fairer, under each information treatment. No relocation is the baseline.", fig.width = 5, fig.height = 3.5}
+tables_rologit %>% 
+    filter(relocation_treatment != "All") %>%
+    mutate(
+        term = case_when(
+            grepl("GDP", term) ~ "Relocation by GDP vs. No relocation",
+            grepl("pop", term) ~ "Relocation by population vs. No relocation",
+            grepl("asyl", term) ~ "Asylum seekers (std.)",
+        )
+    ) %>% 
+    ggplot(
+        aes(
+            x = estimate,
+            xmin = conf.low,
+            xmax = conf.high,
+            y = relocation_treatment, 
+            color = relocation_treatment
+        )
+    ) +
+    scale_color_brewer(palette = "Set1") +
+    facet_wrap(~ term, ncol = 1, strip.position = "top") +
+    geom_vline(xintercept = 0) +
+    geom_errorbar(width = 0.1) + 
+    geom_point() + 
+    scale_x_continuous(limits = c(-1,1) * 0.85) +
+    labs(
+        x = "Coefficient and 95% CIs",
+    ) +
+    theme(
+        panel.background = element_rect(color = "gray"),
+        strip.text.y = element_text(angle = 0),
+        axis.text.x = element_text(),
+        legend.position = "none",
+        axis.title.y = element_blank(),
+    )
 ```
 
-## Heterogenous effects 
+## Heterogenous effects
 
 ### Political orientation 
 
