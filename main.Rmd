@@ -1,9 +1,12 @@
 ---
 params: 
     debug: false
+
 title: |
     Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System
+
 date: "This version: `r format(Sys.Date(), '%b %d, %Y')`"
+
 author: 
     - (Alphabetical Order)
     - Andrea Blasco
@@ -17,7 +20,7 @@ papersize: a4
 fontsize: 12pt
 linestretch: 1.5
 mainfont: Arial
-csl: [https://www.zotero.org/styles/the-quarterly-journal-of-economics]
+csl: [assets/journal-of-public-economics.csl]
 header-includes: |
     ```{=latex}
     \usepackage{pdflscape}
