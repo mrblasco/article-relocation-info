@@ -1,10 +1,10 @@
-
 ```{r, include = FALSE}
 library(dplyr)
 library(kableExtra)
 library(ggplot2)
 library(ggtext)
 #source("R/theme.R")
+
 theme_set(theme_minimal(base_size = 11))
 
 tab_dir <- file.path("results", "tables")
@@ -12,7 +12,7 @@ tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
 ```
 
 ```{r rologit, include = FALSE, cache = TRUE}
-source("analysis_mean_rank.R")
+#source("analysis_mean_rank.R")
 source("analysis_rologit.R")
 ```
 
@@ -20,15 +20,13 @@ source("analysis_rologit.R")
 
 ## Perceived fairness in the control group
 
-Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the 'No Info' group), 76% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options. 
-<!-- Therefore, this evidence supports our hypothesis (H1) that the public perceives proportional relocation schemes as fairest.  -->
+Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, without information on the number of asylum seekers under each relocation scheme (i.e., the 'No Info' group), 74% of respondents selected some form of relocation as fairest, with a slight preference for relocation by GDP (39%) over relocation by population (35%). Only a minority (26%) considered no relocation at all to be the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options.
 
 Figure \@ref(fig:toprank) also reveals considerable variation across countries. In Germany, only 58% in the ‘No info’ group ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. These stark differences suggest that country-specific conditions, such as the political climate, refugee situation, and socio-economic differences, play a significant role in shaping public perceptions of fairness.
 
-```{r toprank, fig.cap = cap, fig.width = 7, fig.height = 3.5}
-cap <- paste(
-    "Perceptions of the fairest relocation scheme in the Control treatment, with no information about the corresponding asylum applications"
-)
+```{r toprank, fig.cap = full_cap, fig.scap = short_cap, fig.width = 7, fig.height = 3.5, out.width = "\\textwidth"}
+short_cap <- "Fairness of relocation scheme (Control)"
+full_cap <- "Perceptions of the fairest asylum-seeker allocation mechanism in the Control treatment"
 readRDS(file.path("results", "figures", "top_rank_no_info.rds"))
 ```
 
@@ -36,14 +34,14 @@ readRDS(file.path("results", "figures", "top_rank_no_info.rds"))
 
 Figure \@ref(fig:mean-rank) shows the mean differences in fairness rankings for the three allocation schemes (No relocation, Relocation by GDP, and Relocation by population), comparing respondents who were shown the number of relocated asylum seekers under each scheme (“Info: absolute”) with those who received no information (“no info”) and those who received the same information expressed in per-capita terms (“Info: relative”).
 
-In countries that would experience more asylum seekers under the no-relocation scheme, such as Greece, Germany and Sweden, providing information about the level of asylum seekers caused a significant drop in the mean rank for no relocation compared providing no information. By contrast, in countries that would receie relatively fewer asylum seekers under no relocation, like Spain, Poland and Italy, providing this information significantly raised the average rank of the no-relocation option (by about 0.3). These results suggest that public perception of fairness are heavily influenced by information about the levels of asylum seekers and that the effect of such information depends on national interest: if relocation means more asylum seekers, information improves the perceived fairness of no relocation and vice versa. This evidence is consistent with our hypotheses that information plays a key role in shaping public perceptions of fairness of alternative relocation systems, and that countries will react differently to the same type of communication.
+In countries that would experience more asylum seekers under the no-relocation scheme, such as Greece, Germany and Sweden, providing information about the number of asylum seekers caused a significant drop in the mean rank for no relocation compared to providing no information. By contrast, in countries that would receive relatively few asylum seekers under no relocation, such as Spain, Poland and Italy, providing this information significantly raised the average rank of the no-relocation option (by about 0.3). These results suggest that public perception of fairness is heavily influenced by information about the levels of asylum seekers and that the effect of such information depends on national interest: if relocation means more asylum seekers, information improves the perceived fairness of no relocation and vice versa. This evidence is consistent with our hypotheses that information plays a key role in shaping public perceptions of fairness of alternative relocation systems, and that countries will react differently to the same type of communication.
 
-Figure \@ref(fig:mean-rank) also reveals significant differences in fairness rankings between the Absolute and Relative information conditions. In Spain, Poland, and Italy, the mean rank of no relocation increased significantly by 0.05 (one sixth the drop associated with no information), while in Germany it decreased by 0.03. These results confirm our hypotheses that individuals react not only to information, but they also react more when it is presented in absolute than in relative numbers. 
+Figure \@ref(fig:mean-rank) also reveals significant differences in fairness rankings between the absolute- and relative-information conditions. In Spain, Poland, and Italy, the mean rank of no relocation increased significantly by 0.05 (one sixth the drop associated with no information), while in Germany it decreased by 0.03. These results confirm our hypotheses that individuals react not only to information, but they also react more when it is presented in absolute than in relative numbers. 
 
-As a formal test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesized.
+As a formal test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.
 
 ```{r mean-rank, fig.width = 7, fig.height = 7, fig.cap = cap}
-cap <- "Average differences and 95% confidence intervals in fairness rankings between individuals in the Absolute information group (baseline) and thos in the Relative or No information groups. A higher rank means a higher perceived fairness of the allocation mechanims. Statistically significant differences are highlighted."
+cap <- "Average differences and 95% confidence intervals in fairness rankings between individuals in the Absolute information group (baseline) and those in the Relative or No information groups. A higher rank means a higher perceived fairness of the allocation mechanims. Statistically significant differences are highlighted."
 readRDS(file.path("results", "figures", "mean_rank.rds"))
 ```
 

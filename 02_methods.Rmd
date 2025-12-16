@@ -3,6 +3,7 @@ library(dplyr)
 library(knitr)
 library(kableExtra)
 library(flextable)
+
 tables <- readRDS("results/tables/descriptives_all_tables.rds")
 ```
 
@@ -10,9 +11,11 @@ tables <- readRDS("results/tables/descriptives_all_tables.rds")
 
 ## Experimental design
 
-A sample representative of the adult population (18 years and over) in eight EU countries (Bulgaria, France, Germany, Greece, Italy, Poland, Spain and Sweden) was drawn from Ipsos online panel by means of stratified random probability sampling. The stratification leveraged available profile data, such as respondent's age, gender and geographic region (NUTS 1), and pre-defined sub-sample sizes (quota) based on official population statistics provided by Eurostat. The overall sample size of the project included 8,122 participants. The main fieldwork took place between 30 September 2024 and 21 October 2024. Details of the field work and survey design are available elsewhere [@blasco2025fairness].
+A sample representative of the adult population (18 years and over) in eight EU countries (Bulgaria, France, Germany, Greece, Italy, Poland, Spain and Sweden) was drawn from Ipsos online panel by means of stratified random probability sampling. The stratification leveraged available profile data, such as respondents' age, gender and geographic region (NUTS 1), and pre-defined sub-sample sizes (quota) based on official population statistics provided by Eurostat. The overall sample size of the project included 8,122 participants. The main fieldwork took place between 30 September 2024 and 21 October 2024. Details of the field work and survey design are available elsewhere [@blasco2025fairness].
 
-The experiment tested how different types of information affected participants' ranking of the fairness of three relocation rules for asylum seekers across EU countries:
+The experiment tested how different types of information affected participants' ranking of the fairness of three relocation rules for asylum seekers across EU countries:^[
+    The experimental design and pre-analysis plan were pre-registered within the AEA RCT Registry (AEARCTR-0014194). The Ethics Research Board of the JRC approved the experimental protocol.
+]
 
 - **No relocation** (the baseline): asylum seekers remain in the country where they first arrive;
 
@@ -27,56 +30,57 @@ Respondents were asked to rank these allocation rules from the fairest (rank = 1
 - **Relative** information: the expected number of asylum applications under each relocation scheme per 100,000 citizens.
 
 Table \@ref(tab:example) illustrates the experiment with a simplified scenario involving two countries, Country A and Country B.^[
-    This scenario is for illustrative purposes, it was not discussed with participants in the experiment.
+ This scenario is for illustrative purposes; it was not discussed with participants in the experiment.
 ] Both countries have the same GDP, but Country A has more residents, while Country B received more than twice as many asylum applications, on average, in the past ten years (2014-2023). As a result, Country A will experience more asylum applications under proportional relocation than under no relocation. Furthermore, since countries are equally rich, but Country A is more heavily populated, the difference in relocation outcomes will be greater under population-based relocation than under GDP-based relocation.
 
-Under this scenario, study participants from Country A assigned to the absolute-information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A), receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B), receive fewer, becoming “net senders”.
+Under this scenario, study participants from Country A assigned to the absolute-information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A) receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B) receive fewer, becoming “net senders”.
 
 ```{r example}
 tables$raw$tbl_example %>%
-    kableExtra::kbl(caption = "Illustrative example", booktabs = TRUE, align = "lrrrrr") %>% 
-    kableExtra::kable_styling(full_width = FALSE) %>%
-    kableExtra::column_spec(1, bold = TRUE, width = "20em") 
+    kableExtra::kbl(
+        col.names = c("", "Abs.", "Rel.", "Abs.", "Rel.", ""),
+        caption = "Illustrative example for two countries", 
+        booktabs = TRUE, 
+        align = "lrrrrr",
+        linesep = "\\addlinespace\\hline\\addlinespace",
+    ) %>%
+    kableExtra::kable_styling(full_width = TRUE) %>%
+    kableExtra::column_spec(1, italic = TRUE, width = "10em")  %>% 
+    kableExtra::pack_rows("Hypothetical situation:", 1, 3) %>%
+    kableExtra::pack_rows("Information treatment:", 4, 6) %>%
+    kableExtra::add_header_above(c("", "Country A" = 2, "Country B" = 2, "All"))
 ```
-
 
 In Table \@ref(tab:asylum-per-capita), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
 
 ```{r asylum-per-capita}
-tables$raw$tbl_asylum_rel %>% 
+tables$raw$tbl_asylum_rel %>%
+    dplyr::mutate(
+        diff_gdp = no_relocation - gdp,
+        diff_pop = no_relocation - population
+    ) %>%
+    dplyr::arrange(desc(diff_gdp)) %>%
     dplyr::select(
       Country = country,
-      "No relocation (per 100k)" = no_relocation,
-      "By population (per 100k)" = population,
-      "By GDP (per 100k)" = gdp
+      "No relocation" = no_relocation,
+      "Relocation by GDP" = gdp,
+      "Relocation by pop." = population,
+      "Diff. (GDP)" = diff_gdp,
+      "Diff. (pop.)" = diff_pop
     ) %>%
     kableExtra::kbl(
-        caption = "Expected asylum seekers per capita, by allocation rules",
+        caption = "Expected asylum seekers per 100 000 residents, under different allocation rules",
         booktabs = TRUE,
         linesep = "",
     ) %>% 
     kableExtra::kable_styling(full_width = TRUE)
 ```
 
-The experimental design and pre-analysis plan were pre-registered within the AEA RCT Registry (AEARCTR-0014194). The Ethics Research Board of the JRC approved the experimental protocol.
-
 The survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix. A descriptive analysis of the responses is presented in the technical report by @blasco2025fairness. In our analysis, we included control variables such as trust or political affiliation, as these are associated with attitudes towards migration [e.g.,@canetti2016threatened;@mitchell2021social]. We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives [@berlinschi2019migrants].
 
 ## Data 
 
-Table \@ref(tab:assignment-summary) illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
-
-```{r assignment-summary}
-tables$raw$tbl_assignment %>% 
-    kableExtra::kbl(
-        caption = "Random assignment of respondents, by country",
-        format.args = list(big.mark = " "),
-        booktabs = TRUE,
-        linesep = c(rep("", 7), "\\addlinespace")
-    ) %>% 
-    kableExtra::kable_styling(full_width = TRUE) %>%
-    kableExtra::column_spec(1, bold = TRUE)
-```
+Table \@ref(tab:assignment-summary) in the Appendix illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
 
 Table \@ref(tab:summary) illustrates the distribution of key pre-treatment characteristics, including sex, age, education, trust, and perceptions across the three treatment groups. On average, respondents were 50 years old (with 16 years SD), with about half (47%) identifying as male. For simplicity of exposition and comparability across countries, education was merged into three broad categories: high (ISCED 5-8; 32% of respondents), medium (ISCED 3-4; 48%), and low (ISCED 0-2; 19%). On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
 
@@ -89,21 +93,26 @@ Table \@ref(tab:summary) also reports mean differences between the control group
 ```{r summary}
 tbl_covariates <- tables$raw$tbl_covariates
 tbl_covariates %>%
+    dplyr::mutate(
+        variable = gsub("Importance of", "Value of", variable) %>% 
+            gsub("Perceived evenness of AS distribution in EU", "Evenness of AS in EU", .)
+    ) %>% 
     dplyr::select(
         Variable = variable,
         "Control" = "(Intercept)",
-        "Diff. Relative" = "relocation_treatmentRelative",
-        "Diff. Absolute" = "relocation_treatmentAbsolute",
+        "Diff. Rel." = "relocation_treatmentRelative",
+        "Diff. Abs." = "relocation_treatmentAbsolute",
     ) |>
     kableExtra::kbl(
-        booktabs = TRUE, digits = 1,
+        booktabs = TRUE, 
+        digits = 1,
         caption = "Summary statistics (standardized mean difference in square brackets)"
     ) |>
-    kableExtra::column_spec(1, width = "20em") |>
-    kableExtra::kable_styling(full_width = FALSE) |>
+    kableExtra::kable_styling(full_width = TRUE) |>
+    kableExtra::column_spec(1, width = "15em") |>
     kableExtra::pack_rows("Sociodemographics", 1, 5) |>
     kableExtra::pack_rows("Political attitudes", 6, 5 + 4) |>
-    kableExtra::pack_rows("Other", 1 + 5 + 4, nrow(tbl_covariates)) 
+    kableExtra::pack_rows("Other variables", 1 + 5 + 4, nrow(tbl_covariates)) 
 ```
 
 <!-- As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful. -->

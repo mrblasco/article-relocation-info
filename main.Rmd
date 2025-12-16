@@ -5,7 +5,8 @@ params:
 title: |
     Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System
 
-date: "This version: `r format(Sys.Date(), '%b %d, %Y')`"
+date: |
+    This version: `r format(Sys.Date(), '%b %d, %Y')`
 
 author: 
     - (Alphabetical Order)
@@ -15,22 +16,28 @@ author:
     - Begona Cabeza Martinez
 
 bibliography: [refs.bib]
-geometry: "margin=1in"
-papersize: a4
-fontsize: 12pt
-linestretch: 1.5
-mainfont: Arial
 csl: [assets/journal-of-public-economics.csl]
+
+papersize: a4
+geometry: "margin=1.5in"
+fontsize: 12pt
+linestretch: 1.1
+mainfont: Times New Roman
+
 header-includes: |
     ```{=latex}
     \usepackage{pdflscape}
-    \usepackage{endfloat}
+    %\usepackage{endfloat}
     ```
+
 always_allow_html: true
+
 link-citations: true
 colorlinks: true
 citecolor: blue
+
 description: Research paper
+
 abstract: |
     Despite intense political debate over reforming the EU asylum system, there is little evidence on what drives public support for alternative solutions. Using an experimental survey, we examine Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to the resident populations. By varying the information provided about the consequences of these mechanisms, we explored to what extent public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider relocation to be the fairest option. However, there are large cross-country differences, with proportional relocation schemes perceived as fair by 58% of respondents in Germany versus 87% in Greece, which suggest a “self-serving” bias --- a tendency to rank as fairer the method that results in fewer asylum seekers for their own country. Moreover, when we explicitly communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. By varying how the information is presented, we find a stronger effect when the communication uses *absolute* figures instead of figures *relative* to population. These findings shed new light on how public perceptions of fairness of the EU asylum system can be shaped by information.
 ---
