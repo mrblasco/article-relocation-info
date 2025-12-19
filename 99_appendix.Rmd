@@ -6,11 +6,11 @@ tables <- readRDS("results/tables/descriptives_all_tables.rds")
 
 ## Regression model for the fairness rankings
 
-We used a rank-ordered logit model [@hausman1987specifying] to estimate the effect of a change in the expected number of asylum seekers under a relocation scheme on the probability of ranking the scheme higher in the fairness ranking. This model allows probabilities to depend on the differences among all alternatives in a latent "fairness" variable. We assume the latent variable to be a function of the expected asylum seekers (scaled), $AS$, and we allow the coefficients to vary by treatment. This can be formulated as:
+We used a rank-ordered logit model [e.g., @hausman1987specifying] to estimate the effect of a change in the expected number of asylum seekers under a relocation scheme on the probability of ranking the scheme higher in the fairness ranking. This model allows probabilities to depend on the differences among all alternatives in a latent "fairness" variable. We assume the latent variable to be a function of the expected asylum seekers (scaled), $AS$, and we allow the coefficients to vary by treatment. This variable can be formulated as:
 \[
-    \mu_{ijt} = \alpha_{jt} + \beta_{jt} \text{AS},
+    \mu_{ij}^{\tau} = \alpha_{j}^{\tau} + \beta_{j}^{\tau} \text{AS},
 \]
-for all $i$ and $j$ alternatives, with $\beta_{jt}$ set to zero for an arbitrary alternative and an arbitrary treatment condition. We selected the no-relocation scheme as the reference alternative, and the reference treatment group is the absolute-information group, so the model yields estimates of differences between control vs absolute and absolute vs relative information.
+for all $i$ and $j$ alternatives, with $\alpha_{j}^{\tau}$ and $\beta_{j}^{\tau}$ set to zero for an arbitrary alternative and an arbitrary treatment condition $\tau$. We selected the no-relocation scheme as the reference alternative, and the reference treatment group is the absolute-information group, so the model yields estimates of differences between control vs absolute and absolute vs relative information.
 
 
 ## Questionnaire

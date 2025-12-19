@@ -16,7 +16,7 @@ author:
     - Begona Cabeza Martinez
 
 bibliography: [refs.bib]
-csl: [assets/journal-of-public-economics.csl]
+csl: [assets/elsevier-harvard.csl]
 
 papersize: a4
 geometry: "margin=1.5in"
@@ -27,6 +27,8 @@ mainfont: Times New Roman
 header-includes: |
     ```{=latex}
     \usepackage{pdflscape}
+    \usepackage{caption}
+    \captionsetup{margin=10pt,font=small,labelfont=bf}
     %\usepackage{endfloat}
     ```
 

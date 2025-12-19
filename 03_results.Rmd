@@ -5,15 +5,24 @@ library(ggplot2)
 library(ggtext)
 #source("R/theme.R")
 
-theme_set(theme_minimal(base_size = 11))
+theme_set(theme_classic(base_size = 11))
+theme_update(
+    #panel.grid.major = element_line(linewidth = 0.35, linetype = "dashed", color = "gray"),
+    axis.ticks.length = unit(-0.2, "cm"),
+)
 
 tab_dir <- file.path("results", "tables")
 tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
-```
+tbl_coeffs_hetero_raw <- readRDS(file.path(tab_dir, "rologit_coeffs_hetero.rds"))
 
-```{r rologit, include = FALSE, cache = TRUE}
-#source("analysis_mean_rank.R")
-source("analysis_rologit.R")
+tbl_coeffs_hetero <- tbl_coeffs_hetero_raw %>% 
+    dplyr::select(estimate, std.error, condition, group_var, group, term) %>% 
+    dplyr::mutate(
+        baseline = condition == "Absolute",
+        estimate = estimate - estimate[baseline],
+        std.error = sqrt(std.error^2 + std.error[baseline]^2),
+        .by = c(group_var, group, term)
+    ) 
 ```
 
 # Results
@@ -25,9 +34,9 @@ Figure \@ref(fig:toprank) shows that, when asked to pick the fairest option, wit
 Figure \@ref(fig:toprank) also reveals considerable variation across countries. In Germany, only 58% in the ‘No info’ group ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. These stark differences suggest that country-specific conditions, such as the political climate, refugee situation, and socio-economic differences, play a significant role in shaping public perceptions of fairness.
 
 ```{r toprank, fig.cap = full_cap, fig.scap = short_cap, fig.width = 7, fig.height = 3.5, out.width = "\\textwidth"}
-short_cap <- "Fairness of relocation scheme (Control)"
-full_cap <- "Perceptions of the fairest asylum-seeker allocation mechanism in the Control treatment"
-readRDS(file.path("results", "figures", "top_rank_no_info.rds"))
+short_cap <- "Fairest asylum-seeker allocation mechanism (Control)"
+full_cap <- "Fairest asylum-seeker allocation mechanism: Top-ranked mechanism in the Control treatment, where respondents have no direct information about allocation consequences."
+p <- readRDS(file.path("results", "figures", "top_rank_no_info.rds"))
 ```
 
 ## Average Treatment Effects on Fairness Rankings
@@ -40,19 +49,50 @@ Figure \@ref(fig:mean-rank) also reveals significant differences in fairness ran
 
 As a formal test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.
 
-```{r mean-rank, fig.width = 7, fig.height = 7, fig.cap = cap}
-cap <- "Average differences and 95% confidence intervals in fairness rankings between individuals in the Absolute information group (baseline) and those in the Relative or No information groups. A higher rank means a higher perceived fairness of the allocation mechanims. Statistically significant differences are highlighted."
-readRDS(file.path("results", "figures", "mean_rank.rds"))
+```{r mean-rank, fig.width = 7, fig.height = 7, fig.cap = cap, fig.scap = short_cap, out.width = "\\textwidth"}
+short_cap <- "Mean differences in fairness rankings"
+cap <- "Average differences and 95% confidence intervals in fairness rankings between individuals in the absolute-information group (baseline) and those in the relative- or no-information groups. A lower rank means a higher perceived fairness of the allocation mechanims. Statistically significant differences are highlighted."
+
+p <- readRDS(file.path("results", "figures", "mean_rank.rds"))
 ```
 
 ## The role of asylum seekers 
 
 We further investigate the role of the expected asylum seekers under each relocation scheme using a rank-ordered logit model for the probability of ranking each relocation scheme higher in the fairness ranking (see the Appendix).
 
-Table \@ref(tab:coeffs) presents the results of the baseline rank-ordered logit model, where we assume the effect of asylum seekers does not vary by treatments. The coefficients show that proportional schemes were generally ranked as fairer, as indicated by the positive and significant intercept interactions for GDP (0.64, p<0.05) and population (0.57, p<0.05). The negative coefficient for asylum seekers (−0.35, p<0.05) suggests that schemes assigning more asylum seekers were perceived as less fair. These findings confirm our hypotheses and earlier analysis. Among the interaction terms, the effect of relocation by population under the control condition (0.13, p<0.05) is positive and statistically significant, indicating that fairness perceptions were sensitive to information about asylum seekers differences, while other interaction effects were not statistically significant.
+Figure \@ref(fig:rologit-base) presents the results of the baseline rank-ordered logit model, where we assume the effect of asylum seekers does not vary by treatments. The coefficients show that proportional schemes were generally ranked as fairer, as indicated by the positive and significant intercept interactions for GDP (0.64, p<0.05) and population (0.57, p<0.05). The negative coefficient for asylum seekers (−0.35, p<0.05) suggests that schemes assigning more asylum seekers were perceived as less fair. These findings confirm our hypotheses and earlier analysis. In this regression, we don't expect strong average treatment effects, as they should have opposite signs that offset one another across countries. However, among the interaction terms, the effect of relocation by population under the control condition (0.13, p<0.05) is positive and statistically significant, indicating that fairness perceptions were on average sensitive to information about asylum seekers differences, while other interaction effects were not statistically significant.
+
+```{r rologit-base, fig.width = 3.5, fig.height = 2.5, out.width = "0.75\\textwidth", fig.cap = cap, fig.scap = short_cap, fig.align="center"}
+short_cap <- "TBA"
+cap <- "Estimates and 95% CIs from a rank-ordered logit regression on the fairness rankings. $\\beta_{AS}$ represents the effect of a SD change in expected asylum seekers on the probability of ranking an allocation scheme as fairer. $\\alpha_{j}$ represents the effect of a proportional allocation mechanism $j$ relative to the no relocation alternative (omitted). This shows that only a large increase in expected asylum seekers can fully offset the baseline perception of fairness for proportional systems."
+
+tables_rologit %>% 
+    filter(relocation_treatment == "All", !grepl("info", term)) %>% 
+    ggplot(
+        aes(
+            x = estimate, 
+            y = term,
+            xmin = conf.low,
+            xmax = conf.high
+        )
+    ) + 
+    geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+    geom_errorbar(width = 0.1) + 
+    geom_point() + 
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "(Intercept):relocation_population_ranking" = expression(alpha[pop.]),
+            "(Intercept):relocation_GDP_ranking" = expression(alpha[GDP]),
+            "scale(asyl_skrs_rel)" = expression(beta[AS])
+        )
+    ) + 
+    scale_x_continuous(name = "Estimates and 95% CIs", limits = c(-1, 1) * 0.75)
+```
 
 ```{r coeffs}
 tables_rologit %>%
+    filter(relocation_treatment != "All") %>%
     mutate(
         term = gsub("^info", "", term) %>%
             gsub("relocation_(.*)_ranking", "Alt (\\1)", .) %>% 
@@ -76,9 +116,10 @@ tables_rologit %>%
             p.value < 0.1 ~ "*",
             TRUE ~ ""
         ),
-        cis = sprintf("[%.2f,%.2f]", conf.low, conf.high),
+        cis = sprintf("[%.1f,%.1f]", conf.low, conf.high),
         std.error = sprintf("(%.2f)", std.error),
-        estimate = sprintf("%.2f%s", estimate, stars),
+        #estimate = sprintf("%.2f\\(^{%s}\\)", estimate, stars),
+        estimate = sprintf("%.2f", estimate)
     ) %>% 
     dplyr::select(
         term, estimate, std.error, cis, relocation_treatment
@@ -99,49 +140,62 @@ tables_rologit %>%
     dplyr::select(-statistic) %>%
     kableExtra::kbl(
         booktabs = TRUE, 
-        caption = "Regression coefficients, standard errors in parenthesis, and 95\\% confidence intervals in square brackets.",
+        caption = "Regression coefficients from rank-ordered logit on fairness rankings",
         align = "lcccc",
+        escape = FALSE,
+    ) %>%
+    kableExtra::kable_styling(
+        full_width = TRUE
+    ) %>%
+    kableExtra::column_spec(1, width = "15em") %>%
+    kableExtra::footnote(
+        "Standard errors in parenthesis, and 95% confidence intervals in square brackets."
     )
 ```
 
-Figure \@ref(fig:coeffs) reports the results of the rank-ordered logit model estimated separately for each information condition, thus all coefficients to vary across the treatment conditions. Across all groups, alternatives with proportional relocation, either by GDP or by populations, were consistently ranked as fairer, with positive and significant coefficients in each condition, again confirming earlier results. However, the strength of these effects varied: the control group showed the largest by-GDP and by-population effects (0.74 and 0.75, respectively), while these effects were smaller under the absolute and relative information conditions. The negative coefficients for asylum seekers indicate that schemes allocating more asylum seekers were viewed as less fair, though the magnitude of this effect differed significantly across groups. It was strongest in the absolute-information condition (−0.57, 95% CI: -0.62, -0.52), moderate in the relative-information condition (−0.40, 95% CI: -.45, -.35), and weakest in the control group (−0.13, 95% CI: -.17, -0.08). This pattern confirms that providing information, particularly absolute information, heightened sensitivity to the number of asylum seekers when evaluating fairness. 
+Figure \@ref(fig:rologit-ate) reports the results of the rank-ordered logit model estimated separately for each information condition, thus all coefficients to vary across the treatment conditions. Across all groups, alternatives with proportional relocation, either by GDP or by populations, were consistently ranked as fairer, with positive and significant coefficients in each condition, again confirming earlier results. However, the strength of these effects varied: the control group showed the largest by-GDP and by-population effects (0.74 and 0.75, respectively), while these effects were smaller under the absolute and relative information conditions. The negative coefficients for asylum seekers indicate that schemes allocating more asylum seekers were viewed as less fair, though the magnitude of this effect differed significantly across groups. It was strongest in the absolute-information condition (−0.57, 95% CI: -0.62, -0.52), moderate in the relative-information condition (−0.40, 95% CI: -.45, -.35), and weakest in the control group (−0.13, 95% CI: -.17, -0.08). This pattern confirms that providing information, particularly absolute information, heightened sensitivity to the number of asylum seekers when evaluating fairness. 
 
 When considering the size of this effect, our results show that the tendency to perceive as fairer the schemes that imply fewer asylum seekers, a “self-serving” bias, does not by itself fully offset the proportional relocation effects. Indeed, as Figure 3 shows, a one SD increase in the expected asylum seekers is necessary to completely offset the proportional allocation effect, implying that a sizeable deviation is needed to favour no relocation over a proportional scheme.
 
-```{r treat-coeffs, fig.cap = "Estimates and 95% confidence intervals from separate rank-ordered logit regressions on the probability of ranking an alternative relocation scheme as fairer, under each information treatment. No relocation is the baseline.", fig.width = 5, fig.height = 3.5}
+```{r rologit-ate, fig.cap = cap, fig.width = 5, fig.height = 3.5, out.width = "\\textwidth"}
+short_cap <- "TBA"
+cap <- "Estimates and 95% CIs from separate rank-ordered logit regressions on the probability of ranking an alternative relocation scheme as fairer, under each information treatment. $\\beta_{AS}^{\\tau}$ represents the effect of a SD change in expected asylum seekers on the probability of ranking an allocation scheme as fairer, under treatment $\\tau$. $\\alpha_{j}^{\\tau}$ represents the effect of a proportional allocation mechanism $j$ relative to the no relocation alternative (omitted), under treatment $\\tau$. This shows that the effects associated with a change in expected asylum seekers (AS) are stronger under absolute than relative information. A change in AS has a significant effect on fairness rankings even under no information, indicating some awareness of respondents beyond our intervention."
+
+dodge <- 0.5
+
 tables_rologit %>% 
     filter(relocation_treatment != "All") %>%
-    mutate(
-        term = case_when(
-            grepl("GDP", term) ~ "Relocation by GDP vs. No relocation",
-            grepl("pop", term) ~ "Relocation by population vs. No relocation",
-            grepl("asyl", term) ~ "Asylum seekers (std.)",
-        )
-    ) %>% 
     ggplot(
         aes(
             x = estimate,
             xmin = conf.low,
             xmax = conf.high,
-            y = relocation_treatment, 
-            color = relocation_treatment
+            y = term, 
+            shape = reorder(relocation_treatment, estimate),
+            color = reorder(relocation_treatment, estimate),
         )
     ) +
-    scale_color_brewer(palette = "Set1") +
-    facet_wrap(~ term, ncol = 1, strip.position = "top") +
-    geom_vline(xintercept = 0) +
-    geom_errorbar(width = 0.1) + 
-    geom_point() + 
-    scale_x_continuous(limits = c(-1,1) * 0.85) +
-    labs(
-        x = "Coefficient and 95% CIs",
+    geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+    geom_errorbar(width = 0.1, position = position_dodge(dodge)) + 
+    geom_point(position = position_dodge(dodge)) + 
+    scale_shape_discrete(
+        name = expression("Treatment (" ~ tau ~ ")")
     ) +
-    theme(
-        panel.background = element_rect(color = "gray"),
-        strip.text.y = element_text(angle = 0),
-        axis.text.x = element_text(),
-        legend.position = "none",
-        axis.title.y = element_blank(),
+    scale_color_brewer(
+        name = expression("Treatment (" ~ tau ~ ")"),
+        palette = "Set1"
+    ) +
+    scale_x_continuous(
+        name = "Coefficient and 95% CIs",
+        limits = c(-1,1) * 0.85
+    ) +
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "(Intercept):relocation_population_ranking" = expression(alpha[pop.]^tau),
+            "(Intercept):relocation_GDP_ranking" = expression(alpha[GDP]^tau),
+            "scale(asyl_skrs_rel)" = expression(beta[AS]^tau)
+        )
     )
 ```
 
@@ -156,7 +210,8 @@ Looking at the intercepts, which compare alternative schemes at the average numb
 Conversely, we observe significant heterogeneity in the size of the effect of the provided information about expected conseuqneces of each regime (i.e., the slope). In all models, alternatives with higher numbers of asylum seekers were associated with lower fairness. However, absolute and relative information significantly amplified sensitivity to the number of asylum seekers, particularly among centre and right respondents. The differences in responses between left- and right-leaning respondents were particularly pronounced in the absolute information condition. Here, right-leaning respondents showed the strongest negative reaction to higher numbers of asylum seekers (−0.76), while left-leaning respondents were much less sensitive (−0.35), highlighting a stark partisan gap in fairness perceptions.
 
 ```{r political, fig.cap = "Political orientation", fig.asp = 1}
-results[["political_right_cut"]]$plot
+plot(0, 1)
+#results[["political_right_cut"]]$plot
 ```
 
 ## Fair share 
@@ -167,48 +222,177 @@ Both groups show higher perceived fairness for relocation schemes compared to no
 
 At the same time, for respondents reporting a “too high” share, we observe strong and significant heterogeneous effects of the expected number of asylum seekers on each relocation scheme. The negative impact of a one standard deviation increase in asylum seekers was largest under the Absolute condition (Estimate = -0.79, SE = 0.04), followed by the Relative condition (-0.56, SE = 0.04), and smallest in the Control group (-0.19, SE = 0.04). This corresponds to a difference of approximately 0.60 between Absolute and Control, substantially larger than the corresponding difference in the “fair or too low” group, which is 0.26.
 
-```{r fair, fig.cap = "Fair share", fig.asp = 1}
-results[["fair_share"]]$plot
-```
+```{r fair, fig.cap = cap}
 
-```{r eval = FALSE}
-results[["fair_share"]]$coeffs %>% 
-    mutate(cis = sprintf("[%.2f, %.2f]", conf.low, conf.high)) %>%
-    arrange(group, term, condition) %>%
-    select(group, term, condition, Estimate = estimate, SE = std.error, "95% CI" = cis) %>%
-    mutate(term = ifelse(row_number() == 1, as.character(term), ""), 
-            .by = c(group, term)) %>%
-    mutate(group = ifelse(row_number() == 1, as.character(group), ""), .by = group) %>%
-    kbl(
-        digits = 2,
-        caption = "Regression coefficients and 95% CIs",
-        caption.short = "Fair share heterogeneity"
-    ) %>% 
-    kable_styling() %>% 
-    column_spec(1:2, bold = TRUE)
+cap <- "Fair share"
+
+tbl_coeffs_hetero_raw %>%
+    filter(group_var == "fair_share") %>%
+    ggplot(
+        aes(
+            x = estimate,
+            y = term,
+            xmin = estimate - 1.96 * std.error,
+            xmax = estimate + 1.96 * std.error,
+            color = condition,
+            shape = condition,
+            linetype = group
+        )
+    ) + 
+    geom_vline(xintercept = 0, color = "red") + 
+    geom_errorbar(width = 0.2, position = position_dodge(.5)) + 
+    geom_point(position = position_dodge(.5)) + 
+    scale_shape_discrete(
+        name = expression("Treat. (" ~ tau ~ ")"),
+    ) + 
+    scale_color_brewer(
+        name = expression("Treat. (" ~ tau ~ ")"),
+        palette = "Set1"
+    ) + 
+    scale_x_continuous(
+        name = "Estimates and 95% CI"
+    ) +
+    scale_linetype_discrete(
+        name = "Pol. Right"
+    ) +
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "asyl_skrs_rel_scaled" = expression(beta[AS]^tau),
+            "(Intercept):relocation_population_ranking" = expression(alpha[pop.]^tau),
+            "(Intercept):relocation_GDP_ranking" = expression(alpha[GDP]^tau)
+        )
+    ) 
 ```
 
 ### Trust in the EU
 
 Figure \@ref(fig:trust) illustrates ... 
 
-```{r trust, fig.cap = "Fair share", fig.asp = 1}
-results[["trust_eu_cut"]]$plot
+```{r trust, fig.cap = "Trust in EU", out.width = "\\textwidth", fig.width = 5, fig.height=3.5}
+tbl_coeffs_hetero %>% 
+    filter(group_var == "trust_eu",!baseline) %>%
+    ggplot(
+        aes(
+            x = estimate,
+            y = term,
+            xmin = estimate - 1.96 * std.error,
+            xmax = estimate + 1.96 * std.error,
+            color = condition,
+            shape = condition,
+            linetype = group
+        )
+    ) + 
+    geom_vline(xintercept = 0, color = "red") + 
+    #facet_grid(~group) + 
+    geom_errorbar(width = 0.1, position = position_dodge(.5)) + 
+    geom_point(position = position_dodge(.5)) + 
+    scale_shape_discrete(
+        name = expression("Treat. (" ~ tau ~ ")"),
+    ) + 
+    scale_color_brewer(
+        name = expression("Treat. (" ~ tau ~ ")"),
+        palette = "Set1"
+    ) + 
+    scale_x_continuous(
+        name = "Estimates and 95% CI"
+    ) +
+    scale_linetype_discrete(
+        name = "Trust EU"
+    ) +
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "asyl_skrs_rel_scaled" = expression(alpha[AS]^tau),
+            "(Intercept):relocation_population_ranking" = expression(beta[pop.]^tau),
+            "(Intercept):relocation_GDP_ranking" = expression(beta[GDP]^tau)
+        )
+    ) + 
+    coord_flip()
 ```
 
-```{r, eval = FALSE}
-results[["trust_eu_cut"]]$coeffs %>% 
-    mutate(cis = sprintf("[%.2f, %.2f]", conf.low, conf.high)) %>%
-    arrange(group, term, condition) %>%
-    select(group, term, condition, Estimate = estimate, SE = std.error, "95% CI" = cis) %>%
-    mutate(term = ifelse(row_number() == 1, as.character(term), ""), 
-            .by = c(group, term)) %>%
-    mutate(group = ifelse(row_number() == 1, as.character(group), ""), .by = group) %>%
-    kbl(
-        digits = 2,
-        caption = "Regression coefficients and 95% CIs",
-        caption.short = "Fair share heterogeneity"
-    ) %>% 
-    kable_styling() %>% 
-    column_spec(1:2, bold = TRUE)
+## Age
+
+```{r}
+tbl_coeffs_hetero %>% 
+    filter(group_var == "age_cat",!baseline) %>%
+    ggplot(
+        aes(
+            x = estimate,
+            y = term,
+            xmin = estimate - 1.96 * std.error,
+            xmax = estimate + 1.96 * std.error,
+            color = condition,
+            shape = condition,
+            linetype = group
+        )
+    ) + 
+    geom_vline(xintercept = 0, color = "red") + 
+    #facet_grid(~group) + 
+    geom_errorbar(width = 0.1, position = position_dodge(.5)) + 
+    geom_point(position = position_dodge(.5)) + 
+    scale_shape_discrete(
+        name = expression("Treat. (" ~ tau ~ ")"),
+    ) + 
+    scale_color_brewer(
+        name = expression("Treat. (" ~ tau ~ ")"),
+        palette = "Set1"
+    ) + 
+    scale_x_continuous(
+        name = "Estimates and 95% CI"
+    ) +
+    scale_linetype_discrete(
+        name = "Age"
+    ) +
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "asyl_skrs_rel_scaled" = expression(alpha[AS]^tau),
+            "(Intercept):relocation_population_ranking" = expression(beta[pop.]^tau),
+            "(Intercept):relocation_GDP_ranking" = expression(beta[GDP]^tau)
+        )
+    ) + 
+    coord_flip()
+```
+
+## Political right 
+
+```{r}
+tbl_coeffs_hetero_raw %>% 
+    filter(group_var == "political_right") %>%
+    ggplot(
+        aes(
+            x = estimate,
+            y = term,
+            xmin = estimate - 1.96 * std.error,
+            xmax = estimate + 1.96 * std.error,
+            color = condition,
+            shape = condition,
+            linetype = group
+        )
+    ) + 
+    geom_vline(xintercept = 0, color = "red") + 
+    geom_errorbar(width = 0.2, position = position_dodge(.5)) + 
+    geom_point(position = position_dodge(.5)) + 
+    scale_shape_discrete(
+        name = expression("Treat. (" ~ tau ~ ")"),
+    ) + 
+    scale_color_brewer(
+        name = expression("Treat. (" ~ tau ~ ")"),
+        palette = "Set1"
+    ) + 
+    scale_x_continuous(
+        name = "Estimates and 95% CI"
+    ) +
+    scale_linetype_discrete(
+        name = "Pol. Right"
+    ) +
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "asyl_skrs_rel_scaled" = expression(beta[AS]^tau),
+            "(Intercept):relocation_population_ranking" = expression(alpha[pop.]^tau),
+            "(Intercept):relocation_GDP_ranking" = expression(alpha[GDP]^tau)
+        )
+    ) 
 ```
