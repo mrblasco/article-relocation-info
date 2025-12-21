@@ -1,5 +1,7 @@
 ```{r, include = FALSE}
-tables <- readRDS("results/tables/descriptives_all_tables.rds")
+tab_dir <- file.path("results", "tables")
+tables <- readRDS(file.path(tab_dir, "descriptives_all_tables.rds"))
+tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
 ```
 
 # Appendix 
@@ -12,10 +14,11 @@ We used a rank-ordered logit model [e.g., @hausman1987specifying] to estimate th
 \]
 for all $i$ and $j$ alternatives, with $\alpha_{j}^{\tau}$ and $\beta_{j}^{\tau}$ set to zero for an arbitrary alternative and an arbitrary treatment condition $\tau$. We selected the no-relocation scheme as the reference alternative, and the reference treatment group is the absolute-information group, so the model yields estimates of differences between control vs absolute and absolute vs relative information.
 
-
 ## Questionnaire
 
-TBA
+```{r child = "99_a_questionnaire.Rmd"}
+```
+
 
 ## Additional Tables
 
@@ -32,24 +35,32 @@ tables$raw$tbl_assignment |>
 ```
 
 
-```{r, eval = FALSE}
-require(dplyr)
-require(kableExtra)
-tbl_relocation |>
-    kbl(
-        caption = "Expected asylum applications (per 100 000 locals) under no relocation, relocation by GDP, and relocation by population", 
-        caption.short = "Expected asylum applications",
-        booktabs = TRUE,
-        linesep = "",
-        toprule = "\\addlinespace[1em]\\toprule",
-    ) |>
-    kable_styling(
-        full_width = TRUE,
-        position = "center",
-        latex_options = c("hold_position"),
-        font_size = 12,
-        stripe_color = "gray!10"
-    ) |>
-    column_spec(1, bold = TRUE)
+```{r rologit-base, fig.width = 3.5, fig.height = 2.5, out.width = "0.75\\textwidth", fig.cap = cap, fig.scap = short_cap, fig.align="center"}
+short_cap <- "Rank-ordered logit baseline specification."
+
+cap <- "Estimates and 95% CIs from a rank-ordered logit regression on the fairness rankings. $\\beta_{AS}$ represents the effect of a SD change in expected asylum seekers on the probability of ranking an allocation scheme as fairer. $\\alpha_{j}$ represents the effect of a proportional allocation mechanism $j$ relative to the no relocation alternative (omitted). This shows that only a large increase in expected asylum seekers can fully offset the baseline perception of fairness for proportional systems."
+
+tables_rologit %>% 
+    filter(relocation_treatment == "All", !grepl("info", term)) %>% 
+    ggplot(
+        aes(
+            x = estimate, 
+            y = term,
+            xmin = conf.low,
+            xmax = conf.high
+        )
+    ) + 
+    geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+    geom_errorbar(width = 0.1) + 
+    geom_point() + 
+    scale_y_discrete(
+        name = NULL,
+        labels = c(
+            "(Intercept):relocation_population_ranking" = expression(alpha[pop.]),
+            "(Intercept):relocation_GDP_ranking" = expression(alpha[GDP]),
+            "scale(asyl_skrs_rel)" = expression(beta[AS])
+        )
+    ) + 
+    scale_x_continuous(name = "Estimates and 95% CIs", limits = c(-1, 1) * 0.75)
 ```
 

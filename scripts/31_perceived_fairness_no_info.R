@@ -117,7 +117,7 @@ ds_asylum_rel <- data.frame(
   no_relocation = c(313, 138, 397, 178, 151, 344, 128, 16),
   population = c(169, 169, 169, 169, 169, 169, 169, 169),
   gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
-) 
+)
 
 ds_mean_rank <- ds_long %>% 
     reframe(

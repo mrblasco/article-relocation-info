@@ -2,13 +2,13 @@
 # Prepare dataset for analysis
 # Author: Andrea Blasco
 # ----------------------------------------------------
-suppressWarnings({
+suppressMessages({
     library(dplyr)
     library(fairMigrate)
 })
 
 data_dir <- file.path("data", "processed")
-dir.create(data_dir)
+dir.create(data_dir, showWarnings = FALSE)
 
 ds_survey_filename <- file.path(data_dir, "fair_survey_clean.rds")
 ds_long_filename <- file.path(data_dir, "fair_survey_long.rds")
@@ -16,8 +16,10 @@ ds_long_filename <- file.path(data_dir, "fair_survey_long.rds")
 # ----------------------------------------------------
 # Load data from `fairMigrate` package
 # ----------------------------------------------------
-data_filename <- file.path(data_dir, "fairness_survey.rds")
+
+message("Loading raw survey data...")
 ds_raw <- fairMigrate::fairness_survey
+message("Raw data loaded: ", nrow(ds_raw), " rows, ", ncol(ds_raw), " columns")
 
 ds_survey <- ds_raw %>%
     dplyr::rename(most_important_goal = most_important) %>%
@@ -53,6 +55,7 @@ ds_survey <- ds_raw %>%
             ~ gsub("[^0-9]+", "", .) %>% as.numeric()
         )
     )
+message("Processed data: ", nrow(ds_survey), " rows, ", ncol(ds_survey), " columns")
 
 # ----------------------------------------------------
 # Convert rankings to long format
@@ -84,11 +87,12 @@ ds_long <- ds_survey %>%
         ),
         rank = as.numeric(gsub("[^0-9]+", "", choice))
     )
+message("Long-format data created: ", nrow(ds_long), " rows")
 
 
 # ----------------------------------------------------
 # Save ... 
 # ----------------------------------------------------
-
 saveRDS(ds_long, ds_long_filename)
 saveRDS(ds_survey, ds_survey_filename)
+message("Datasets saved to: ", ds_survey_filename, " and ", ds_long_filename)

@@ -4,7 +4,12 @@
 .RData
 .Ruserdata
 
+*_diff*
+tmp/
+
 .vscode/
+
+archive/
 
 # knitr / rmarkdown
 *_cache/

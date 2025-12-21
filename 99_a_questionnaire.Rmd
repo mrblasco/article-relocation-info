@@ -1,0 +1,768 @@
+ 
+Welcome to this survey!  
+
+Thank you for your interest in this survey. This survey has been funded by the Joint Research Centre (JRC) of the European Commission and is implemented by Ipsos.  
+
+We are interested in your views about migration and asylum in the European Union. Please read all the information and answer the questions carefully. Different people will give different answers. It is your opinion that matters to us, do not hesitate to express it. 
+Your answers throughout this survey will be kept confidential. The European Commission will not receive any information from which they would be able to directly identify you. The data will be held for no longer than 5 years. The European Commission acts as data controller for all further data processing activities conducted by the European Commission on the research data delivered by Ipsos. 
+
+Participation in the survey is voluntary and you may withdraw consent at any time. 
+
+Before agreeing, please also read this information sheet [add hyperlink to information sheet].   
+
+If you would like to read the Privacy Notice you can access it at https://survey.ipsos.be/privacynotice_JRC_Refugees.pdf 
+
+By agreeing to take part in this survey, you confirm that: 
+
+You have read the information about the survey (please click here [insert hyperlink to information sheet] to read the information sheet). 
+
+You are taking part in this survey by your own free will. 
+
+Do you agree to participate given the above conditions? 
+
+- Yes – I have read the information above and agree to take part in the survey. 
+- No – I do not agree to take part in this survey. [screen out] 
+ 
+Base: all participants 
+
+D1. YEAR/MONTH. What is your date of birth?  
+
+* YEAR 
+* _1910 1910 
+* ... 
+* _2015 2015 
+* MONTH 
+* _1  January 
+* _2  February 
+* _3  March 
+* _4  April 
+* _5  May 
+* _6  June 
+* _7  July 
+* _8  August 
+* _9  September 
+* _10  October 
+* _11  November 
+* _12  December 
+
+[Standard Screener: DO NOT MODIFY OR TRANSLATE] 
+
+QUOTAGERANGE [Hidden]. Hidden Question - QUOTAGERANGE ‘this is a dummy question that will hold age breaks’ for the quotas that should be defined by the PM; it CAN be edited and lines can be added to meet survey objectives.
+
+* _18_24 ‘18-24’, 
+* _25_34 ‘25-34’, 
+* _35_44 ‘35-44’ 
+* _45_54 ‘45-54’ 
+* _55_64 ‘55-64’ 
+* _65_99 ‘65 and older’ 
+
+[TERMINATE IF LESS THAN 18] 
+ 
+D2. [S] GENDER_NONBINARY_. Are you…?  <sex> 
+ 
+* _1 Male 
+* _2 Female 
+* _3 Other 
+* _99 Prefer not to answer 
+ 
+D3. [S] In which region do you live? <nuts> 
+
+1 	Bulgaria 	See excel Region 
+2 	France 	IIS standard screener - FRREGION5 
+3 	Germany 	IIS standard screener - GERREGION1 
+4 	Greece 	IIS standard screener - GRREGION1 
+5 	Italy 	IIS standard screener - ITREGION1 
+6 	Poland 	IIS standard screener - PLREGION1 
+7 	Spain 	IIS standard screener - ESREGION2 
+8 	Sweden 	IIS standard screener - SEREGION2 
+1.  Prefer not to answer [hidden]  
+SCRIPTER: if D3=99: screenout 
+ 
+D4. [S] What is the highest level of education you have successfully completed (usually by obtaining a certificate or diploma)? <edu> 
+ 
+SCRIPTER: insert country-specific list Excel ‘Education’ 
+SCRIPTER: add recode into ISCED (1 ‘Low’, 2 ‘Mid’, 3 ‘High’, 99 ‘Unknown) and ISCED2 (1 ‘Low+Mid’, 2 ‘High’, 99 ‘Unknown) 
+1.   Prefer not to answer 
+ 
+Base: All participants 
+D5. [S] Would you say that you live in a..? <settlement> 
+
+1. Rural area or village  
+2. Small or medium size town  
+3. Large town or city  
+99. Don’t know (hidden) 
+ 
+Q1. [Progressive grid] Would you say that most people can be trusted, or that you can’t be too careful in dealing with people?  
+Please choose on a scale from 0 (You can’t be too careful) to 10 (Most people can be trusted). <trust>  
+ 
+0 
+You can’t be too careful 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Most people can be trusted 
+ 
+Q2. [Progressive grid] How much do you trust your national government?  
+Please choose on a scale from 0 (Not at all) to 10 (Completely). <trust_gov> 
+ 
+0 
+Not at all 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Completely 
+ 
+
+Q3. [Progressive grid] How much do you trust the institutions of the European Union (EU)?  
+Please choose on a scale from 0 (Not at all) to 10 (Completely). <trust_eu> 
+ 
+0 
+Not at all 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Completely 
+   
+
+Info1. Before moving on to the next block of questions, please note the differences between two terms: ‘asylum seekers’ and ‘refugees’: 
+ 
+SCRIPTER: insert as grid (check if readable on mobile) 
+ 	Legal status 	Access to rights and services 
+Asylum seekers 	Application being processed:  
+Asylum seekers are individuals who have applied for asylum (protection) in another country, but their application is still being processed. 	Limited rights and access to services:  
+Asylum seekers may have limited access to rights and services depending on the laws and policies of the country they are in. 
+Refugees 	Officially recognised:  
+Refugees are individuals whose claim for international protection has been officially recognized according to the laws of the country they are seeking refuge in. 	Entitled to specific rights and protection:  
+Refugees are entitled to certain rights and protections under international law, including the right to work, access to education, and healthcare. 
+
+Q4. [S] (reverse scale for Random_group=2) How much do you know about the migration and asylum system in the EU? <asylum_knowledge> 
+ 
+1.	I have no knowledge  
+2.	I have basic knowledge  
+3.	I have a good understanding  
+4.	I have great expertise  
+ 
+
+Q5. [S] How many asylum applications were received by [COUNTRY] in 2023?  
+Provide your best guess. <asylum_applic_guess> 
+
+1.	Less than X1 
+2.	Between X1 and X2 
+3.	Between X2 and X3 
+4.	Between X3 and X4 
+5.	More than X4 
+ 
+98.	I don’t know 
+ 
+
+Q6. [S] What proportion of asylum applications in [COUNTRY] was approved last year? Provide your best guess. <asylum_approv_guess> 
+ 
+1.	0-10% 
+2.	11-20% 
+3.	21-30% 
+4.	31-40% 
+5.	41-50% 
+6.	51-60% 
+7.	61-70% 
+8.	71-80% 
+9.	81-90% 
+10.	91-100% 
+98.	I don’t know 
+ 
+
+Q7. [S] (reverse scale for Random_group=2) Do you think that [COUNTRY] received more or fewer asylum requests than the EU average, last year?  <asylum_more_applic_guess> 
+ 
+1.	More asylum requests in [COUNTRY] than the EU average 
+2.	Roughly the same 
+3.	Fewer asylum requests in [COUNTRY] than the EU average 
+98.	I don’t know (fixed) 
+ 
+
+Q8. [S] (reverse scale for Random_group=2) Do you think that [COUNTRY] is faster or slower in processing asylum requests than the EU average? <asylum_speed_guess> 
+ 
+1.	Faster in processing asylum requests than EU average 
+2.	Roughly the same 
+3.	Slower in processing asylum requests than EU average 
+98.	I don’t know (fixed) 
+ 
+
+Q9. [S] (reverse scale for Random_group=2) Are refugees in [COUNTRY] entitled to more rights or get access to more services than refugees in most other countries in the EU? <asylum_rights_comparison> 
+ 
+1.	More rights/services for refugees in [COUNTRY] than in most EU countries 
+2.	Roughly the same 
+3.	Fewer rights/services for refugees in [COUNTRY] than in most EU countries 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+Q10. [Progressive grid] (reverse scale for Random_group=2) In your opinion, how are asylum seekers currently distributed among the EU countries? Please answer on a scale from 0 to 10. <asylum_distr_even>  
+ 
+0 
+Unevenly distributed across the EU  	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Evenly distributed across the EU 
+ 
+Base: Random_group=1 
+Q10v1. [Progressive grid] In your opinion, how are asylum seekers currently distributed among the EU countries? Please answer on a scale from 0 to 10.  
+ 
+0 
+Unevenly distributed across the EU  	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Evenly distributed across the EU  
+ 
+Base: Random_group=2  
+Q10v2. [Progressive grid] In your opinion, how are asylum seekers currently distributed among the EU countries? Please answer on a scale from 0 to 10.   
+ 
+0 
+Evenly distributed across the EU  	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Unevenly distributed across the EU 
+
+Q11. [Progressive grid] How important is it that the European Union system for hosting asylum seekers and refugees ensures that …?  
+ 
+Rows (randomize): 
+1.	…the cost related to hosting asylum seekers or refugees is shared among EU countries <burden_sharing_important> 
+2.	…the number of asylum seekers or refugees hosted is not too different among EU countries <equal_distribution_important> 
+3.	…asylum seekers or refugees have access to the same rights across all EU countries <equal_rights_important> 
+4.	…asylum seekers or refugees are treated in the same way in all EU countries <equal_treatment_important> 
+5.	…asylum applications are processed quickly <quick_processing_important> 
+
+Columns:  
+
+1.	0 - Not at all important  
+1.	1 
+2.	2 
+3.	3 
+4.	4 
+5.	5 
+6.	6 
+7.	7 
+8.	8 
+9.	9 
+10 - Very important 
+ 
+
+Q12. Of the five considerations listed in the previous screen, which is the most important to you? 
+ 
+1.	the cost related to hosting asylum seekers or refugees is shared among EU countries  
+2.	the number of asylum seekers or refugees hosted is not too different among EU countries  
+3.	asylum seekers or refugees have access to the same rights across all EU countries  
+4.	asylum seekers or refugees are treated in the same way in all EU countries  
+5.	asylum applications are processed quickly 
+ 
+
+Q13. [S] (reverse scale for Random_group=2) Do you believe that [COUNTRY] is currently hosting a fair share of the total asylum seekers in the European Union? <fair_share> 
+ 
+1.	Yes 
+2.	No, the share is too high  
+3.	 No, the share is too low 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+PROG: create 3 equal groups: create hidden variable ‘relocation_treatment’, according to least fill quota per country. Assign each participant to one of these 3 groups. For group 2 and 3 extra info is to be shown in Q13: 
+1.	Control 
+2.	Absolute 
+3.	Relative 
+ 
+
+Q14. [S] Below you see three scenarios describing how asylum applicants could be distributed across the EU. <IF TREATED: The numbers are based on national statistics.> In your view, what would be a fair way to establish the number of asylum applicants per country? Please rank the three options from the fairest to the least fair one.  
+<fair_number_applications> 
+ 
+1.	No relocation: Applications should be handled in the country of first entry (that is, asylum seekers are required to submit their asylum application in the European country in which they initially arrive).  
+PROG: show for relocation_treatment =2: ‘This would mean approximately <Bold: X1> asylum applications allocated to [COUNTRY] on average per year.’  
+PROG: show for relocation_treatment =3: ‘This would mean approximately <Bold: Y1> applications allocated to [COUNTRY] per 100,000 of its citizens on average per year.’ <no_relocation_preferred> 
+2.	Proportional to population: The number of applications should be proportional to the country’s population.  
+PROG: show for relocation_treatment =2: ‘This would mean approximately <Bold: X2>asylum applications allocated to [COUNTRY] on average per year.’  
+PROG: show for relocation_treatment =3: ‘This would mean approximately <Bold: Y2> applications allocated to [COUNTRY] per 100,000 of its citizens on average per year.’ <relocation_population_preferred> 
+3.	Proportional to the country’s economy: The number of applications should be proportional to the country’s GDP.  
+PROG: show for relocation_treatment =2: ‘This would mean approximately <Bold: X3>asylum applications allocated to [COUNTRY] on average per year.’  
+PROG: show for relocation_treatment =3: ‘This would mean approximately <Bold: Y3> applications allocated to [COUNTRY] per 100,000 of its citizens on average per year.’ <relocation_GDP_preferred> 
+PROG: replace value <X1-X2-X3> and <Y1-Y2-Y3> by country specific numbers (see xls file) 
+Scripter: Please keep Q14 and Q15 on same page.  
+ 
+
+Q15. Could you please briefly explain why you ranked the options the way you did? What influenced your choice? 
+PROG: create 3 random groups (completely random, no least fill quota): create hidden variable ‘scenario’. Assign each participant to one of these 3 groups. Different info shown in Q16 depending on group: 
+1.	fair 
+2.	unfair 
+3.	unfair_more 
+ 
+Q16. [SLIDER] Imagine a hypothetical situation where <if Scenario=1 or 2, show: ‘200,000’ if Scenario=3, show ‘300,000’> refugees from a non-EU country need to be resettled across three EU countries <PROG: show: ‘([countryX], [countryY], and [COUNTRY])>. The refugees are initially distributed as follows: 
+PROG: show for Treat Scenario=1 (Fair Distribution):  
+* [countryX]: 55,000 refugees 
+* [countryY]: 45,000 refugees 
+ 
+PROG: show for Treat Scenario=2 (Less Fair Distribution):  
+* [countryX]: 85,000 refugees 
+* [countryY]: 15,000 refugees 
+ 
+PROG: show for Treat Scenario=3 (Less Fair, More Refugees) 
+* [countryX]: 135,000 refugees 
+* [countryY]: 65,000 refugees 
+ 
+Based on the scenario: how many of the remaining 100,000 refugees would you be willing to accept in [COUNTRY]? If you select a number less than 100,000, the remaining amount will be evenly distributed between the other two countries. <number_accepted_refugees> 
+ 
+[INSERT SLIDER ranging from 0 to 100,000, in steps of 5000, show value of selected point] 
+ 
+PROG: replace [countryX] and [countryY] with random pairs from {Romania, Belgium, Austria, Czech Republic}, store the country shown in variable countryX and countryY: 
+ 
+Pair 	CountryX 	CountryY 
+1 	Romania 	Belgium 
+2 	Romania 	Austria 
+3 	Romania 	Czech Republic 
+4 	Belgium 	Romania 
+5 	Belgium 	Austria 
+6 	Belgium 	Czech Republic 
+7 	Austria 	Romania 
+8 	Austria 	Belgium 
+9 	Austria 	Czech Republic 
+10 	Czech Republic 	Romania 
+11 	Czech Republic 	Belgium 
+12 	Czech Republic 	Austria 
+ 
+Base: if pilot=Yes 
+Q16b. [O] When responding to the previous question, was there anything unclear or difficult to understand? If so, what? Please also share any suggestions you may have to improve the question. <underst_open> 
+___ 
+ 
+98.	Everything was clear <underst_clear> 
+ 
+
+Q17. [S] (reverse scale for Random_group=2) In your opinion, how important is it that EU countries hosting more asylum seekers receive financial support from other EU countries? <hosting_be_rewarded> 
+ 
+1.	Very important 
+2.	Somewhat important 
+3.	Not important at all 
+98.	I don’t know (fixed) 
+ 
+
+Q18. [S] (randomize) To the best of your knowledge, who handles asylum applications in the EU? <who_handles_correct>  
+ 
+1.	EU authorities 
+2.	National authorities  
+98.	I don’t know (fixed) 
+ 
+
+Q19. [Progressive grid] People have different opinions about the reasons to seek asylum. In your opinion, to what extent do the following reasons justify that a person seeks asylum in [COUNTRY]? 
+ 
+Rows (randomize, keep 3+4 together): 
+1.	Escaping persecution due to nationality, ethnic origin, political opinion, or sexual orientation <persecution_justified>   
+2.	Escaping violence, conflict or war  <war_justified>  
+3.	Seeking employment <job_justified>  
+4.	Seeking social welfare <welfare_justified>  
+Columns (reverse scale for Random_group=2):  
+1.	Completely justified 
+2.	Justified 
+3.	Not at all justified 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+
+Q20. [S] (randomize 1-4, same order as Q19) In your opinion, what is the most common reason for a person to seek asylum in [COUNTRY]? <asylum_reason> 
+ 
+1.	Escaping persecution due to nationality, ethnic origin, political opinion, or sexual orientation <persecution_common> 
+2.	Escaping violence, conflict or war  <war_common>   
+3.	Seeking employment <job_common> 
+4.	Seeking social welfare <welfare_common> 
+5.	Other, please specify [O] (fixed) <other_common> 
+98.	I don’t know (fixed) <idk_common> 
+99.	Prefer not to answer (fixed) <pnta_common> 
+ 
+
+Q_Check. [S] Please read the following statements. Please be so kind and let us know that you’re paying attention and reading all the questions carefully: please choose the second statement below, regardless if you agree with it or not. The most desirable characteristic of an asylum system is that… 
+ 
+1.	it is cost-effective  
+2.	decisions are free from prejudice 
+3.	decisions are made quickly 
+4.	the interests of EU Member States are safeguarded 
+5.	the rights of the applicants are observed 
+ 
+PROG: if Q_Check <> 2 à Screen out 
+ 
+Base: all participants (filled during data processing, one of the 2 below versions is shown to participants) 
+PROG: Please combine Q21v1 and Q21v2 in 1 variable Q21, where the labels of Q21 are used (so copy Q21v1 as is and recode Q21v2 to reverse the codes 0=10, 1=9, …, 10=0). 
+Q21. [Progressive grid] (reverse scale for Random_group=2) Do you think that asylum decisions taken by immigration authorities in [COUNTRY] are usually based on evidence and legal standards or are usually influenced by political, cultural, or personal biases?   
+Rate on a scale of 0 to 10, where 0 indicates all decisions are made solely based on verifiable evidence and legal standards, and where 10 suggests decisions are heavily influenced by various biases. <asylum_decisions_objective>  
+ 
+0 
+Asylum decisions are made solely based on verifiable evidence and legal standards 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Asylum decisions are heavily influenced by political, cultural, or personal biases 
+ 
+Base: Random_group=1 
+Q21v1. [Progressive grid] Do you think that asylum decisions taken by immigration authorities in [COUNTRY] are usually based on evidence and legal standards or are usually influenced by political, cultural, or personal biases?   
+Rate on a scale of 0 to 10, where 0 indicates all decisions are made solely based on verifiable evidence and legal standards, and where 10 suggests decisions are heavily influenced by various biases.  
+ 
+0 
+Asylum decisions are made solely based on verifiable evidence and legal standards 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Asylum decisions are heavily influenced by political, cultural, or personal biases 
+ 
+Base:  Random_group=2 
+Q21v2. [Progressive grid] Do you think that asylum decisions taken by immigration authorities in [COUNTRY] are usually based on evidence and legal standards or are usually influenced by political, cultural, or personal biases?   
+Rate on a scale of 0 to 10, where 0 indicates all decisions are heavily influenced by various biases, and where 10 suggests decisions are made solely based on verifiable evidence and legal standards.  
+ 
+0 
+Asylum decisions are heavily influenced by political, cultural, or personal biases  	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Asylum decisions are made solely based on verifiable evidence and legal standards 
+ 
+ 
+Base: all participants (filled during data processing, one of the 2 below versions is shown to participants)  
+PROG: Please combine Q22v1 and Q22v2 in 1 variable Q22, where the labels of Q22 are used (so copy Q22v1 as is and recode Q22v2 to reverse the codes 0=10, 1=9, …, 10=0). 
+Q22. [S] (reverse scale for Random_group=2) Suppose that some asylum applications submitted in [COUNTRY] contain false or misleading information. How confident are you in the ability of your country's asylum system to identify these asylum applications?  
+Rate it on a scale of 0 to 10, where 0 indicates Not confident at all (the system fails to recognize a significant number of false applications) and 10 indicates that Completely confident (the system detects false applications effectively). <asylum_fraud_detected> 
+ 
+0 
+Not confident at all 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Completely confident 
+ 
+ 
+Base: Random_group=1 
+Q22v1. [S] Suppose that some asylum applications submitted in [COUNTRY] contain false or misleading information. How confident are you in the ability of your country's asylum system to identify these asylum applications?  
+Rate it on a scale of 0 to 10, where 0 indicates Not confident at all (the system fails to recognize a significant number of false applications) and 10 indicates Completely confident (the system detects false applications effectively).  
+ 
+0 
+Not confident at all 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Completely confident 
+ 
+Base: Random_group=2 
+Q22v2. [S] Suppose that some asylum applications submitted in [COUNTRY] contain false or misleading information. How confident are you in the ability of your country's asylum system to identify these asylum applications?  
+Rate it on a scale of 0 to 10, where 0 indicates Completely confident (the system detects false applications effectively) and 10 indicates Not confident at all (the system fails to recognize a significant number of false applications).  
+ 
+0 
+Completely confident 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Not confident at all 
+ 
+
+Q23. [S] In your opinion, should asylum seekers have the right to decide on their final country of destination in the EU? <refugees_should_choose> 
+ 
+1.	Yes 
+2.	No 
+98.	I don’t know 
+99.	Prefer not to answer 
+ 
+Base: all participants 
+Q24. [O] Do these terms: migrant, asylum seeker, refugee, mean the same?  
+ 
+If not, please briefly describe how you understand the differences between them. <def_migr> 
+ 
+  
+
+Info2. Please pay attention to the following definition of migrants before continuing the survey: 
+ 
+Migrants: We refer to migrants as people who are citizens of a country outside the EU and who move to one EU country. They might move for various reasons: escaping danger, seeking work or a better life. Asylum seekers and refugees are two categories of migrants, but not all migrants are asylum seekers or refugees. 
+SCRIPTER: insert country specific image (translations will be included):  
+ 
+      
+ 
+ 
+ 
+ 
+
+Q25. [Q] What proportion of migrants from outside the EU that are currently in [COUNTRY] are asylum seekers? 
+Provide your best guess. <share_asylum_migrants> 
+ 
+1.	0-10% 
+2.	11-20% 
+3.	21-30% 
+4.	31-40% 
+5.	41-50% 
+6.	51-60% 
+7.	61-70% 
+8.	71-80% 
+9.	81-90% 
+10.	91-100% 
+11. I don’t know 
+ 
+ 
+
+Q26. [Q] What proportion of the residents of [COUNTRY] are migrants from outside the EU? 
+Provide your best guess. <share_nonEU_population> 
+ 
+1.	0-10% 
+2.	11-20% 
+3.	21-30% 
+4.	31-40% 
+5.	41-50% 
+6.	51-60% 
+7.	61-70% 
+8.	71-80% 
+9.	81-90% 
+10.	91-100% 
+98.	I don’t know 
+ 
+PROG: create 2 random groups (completely random, no least fill quota): create hidden variable ‘Q27_place’. Assign each participant to one of these 2 groups. Q27 to be shown here or after Q33. Please combine Q27a and Q27b in 1 variable Q27. 
+1.	After Q26 
+2.	After Q33 
+ 
+Base: IF Q27_place=1 
+Q27a. [SLIDER] Among migrants from outside the EU staying in [COUNTRY], how many do you think are staying legally? <share_legal_migrants>     
+ 
+[INSERT SLIDER with left and right label, ranging from 0% to 100%, show value of selected point] 
+0% staying legally 	 	 	 	 	 	 	 	 	 	100% staying legally 
+ 
+98.	I don't know 
+99.	Prefer not to answer 
+ 
+
+Q28. [Progressive grid] Do you support or oppose that migrants from outside the EU have access to the following services in [COUNTRY]?  
+ 
+Rows (randomize): 
+1.	Public healthcare <support_healthcare> 
+2.	Public education for minors <support_education> 
+3.	Social assistance <support_welfare> 
+4.	Public housing <support_housing> 
+5.	Access to the labour market <support_labour_market> 
+ 
+Columns (reverse scale for Random_group=2): 
+1.	Strongly oppose	 
+2.	Mildly oppose	 
+3.	Neutral	 
+4.	Mildly support 
+5.	Strongly support 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+  
+
+Q29. [Progressive grid] Do you support or oppose that migrants from outside the EU receive the following financial benefits in [COUNTRY]? 
+ 
+Rows (randomize): 
+1.	Family allowance <support_family_benefit> 
+2.	Unemployment benefits <support_unemployment_benefit> 
+3.	Disability allowance <support_disability_benefit> 
+ 
+Columns (reverse scale for Random_group=2):  
+1.	Strongly oppose	 
+2.	Mildly oppose	 
+3.	Neutral	 
+4.	Mildly support 
+5.	Strongly support 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+
+Q30. [S] (reverse scale for Random_group=2) In your opinion, how does the access to public services (healthcare, education, housing etc.) of migrants from outside the EU compare to that of citizens in [COUNTRY]?  <refugees_better_access_services> 
+ 
+1.	It is much better for migrants 
+2.	It is somewhat better for migrants 
+3.	It is about the same 
+4.	It is somewhat worse for migrants 
+5.	It is much worse for migrants 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+
+Q31. [S] (reverse scale for Random_group=2) In your opinion, how does the level of financial benefits provided to migrants from outside the EU compare to that of citizens in [COUNTRY]? <refugees_more_welfare> 
+ 
+1.	It is much better for migrants  
+2.	It is somewhat better for migrants  
+3.	It is about the same 
+4.	It is somewhat worse for migrants  
+5.	It is much worse for migrants 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+SCRIPTER: Randomise order in which Q32 and Q33 are shown. Capture order in variable  
+ 
+
+Q32. [S] (reverse scale for Random_group=2) To what extent are you concerned that fewer benefits and services will be available to citizens, if benefits and services are provided to migrants from outside the EU? <refugees_benefits> 
+ 
+1.	Very concerned 
+2.	Somewhat concerned 
+3.	Not really concerned 
+4.	Not at all concerned 
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+
+Q33. [S] (reverse scale for Random_group=2) In your opinion, how much do migrants from outside the EU contribute to the economy in [COUNTRY] (for instance, by paying taxes)? <nonEU_contribute> 
+ 
+1.	More than citizens 
+2.	As much as citizens  
+3.	Less than citizens  
+98.	I don’t know (fixed) 
+99.	Prefer not to answer (fixed) 
+ 
+Base: IF Q27_place=2 
+Q27b. [SLIDER] Among migrants from outside the EU staying in [COUNTRY], how many do you think are staying legally? <share_legal_migrants>     
+ 
+[INSERT SLIDER with left and right label, ranging from 0% to 100%, show value of selected point] 
+0% staying legally 	 	 	 	 	 	 	 	 	 	100% staying legally 
+ 
+98.	I don't know 
+99.	Prefer not to answer 
+ 
+ 
+
+Q34. [M] (randomize) Where do you get most of your news on migration matters?  
+Select all that apply.  
+ 
+1.	Television <migration_news_tele> 
+2.	Websites <migration_news_websites> 
+3.	Online Social Networks <migration_news_social_media> 
+4.	Radio <migration_news_radio> 
+5.	Printed press <migration_news_press> 
+6.	Other (fixed) <migration_news_other> 
+7.	I do not look for news on migration matters (fixed) (exclusive) <migration_news_non>  
+98.	I don’t know (fixed) (exclusive) <migration_news_idk> 
+ 
+
+Q35. [S] (reverse scale for Random_group=2) How often do you hear news about migration? <migration_news_freq> 
+ 
+1.	Very often  
+2.	Not too often  
+3.	Not often  
+4.	Never 
+ 
+
+Q36. [S] (reverse scale for Random_group=2) In your opinion, are migrants portrayed accurately by the media in [COUNTRY]? <migrants_media> 
+ 
+1.	No, they are portrayed too positively 
+2.	Yes, they are portrayed accurately 
+3.	No, they are portrayed too negatively 
+98.	I don’t know (fixed) 
+ 
+
+Info3. The next few questions may be considered more sensitive in nature. This includes questions on ethnicity, political opinions, and income. We are asking them because they will help us to better understand your opinion.  
+ 
+We want to remind you that for each question a ‘Prefer not to answer’ option is available for you to select. Participation is always voluntary, and your responses are used for research purposes only.  
+The European Commission will not receive any information from which they would be able to directly identify you. The data will be held for no longer than 5 years. The European Commission acts as data controller for all further data processing activities conducted by the European Commission on the research data delivered by Ipsos. 
+ 
+ 
+
+Q38. [S] Which of these descriptions best describes your current situation?  
+ 
+1.	In paid work<LMS_work> 
+2.	In education<LMS_educ> 
+3.	Unemployed and actively looking for a job <LMS_unemployed> 
+4.	Unemployed, wanting a job, but not actively looking for a job < LMS_inactive> 
+5.	Permanently sick or disabled <LMS_sick> 
+6.	Retired <LMS_retired> 
+7.	In community or military service <LMS_service> 
+8.	Doing housework, looking after children or other persons <LMS_housework> 
+9.	Other <LMS_other> 
+99.	Prefer not to answer<LMS_no_answer> (exclusive) 
+ 
+ 
+
+Q39. [S] In what country were you born? <country_born> 
+ 
+[INSERT DROPDOWN list country] 
+999.	Prefer not to answer 
+ 
+
+Q40. [S] How many years have you been living in [COUNTRY]? <years_country> 
+ 
+______ [NUMERIC, valid range: 0-participant age] 
+99.	Prefer not to answer 
+ 
+
+Q41. [S] In what country was your father born? <country_father> 
+ 
+[INSERT DROPDOWN list country] 
+998.	I don’t know 
+999.	Prefer not to answer 
+ 
+
+Q42. [S] In what country was your mother born? <country_mother> 
+ 
+[INSERT DROPDOWN list country] 
+998.	I don’t know 
+999.	Prefer not to answer 
+ 
+
+Q43. [S] How many children do you have? <children> 
+ 
+1.	I do not have children:  
+2.	1 
+3.	2  
+4.	3  
+5.	4  
+6.	5 or more  
+99.	Prefer not to answer 
+ 
+
+Q44. [S] What is your relationship status? <relationship_status> 
+ 
+1.	 Single  <single> 
+2.	Married <married> 
+3.	Legally separated or divorced <separated> 
+4.	Widowed <widowed> 
+99.	Prefer not to answer <relationship_pnta> 
+ 
+
+Q45. [S] How many people can you count on supporting you in case of need? <number_friends> 
+ 
+1.	None 
+2.	One  
+3.	Two 
+4.	Three 
+5.	Four to six 
+6.	Seven to nine 
+7.	Ten or more 
+99.	Prefer not to answer  
+ 
+
+Q46. [prorgessive grid] We would like to understand what you value.  
+Please read each description and respond how much the description is or is not like you.  
+ 
+Rows: 
+1.	I believe I should always show respect to my parents and to older people. It is important to me to be obedient. <v_conformity>  
+2.	Religious belief is important to me. I try hard to do what my religion requires. <v_tradition>  
+3.	It's very important to me to help the people around me. I want to care for their well-being. <v_benevolence >  
+4.	I think it is important that every person in the world is treated equally. I believe everyone should have equal opportunities in life. <v_universalism> 
+5.	I think it's important to be interested in things. I like to be curious and to try to understand all sorts of things. <v_self-direction>  
+6.	I like to take risks. I am always looking for adventures. <v_stimulation>  
+7.	I seek every chance to have fun. It is important to me to do things that give me pleasure. <v_hedonism>  
+8.	Being very successful is important to me. I like to impress other people. <v_achievement>  
+9.	It is important to me to be in charge and tell others what to do. I want people to do what I say. <v_power>  
+10.	It is important to me that things are organised and clean. I really do not like things to be a mess. <v_security> 
+ 
+Columns  
+1.	Very much like me 
+2.	Like me 
+3.	Somewhat like me 
+4.	A little like me 
+5.	Not like me 
+6.	Not at all like me 
+99. Prefer not to answer  
+ 
+ 
+
+Q47. [S] PROG: If country=1,4, 6, 8 Show: Could you please indicate your household’s monthly income (that is, after income taxes have been paid)? <income_monthly> 
+PROG: If country=2, 3, 5, 7 Show: Could you please indicate your household’s annual income (that is, after income taxes have been paid)? <income_annual> 
+ 
+Your total household income includes your own income plus the incomes of all household members who live together with you. The total income includes incomes from jobs, pensions, social security, interest, dividends, capital gains claimed, profits from businesses, unemployment payments, and all other money your received.  
+ 
+Scripter: insert values from country-specific list Excel ‘Q47_Income’  
+ 
+1.	Less than [insert value1] [insert currency] 
+2.	Between [insert value1] [insert currency] and [insert value2 minus 1] [insert currency] 
+3.	Between [insert value2] [insert currency] and [insert value3 minus 1] [insert currency] 
+4.	Between [insert value3] [insert currency] and [insert value4 minus 1] [insert currency] 
+5.	Between [insert value4] [insert currency] and [insert value5 minus 1] [insert currency] 
+6.	Between [insert value5] [insert currency] and [insert value6 minus 1] [insert currency] 
+7.	Between [insert value6] [insert currency] and [insert value7 minus 1] [insert currency] 
+8.	Between [insert value7] [insert currency] and [insert value8 minus 1] [insert currency] 
+9.	Between [insert value8] [insert currency] and [insert value9] [insert currency] 
+10.	Higher than [insert value9] [insert currency] 
+98.	I don’t know 
+99.	Prefer not to answer 
+Scripter: recode Q47 into Q47_quota:  
+1.	‘Low‘ IF Q47 = 1, 2, 3, 4 
+2.	‘Mid’ IF Q47 = 5, 6, 7 
+3.	‘High’ IF Q47 = 8, 9, 10 
+4.	‘Missing’ IF Q47 = 98 or 99 
+
+Q48. [S] How does your income compare to that of the people around you? <income_compare> 
+ 
+1.	I earn a somewhat lower income 
+2.	I earn an income similar to that of the people around me 
+3.	I earn a somewhat higher income 
+98.	I don’t know 
+99.	Prefer not to answer 
+ 
+
+Q49. [S] In political matters people talk of ‘the left’ and ‘the right’. How would you place your views on this scale? <political_right> 
+ 
+0 
+Left 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 
+Right 
+ 
+99.	Prefer not to answer 
+ 
+
+Q37. [S] (reverse scale for Random_group=2) Overall, how satisfied are you with the life you lead? <life_satisfaction> 
+ 
+1.	Very satisfied 
+2.	Fairly satisfied 
+3.	Not very satisfied 
+4.	Not at all satisfied 
+99. Prefer not to answer 
+ 
+ 
+
+Q50. For your information, you were asked to indicate whether you think that [COUNTRY] received more or fewer asylum requests than the EU average last year. The EU average for last year was 38,867. With [insert number from excel Q7_asylum requests column B] asylum requests last year, [COUNTRY] received [insert fewer/more from excel Q7_asylum requests column D] asylum requests than the EU average.  

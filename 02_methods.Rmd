@@ -21,17 +21,17 @@ The experiment tested how different types of information affected participants' 
 
 - Allocation **proportional to each country's population**: relocations ensure equity with population as a proxy for capacity;
 
-- Allocation **proportional to each country's GDP**: relocations ensure equity with GDP as proxy for capacity.
+- Allocation **proportional to each country's GDP**: relocations ensure equity with GDP as a proxy for capacity.
 
-Respondents were asked to rank these allocation rules from the fairest (rank = 1) to the least fair (rank = 3). Before they did so, we varied the type and amount of information available across three conditions: 
+Respondents were asked to rank these allocation rules from the fairest (rank = 1) to the least fair (rank = 3). Before they did so, we varied the format and amount of information available across three conditions: 
 
-- **No information** (the Control),
+- **No information** (the control),
 - **Absolute** information: the expected number of asylum applications under each relocation scheme,
 - **Relative** information: the expected number of asylum applications under each relocation scheme per 100,000 citizens.
 
 Table \@ref(tab:example) illustrates the experiment with a simplified scenario involving two countries, Country A and Country B.^[
  This scenario is for illustrative purposes; it was not discussed with participants in the experiment.
-] Both countries have the same GDP, but Country A has more residents, while Country B received more than twice as many asylum applications, on average, in the past ten years (2014-2023). As a result, Country A will experience more asylum applications under proportional relocation than under no relocation. Furthermore, since countries are equally rich, but Country A is more heavily populated, the difference in relocation outcomes will be greater under population-based relocation than under GDP-based relocation.
+] Both countries have the same GDP, but Country A has more residents, while Country B received more than twice as many asylum applications, on average, in the past ten years (2014-2023). As a result, Country A will experience more asylum applications under proportional relocation than under no relocation. Furthermore, since countries are equally rich, but Country A is more densely populated, the difference in relocation outcomes will be greater under population-based relocation than under GDP-based relocation.
 
 Under this scenario, study participants from Country A assigned to the absolute-information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A) receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B) receive fewer, becoming “net senders”.
 

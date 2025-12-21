@@ -2,16 +2,19 @@
 # Descriptive analysis
 # Author: Andrea Blasco
 # ----------------------------------------------------
-suppressWarnings({
+suppressMessages({
     library(dplyr)
     library(kableExtra)
     library(flextable)
 })
 
 results_dir <- file.path("results", c("figures", "tables", "models"))
-sapply(results_dir, dir.create, recursive = TRUE, showWarnings = FALSE)
-
+for (dir in results_dir) {
+    dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+}
+tab_dir <- file.path("results", "tables")
 data_dir <- file.path("data", "processed")
+
 ds_survey_filename <- file.path(data_dir, "fair_survey_clean.rds")
 ds_long_filename <- file.path(data_dir, "fair_survey_long.rds")
 
@@ -22,6 +25,7 @@ all_tables_filename <- file.path("results", "tables", "descriptives.rds")
 # ----------------------------------------------------
 
 ds <- readRDS(ds_survey_filename)
+message("Loaded ", ds_survey_filename)
 
 ds <- ds %>%
     dplyr::mutate(
@@ -290,7 +294,6 @@ tables <- list(
 )
 
 
-tab_dir <- file.path("results", "tables")
-dir.create(tab_dir)
 
 saveRDS(tables, file.path(tab_dir, "descriptives_all_tables.rds"))
+message("Tables saved ", file.path(tab_dir, "descriptives_all_tables.rds"))
