@@ -11,15 +11,15 @@ date: |
 author: 
     - (Alphabetical Order)
     - Andrea Blasco
+    - Bego&ntilde;a Cabeza Mart&iacute;nez
     - Rossella Icardi
     - Michal Krawczyk
-    - Begona Cabeza Martinez
 
 bibliography: [refs.bib]
 csl: [assets/elsevier-harvard.csl]
 
 papersize: a4
-geometry: "margin=1.5in"
+geometry: "margin=0.5in"
 fontsize: 12pt
 linestretch: 1.1
 mainfont: Times New Roman
