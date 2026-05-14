@@ -15,7 +15,7 @@ TO          ?= rev1
 
 # Output files
 HTML_OUT    := $(OUTDIR)/index.html
-PDF_OUT     := $(OUTDIR)/report.pdf
+PDF_OUT     := $(OUTDIR)/main.pdf
 DOCX_OUT    := $(OUTDIR)/report.docx
 
 # Versioned exports
@@ -60,13 +60,13 @@ pdf:  $(PDF_OUT)
 docx: $(DOCX_OUT)
 
 $(PDF_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_file=normalizePath("$(PDF_OUT)"), knit_root_dir=getwd(), output_format="bookdown::pdf_document2")'
+	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_dir="$(OUTDIR)", output_format="bookdown::pdf_document2")'
 
 $(HTML_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_file=normalizePath("$(HTML_OUT)"), knit_root_dir=getwd(), output_format="distill::distill_article")'
+	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_dir="$(OUTDIR)", output_format="distill::distill_article")'
 
 $(DOCX_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_file=normalizePath("$(DOCX_OUT)"), knit_root_dir=getwd(), output_format="bookdown::word_document2")'
+	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_dir="$(OUTDIR)", output_format="bookdown::word_document2")'
 
 # -------------------------------
 # Journal submissions

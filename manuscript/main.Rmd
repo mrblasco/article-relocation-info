@@ -49,11 +49,10 @@ library(dplyr)
 library(knitr)
 library(kableExtra)
 library(ggplot2)
+library(here)
 
-# When knitting via RStudio (Knit button), working dir is manuscript/.
-# Set root.dir to the project root so all source() and file paths work correctly.
-if (basename(getwd()) == "manuscript") {
-  knitr::opts_knit$set(root.dir = normalizePath(".."))
+readRDS <- function(x, ...) {
+    base::readRDS(here::here(x), ...)
 }
 
 debug <- params$debug
@@ -69,7 +68,7 @@ table_latex <- function(x, ...) {
     kableExtra::kbl(x, booktabs = TRUE, ...) |>
     kableExtra::kable_styling(full_width = TRUE)
 }
-source("R/theme.R")
+source(here::here("R/theme.R"))
 ```
 
 \clearpage 
