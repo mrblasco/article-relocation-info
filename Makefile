@@ -1,11 +1,17 @@
 # -------------------------------
 # Config
 # -------------------------------
-OUTDIR 			:= docs
-SECTIONS 		:= $(wildcard *.Rmd)
-ASSETS 			:= refs.bib _output.yml
-DATE        	:= $(shell date +%Y-%m-%d)
-SLUG        	:= fairness-asylum
+MANUSCRIPT  := manuscript/main.Rmd
+SECTIONS    := $(wildcard manuscript/*.Rmd)
+ASSETS      := manuscript/refs.bib manuscript/_output.yml
+OUTDIR      := docs
+DATE        := $(shell date +%Y-%m-%d)
+SLUG        := fairness-asylum
+
+JOURNAL     ?= jebo
+REV         ?= rev1
+FROM        ?= initial
+TO          ?= rev1
 
 # Output files
 HTML_OUT    := $(OUTDIR)/index.html
@@ -13,11 +19,11 @@ PDF_OUT     := $(OUTDIR)/report.pdf
 DOCX_OUT    := $(OUTDIR)/report.docx
 
 # Versioned exports
-PDF_VERSION := $(DATE)-$(SLUG).pdf
+PDF_VERSION  := $(DATE)-$(SLUG).pdf
 DOCX_VERSION := $(DATE)-$(SLUG).docx
 
 # -------------------------------
-# All targets 
+# All targets
 # -------------------------------
 all: analysis pdf
 
@@ -25,9 +31,9 @@ all: analysis pdf
 # Analysis
 # -------------------------------
 
-DATA_FILES := data/processed/fair_survey_clean.rds data/processed/fair_survey_long.rds
+DATA_FILES  := data/processed/fair_survey_clean.rds data/processed/fair_survey_long.rds
 DESC_TABLES := results/tables/descriptives_all_tables.rds
-ROLOGIT := results/tables/rologit_coeffs.rds
+ROLOGIT     := results/tables/rologit_coeffs.rds
 
 $(DATA_FILES): scripts/01_prepare_data.R
 	@echo "Preparing data..."
@@ -38,7 +44,7 @@ $(DESC_TABLES): scripts/02_descriptives.R $(DATA_FILES)
 	Rscript $<
 
 $(ROLOGIT): scripts/33_rologit_base.R $(DATA_FILES)
-	@echo "Running descriptive scripts..."
+	@echo "Running rologit..."
 	Rscript $<
 
 analysis: $(DESC_TABLES) $(ROLOGIT)
@@ -53,20 +59,49 @@ html: $(HTML_OUT)
 pdf:  $(PDF_OUT)
 docx: $(DOCX_OUT)
 
-$(PDF_OUT): main.Rmd $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$<", output_file = "$@", output_format="bookdown::pdf_document2")'
+$(PDF_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
+	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_file=normalizePath("$(PDF_OUT)"), knit_root_dir=getwd(), output_format="bookdown::pdf_document2")'
 
-$(HTML_OUT): main.Rmd $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$<", output_file = "$@", output_format="distill::distill_article")'
+$(HTML_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
+	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_file=normalizePath("$(HTML_OUT)"), knit_root_dir=getwd(), output_format="distill::distill_article")'
 
-$(DOCX_OUT): main.Rmd $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$<", output_file = "$@", output_format="bookdown::word_document2")'
+$(DOCX_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
+	Rscript -e 'rmarkdown::render("$(MANUSCRIPT)", output_file=normalizePath("$(DOCX_OUT)"), knit_root_dir=getwd(), output_format="bookdown::word_document2")'
 
 # -------------------------------
-# Archive
+# Journal submissions
 # -------------------------------
 
-store: archive/$(DATE)-$(SLUG).tar.gz 
+# Save a tracked snapshot of the current build.
+# Usage: make submit JOURNAL=jebo REV=rev1
+submit: pdf
+	@mkdir -p submissions/$(JOURNAL)/$(REV)
+	@cp $(OUTDIR)/report.tex submissions/$(JOURNAL)/$(REV)/manuscript.tex
+	@echo "Saved: submissions/$(JOURNAL)/$(REV)/manuscript.tex"
+	@echo "Stage and commit with: git add submissions/ && git commit -m 'snapshot $(JOURNAL) $(REV)'"
+
+# Generate a latexdiff .tex between two submission snapshots.
+# Usage: make diff JOURNAL=jebo FROM=initial TO=rev1
+diff:
+	@mkdir -p submissions/$(JOURNAL)/$(TO)
+	latexdiff \
+	    --config="PICTUREENV=(?:picture|DIFnomarkup|tabu)[\w\d*@]*" \
+	    submissions/$(JOURNAL)/$(FROM)/manuscript.tex \
+	    submissions/$(JOURNAL)/$(TO)/manuscript.tex \
+	    > submissions/$(JOURNAL)/$(TO)/diff.tex
+	@echo "Diff written to: submissions/$(JOURNAL)/$(TO)/diff.tex"
+
+# Compile the diff .tex to PDF.
+# Usage: make diff-pdf JOURNAL=jebo REV=rev1
+diff-pdf:
+	cd submissions/$(JOURNAL)/$(REV) && xelatex diff.tex && xelatex diff.tex
+	@echo "PDF built: submissions/$(JOURNAL)/$(REV)/diff.pdf"
+
+# -------------------------------
+# Archive (legacy, kept for reference)
+# -------------------------------
+
+store: archive/$(DATE)-$(SLUG).tar.gz
 
 archive:
 	@mkdir -p $@
@@ -75,29 +110,6 @@ archive/$(DATE)-$(SLUG).tar.gz: docs | archive
 	@tar -czf $@ $<
 	@git tag "version-$(DATE)" -m "output file: $@"
 
-report_diff.tex: docs/report.tex
-	@mkdir -p tmp/
-	@tar -xzvf archive/2025-12-16-$(SLUG).tar.gz -C tmp
-	@latexdiff --config="PICTUREENV=(?:picture|DIFnomarkup|tabu)[\w\d*@]*" tmp/docs/report.tex $< > report_diff.tex
-
-report_diff.pdf: report_diff.tex
-	@xelatex $<
-	@xelatex $<
-	@open -a Skim $@
-
-diff_clean: 
-	rm *_diff.*
-	rm -r ./tmp/
-
-# -------------------------------
-# Journal submission versions
-# (e.g., anonymized, double-spaced, different template)
-# -------------------------------
-journal: journal-pdf
-
-journal-pdf: $(MAIN) $(SECTIONS) $(ASSETS) | $(OUTDIR)
-	Rscript -e 'rmarkdown::render("$<", output_file="$(JOURNAL_PDF)", params=list(journal=TRUE), output_format="bookdown::pdf_document2")'
-
 # -------------------------------
 # Utilities
 # -------------------------------
@@ -105,4 +117,4 @@ view:
 	open -a Skim $(PDF_OUT)
 
 clean:
-	rm *.ttt *.fff *.log
+	rm -f *.ttt *.fff *.log

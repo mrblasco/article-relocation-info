@@ -50,6 +50,12 @@ library(knitr)
 library(kableExtra)
 library(ggplot2)
 
+# When knitting via RStudio (Knit button), working dir is manuscript/.
+# Set root.dir to the project root so all source() and file paths work correctly.
+if (basename(getwd()) == "manuscript") {
+  knitr::opts_knit$set(root.dir = normalizePath(".."))
+}
+
 debug <- params$debug
 
 opts_chunk$set(

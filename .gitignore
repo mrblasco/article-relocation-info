@@ -7,6 +7,15 @@
 *_diff*
 tmp/
 
+# Compiled submission artifacts (track .tex, not .pdf or LaTeX aux)
+submissions/**/*.pdf
+submissions/**/*.aux
+submissions/**/*.log
+submissions/**/*.out
+submissions/**/*.toc
+submissions/**/*.synctex.gz
+submissions/**/*_files/
+
 .vscode/
 
 archive/

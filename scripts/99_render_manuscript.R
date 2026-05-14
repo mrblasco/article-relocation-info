@@ -3,7 +3,7 @@ library(bookdown)
 
 source("R/logging.R")
 
-input <- file.path("main.Rmd")
+input <- file.path("manuscript/main.Rmd")
 log_info("Input file: ", input)
 
 log_info("Retrieving git branch...")
@@ -26,6 +26,7 @@ out <- tryCatch({
         input,
         output_format = "bookdown::pdf_document2",
         output_dir = output_dir,
+        knit_root_dir = getwd(),
         quiet = TRUE
         )
     }, 
