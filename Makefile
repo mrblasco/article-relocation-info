@@ -76,7 +76,7 @@ $(DOCX_OUT): $(MANUSCRIPT) $(SECTIONS) $(ASSETS) | $(OUTDIR)
 # Usage: make submit JOURNAL=jebo REV=rev1
 submit: pdf
 	@mkdir -p submissions/$(JOURNAL)/$(REV)
-	@cp $(OUTDIR)/report.tex submissions/$(JOURNAL)/$(REV)/manuscript.tex
+	@cp $(OUTDIR)/main.tex submissions/$(JOURNAL)/$(REV)/manuscript.tex
 	@echo "Saved: submissions/$(JOURNAL)/$(REV)/manuscript.tex"
 	@echo "Stage and commit with: git add submissions/ && git commit -m 'snapshot $(JOURNAL) $(REV)'"
 

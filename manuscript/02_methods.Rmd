@@ -1,10 +1,11 @@
 ```{r methods, include = FALSE}
 library(dplyr)
 library(knitr)
+library(tidyr)
 library(kableExtra)
 library(flextable)
 
-tables <- readRDS("results/tables/descriptives_all_tables.rds")
+source(here::here("scripts/02_descriptives.R"))
 ```
 
 # Methods and Data
@@ -33,12 +34,7 @@ Respondents were asked to rank these allocation rules from the fairest (rank = 1
 
 - **Relative** information: the expected number of asylum applications under each relocation scheme per 100,000 citizens.
 
-In this study, GDP and population are used as proxies for “capacity,” consistent with existing EU allocation proposals and policy debates [@thielemann2018refugee]. These indicators also provide respondents with clear and easily interpretable signals of a country’s size and wealth. Research shows that individuals commonly rely on such measures when evaluating “fairness” in international sharing [@kleider2019politics]. We acknowledge, however, that respondents may interpret these indicators in different ways (e.g. housing capacity or labour market conditions). As a result, relying on these measures may conflate different understandings of “capacity” into a single dimension, which may limit the interpretation of the results.
-
-
-To illustrate the main logic behind the experiment, we present a simplified scenario involving only two countries, Poland and Greece. While Poland has a larger population, Greece has handled more than double the average number of asylum applications over the past ten years (2014 - 2023). Under a system of proportional relocation, Poland will experience more asylum applications, than under no relocation. We will call such countries “net receivers”. The opposite would hold true for Greece where any form of relocation will result in a lower number of applications under any of the relocation scenarios. We call such countries “net senders”. 
-
-> TODO [...]
+To illustrate the underlying relocation problem captured by our experiment, we discuss the situation of two countries, Poland and Greece. While Poland has a larger population, Greece has handled more than double the average number of asylum applications over the past ten years (2014 - 2023). Under a system of proportional relocation, Poland will experience more asylum applications, than under no relocation. We will call such countries “net receivers”. The opposite would hold true for Greece where any form of proportional relocation will result in fewer applications. We call such countries “net senders”. 
 
 
 <!-- Table \@ref(tab:example) illustrates the experiment with a simplified scenario involving two countries, Country A and Country B.^[
@@ -47,8 +43,8 @@ To illustrate the main logic behind the experiment, we present a simplified scen
 
 <!-- Under this scenario, study participants from Country A assigned to the absolute-information condition would be informed that their country would host 15,000 asylum seekers under no relocation, 30,000 under relocation by population, and 25,000 under relocation by GDP. In the relative information condition, the same information for Country A would be expressed per 100,000 citizens, with the provided values being 100, 200, and 167, respectively. This example illustrates that, while presenting information about asylum applications in absolute terms can involve large numbers, expressing them as relative figures often shows that the actual impact is modest. It also shows that for each relocation rule, some countries (here, both for relocation based on population and GDP, it is Country A) receive more asylum seekers than in the baseline. We will call such countries “net receivers”. Remaining countries (here, Country B) receive fewer, becoming “net senders”. -->
 
-```{r example}
-tables$raw$tbl_example %>%
+```{r example, eval = FALSE}
+tbl_example %>%
     kableExtra::kbl(
         col.names = c("", "Abs.", "Rel.", "Abs.", "Rel.", ""),
         caption = "Illustrative example for two countries", 
@@ -66,7 +62,7 @@ tables$raw$tbl_example %>%
 In Table \@ref(tab:asylum-per-capita), we report the actual figures for the expected asylum applications in each country under each information condition used in the experiment. They are based on population, GDP, and historical (2014-2023) asylum applications statistics. 
 
 ```{r asylum-per-capita}
-tables$raw$tbl_asylum_rel %>%
+tbl_asylum_rel %>%
     dplyr::mutate(
         diff_gdp = no_relocation - gdp,
         diff_pop = no_relocation - population
@@ -88,7 +84,10 @@ tables$raw$tbl_asylum_rel %>%
     kableExtra::kable_styling(full_width = TRUE)
 ```
 
-The survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix. A descriptive analysis of the responses is presented in the technical report by @blasco2025fairness. In our analysis, we included control variables such as trust or political affiliation, as these are associated with attitudes towards migration [e.g.,@canetti2016threatened;@mitchell2021social]. We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives [@berlinschi2019migrants].
+
+It is important to point out that, GDP and population are intended as proxies for a country's reception and processing capacity, consistent with existing EU allocation proposals and policy debates [@thielemann2018refugee]. These indicators also provide respondents with clear and easily interpretable signals of a country's size and wealth, which, as research shows, are commonly used when evaluating “fairness” in international sharing [@kleider2019politics]. Even so, respondents may interpret the proportionality by GDP or population in different ways (e.g., a proxy for housing capacity or labour market conditions), which may conflate the meaning of "capacity" and limit the interpretation of the results.
+
+Finally, the survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix. A descriptive analysis of the responses is presented in the technical report by @blasco2025fairness. In our analysis, we included control variables such as trust or political affiliation, as these are associated with attitudes towards migration [e.g.,@canetti2016threatened;@mitchell2021social]. We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives [@berlinschi2019migrants].
 
 ## Data 
 
@@ -102,8 +101,7 @@ Table \@ref(tab:summary) also reports mean differences between the control group
     These differences were estimated using OLS controlling for country fixed effets, thus accounting for the stratified randomisation.
 ]
 
-```{r summary}
-tbl_covariates <- tables$raw$tbl_covariates
+```{r summary, eval = knitr::is_latex_output()}
 tbl_covariates %>%
     dplyr::mutate(
         variable = gsub("Importance of", "Value of", variable) %>% 
@@ -118,13 +116,20 @@ tbl_covariates %>%
     kableExtra::kbl(
         booktabs = TRUE, 
         digits = 1,
-        caption = "Summary statistics (standardized mean difference in square brackets)"
+        caption = paste(
+            "Summary statistics.",
+            "The first column reports means and standard deviation (in square brackets)",
+            "for the Control group. Second an third columns",
+            "present differences between control",
+            "means and the other treatment groups, with standardized mean",
+            "differences in square brackets"
+        )
     ) |>
     kableExtra::kable_styling(full_width = TRUE) |>
     kableExtra::column_spec(1, width = "15em") |>
-    kableExtra::pack_rows("Sociodemographics", 1, 5) |>
+    kableExtra::pack_rows("Socio-demographics", 1, 5) |>
     kableExtra::pack_rows("Political attitudes", 6, 5 + 4) |>
-    kableExtra::pack_rows("Other variables", 1 + 5 + 4, nrow(tbl_covariates)) 
+    kableExtra::pack_rows("Other variables", 1 + 5 + 4, nrow(tbl_covariates))
 ```
 
 <!-- As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful. -->
@@ -134,4 +139,59 @@ tbl_covariates %>%
 
 - TODO: I can look at measures of fairness self-reported correlated with left-right 
 - TODO: Left-right vs fairness. Fair share of migrants. 
+
+
+```{r, eval = FALSE}
+library(MASS)
+library(broom)
+
+ds <- mutate(
+    ds,
+    fair_share3 = factor(fair_share, ordered = TRUE, levels = c(
+        "No, the share is too low",
+        "Yes",
+        "No, the share is too high"
+    ))
+)
+ 
+model <- fair_share3 ~ 
+    sex + 
+    scale(age) + 
+    ISCED + 
+    scale(political_right)
+
+countries <- unique(ds$country)
+coef_df  <- list()
+for (j in countries) {
+    try({
+        fit <- polr(
+            formula = model,
+            data = ds,
+            subset = country == j
+        )
+        coef_df [[j]] <- tidy(fit, conf.int = TRUE)
+    })
+}
+
+coef_df <- bind_rows(coef_df, .id = "country") 
+
+library(ggplot2)
+coef_df |>
+    filter(
+        !grepl("Refusal|Unknow|Other|No, the", term)
+    ) |>
+    ggplot(
+        aes(
+            x = estimate,
+            y = term,
+            xmin = conf.low,
+            xmax = conf.high
+        )
+    ) + 
+    facet_grid(~country) + 
+    geom_vline(xintercept = 0, color = "salmon") +
+    geom_linerange() + 
+    geom_point() + 
+    theme_minimal()
+```
 
