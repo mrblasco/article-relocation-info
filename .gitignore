@@ -58,3 +58,4 @@ Thumbs.db
 # python/virtual env (if ever used)
 .env
 venv/
+*.rds
