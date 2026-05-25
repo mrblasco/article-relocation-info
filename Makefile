@@ -27,6 +27,8 @@ DOCX_VERSION := $(DATE)-$(SLUG).docx
 # -------------------------------
 all: analysis pdf
 
+manuscript: html pdf
+
 # -------------------------------
 # Analysis
 # -------------------------------
