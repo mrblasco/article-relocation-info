@@ -3,8 +3,12 @@ tab_dir <- file.path("results", "tables")
 tables <- readRDS(file.path(tab_dir, "descriptives_all_tables.rds"))
 tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
 ```
+\newpage
+\appendix
 
-# Appendix 
+# Appendix
+
+\newpage 
 
 ## Regression model for the fairness rankings
 
@@ -14,11 +18,15 @@ We used a rank-ordered logit model [e.g., @hausman1987specifying] to estimate th
 \]
 for all $i$ and $j$ alternatives, with $\alpha_{j}^{\tau}$ and $\beta_{j}^{\tau}$ set to zero for an arbitrary alternative and an arbitrary treatment condition $\tau$. We selected the no-relocation scheme as the reference alternative, and the reference treatment group is the absolute-information group, so the model yields estimates of differences between control vs absolute and absolute vs relative information.
 
+\newpage 
+
 ## Questionnaire
 
 ```{r child = "99_a_questionnaire.Rmd"}
 ```
 
+
+\newpage 
 
 ## Additional Tables
 
