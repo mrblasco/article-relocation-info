@@ -1,0 +1,9 @@
+data_dir: data/processed
+output_figures: outputs/figures
+output_models: outputs/models
+seed: 4881
+cores: 4
+palette: 
+  - "#0072B2"
+  - "#666666"
+  - "#D55E00"
