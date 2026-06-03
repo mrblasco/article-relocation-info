@@ -9,9 +9,18 @@ suppressMessages({
     library(ggtext)
     library(here)
 })
-options(vsc.dev.args = list(width = 800, height = 500))
 
-knitr::opts_chunk$set(echo = FALSE, error = TRUE)
+
+config <- yaml::read_yaml(
+    here("config", "config.yml")
+)
+
+print(config)
+
+knitr::opts_chunk$set(
+    echo = FALSE,
+    error = TRUE
+)
 
 source("R/helpers_data.R")
 source("R/helpers_models.R")
@@ -21,16 +30,17 @@ source("R/theme.R")
 
 theme_set(theme_nice())
 
-config <- yaml::read_yaml(here("config", "config.yml"))
+create_dir <- function(path) {
+    dir.create(path = path, showWarnings = FALSE, recursive = TRUE)
+}
 
-dir.create(config$output_figures, showWarnings = FALSE, recursive = TRUE)
-dir.create(config$output_models, showWarnings = FALSE, recursive = TRUE)
+create_dir(config$output_figures)
+create_dir(config$output_models)
 set.seed(config$seed)
 
 # ---- load data -----------------------
 
 ds_survey <- read_rds(config$data_dir, "fair_survey_clean.rds")
-ds_long_raw <- read_rds(config$data_dir, "fair_survey_long.rds")
 
 tbl_asylum_rel <- data.frame(
     country = c(
@@ -44,39 +54,266 @@ tbl_asylum_rel <- data.frame(
 
 # ---- data processing ----
 
-ds_long <- ds_long_raw %>%
-    left_join(
-        tbl_asylum_rel,
-        by = "country"
+ds_long <- ds_survey %>%
+    mutate(respondent_id = seq_len(n())) %>%
+    pivot_longer(
+        cols = c(
+            no_relocation_ranking,
+            relocation_population_ranking,
+            relocation_GDP_ranking
+        ),
+        names_to = "alt",
+        names_pattern = "(.*)_ranking",
+        values_to = "rank",
+    ) %>%
+    select(
+        respondent_id,
+        alt,
+        rank,
+        country,
+        treatment = relocation_treatment
     ) %>%
     mutate(
-        country_label = case_when(
+        rank = as.numeric(gsub("[^0-9]", "", rank)),
+        country = factor(country),
+        treatment = factor(treatment),
+        alt = factor(alt)
+    ) %>%
+    glimpse()
+
+ds_asylum_applications <- tbl_asylum_rel %>%
+    mutate(
+        country_type = case_when(
             no_relocation > population ~ "Net sender",
             no_relocation < population ~ "Net receiver",
             TRUE ~ "Other"
         )
     ) %>%
-    select(-alt) %>%
-    recode_labels()
-
-ds_asylum_applications <- tbl_asylum_rel %>%
-    tidyr::pivot_longer(
+    pivot_longer(
         c("population", "gdp", "no_relocation"),
-        names_to = "relocation",
+        names_to = "alt",
         values_to = "asylum_applications"
     ) %>%
     mutate(
-        relocation = recode_values(
-            relocation,
-            "gdp" ~ "GDP",
-            "population" ~ "Population",
+        alt = replace_values(
+            alt,
+            "gdp" ~ "relocation_GDP",
+            "population" ~ "relocation_population",
             "no_relocation" ~ "No relocation"
         )
     ) %>%
     right_join(
         ds_long,
-        by = c("relocation", "country")
+        by = c("alt", "country")
+    ) %>%
+    mutate(
+        asylum_applications_z = scale(asylum_applications)[, 1],
+        rank = factor(rank, ordered = TRUE)
     )
+
+# ----- model
+
+model_formula <- rank ~ alt +
+    treatment +
+    asylum_applications_z +
+    treatment:asylum_applications_z +
+    country
+
+m0 <- MASS::polr(
+    formula = model_formula,
+    data = ds_asylum_applications
+)
+summary(m0)
+
+m0_coeffs <- tidy(m0, conf.int = TRUE)
+
+m0_coeffs <- m0_coeffs %>%
+    mutate(
+        OR = exp(estimate),
+        OR_low = exp(conf.low),
+        OR_high = exp(conf.high),
+        significant = !(conf.low <= 0 & conf.high >= 0),
+        term = reorder(term, OR)
+    )
+
+ref_terms <- tibble(
+    term = c("treatment (reference)", "country (reference categories)"),
+    OR = 1,
+    OR_low = 1,
+    OR_high = 1,
+    significant = FALSE
+)
+
+plot_data <- bind_rows(m0_coeffs, ref_terms)
+
+plot_data %>%
+    ggplot(
+        aes(
+            y = term,
+            x = OR,
+        )
+    ) +
+    geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.4, color = "grey50") +
+    geom_errorbarh(
+        aes(xmin = OR_low, xmax = OR_high, color = significant),
+        height = 0.2,
+        linewidth = 0.7
+    ) +
+
+    # point estimates
+    geom_point(
+        aes(color = significant),
+        size = 2.8
+    ) +
+
+    # emphasize interaction term slightly
+    geom_point(
+        data = ~ filter(.x, grepl("treatment:asylum_applications_z", term)),
+        size = 3.5,
+        shape = 21,
+        fill = "black",
+        color = "black"
+    ) +
+    scale_color_manual(
+        values = c("TRUE" = "#1f77b4", "FALSE" = "grey70"),
+        guide = "none"
+    ) +
+    scale_x_log10() +
+    labs(
+        x = "Odds ratio (log scale)",
+        y = NULL,
+        title = "Determinants of ranking outcomes",
+        subtitle = "Ordered logit model with interaction effect"
+    ) +
+    annotate("text", x = Inf, y = Inf, label = "Ordered logit model", hjust = 1.1)
+
+ggplot(plot_data, aes(x = OR, y = term)) +
+    geom_vline(xintercept = 1, linetype = "dashed") +
+    geom_errorbarh(
+        data = subset(plot_data, !grepl("reference", term)),
+        aes(xmin = OR_low, xmax = OR_high, color = significant),
+        height = 0.2
+    ) +
+    geom_point(
+        aes(color = significant),
+        size = 2.5
+    ) +
+    geom_text(
+        data = subset(plot_data, grepl("reference", term)),
+        aes(label = "REFERENCE"),
+        color = "grey50",
+        hjust = -0.1,
+        size = 3
+    ) +
+    scale_x_log10() +
+    theme_minimal()
+
+
+p1 <- ggplot(m0_coeffs, aes(x = OR, y = term)) +
+    geom_vline(xintercept = 1, linetype = "dashed", linewidth = 0.4, color = "grey50") +
+    geom_errorbarh(
+        aes(xmin = OR_low, xmax = OR_high, color = significant),
+        height = 0.2,
+        linewidth = 0.7
+    ) +
+    geom_point(aes(color = significant), size = 2.6) +
+
+    # highlight interaction term
+    geom_point(
+        data = subset(m0_coeffs, grepl("treatment:asylum_applications_z", term)),
+        size = 3.4,
+        shape = 21,
+        fill = "black",
+        color = "black"
+    ) +
+    scale_x_log10() +
+    scale_color_manual(
+        values = c("TRUE" = "#2C7FB8", "FALSE" = "grey70"),
+        guide = "none"
+    ) +
+    labs(
+        title = "Determinants of ranking outcomes",
+        subtitle = "Ordered logit model (odds ratios)",
+        x = "Odds ratio (log scale)",
+        y = NULL
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(size = 10)
+    )
+
+p2 <- ggplot() +
+    theme_void() +
+    annotate(
+        "text",
+        x = 0,
+        y = 1,
+        hjust = 0,
+        vjust = 1,
+        size = 4,
+        label = paste0(
+            "Model specification:\n",
+            "rank ~ alt + treatment + asylum_applications_z + interaction + country FE\n\n",
+            "Reference categories:\n",
+            "- treatment: control group (baseline)\n",
+            "- country: fixed effects included (omitted from plot)\n\n",
+            "Notes:\n",
+            "- Coefficients shown as odds ratios\n",
+            "- 95% confidence intervals\n",
+            "- Interaction term highlighted in black"
+        )
+    ) +
+    xlim(0, 1) +
+    ylim(0, 1)
+
+p2
+
+m0_coeffs %>% 
+    filter(!grepl("country", term)) %>%
+    ggplot(aes(x = OR, y = term)) +
+    geom_vline(
+        xintercept = 1, linetype = "dashed",
+        linewidth = 0.35, color = "grey60"
+    ) +
+
+    # all coefficients (neutral grey)
+    geom_errorbarh(
+        aes(xmin = OR_low, xmax = OR_high),
+        height = 0.15,
+        color = "grey55",
+        linewidth = 0.5
+    ) +
+    geom_point(
+        color = "grey30",
+        size = 1.9
+    ) +
+
+    # interaction highlighted (Nature-style single accent)
+    geom_point(
+        data = subset(m0_coeffs, grepl("treatment:asylum_applications_z", term)),
+        aes(x = OR, y = term),
+        color = "#D55E00",
+        size = 2.6
+    ) +
+    scale_x_log10() +
+    labs(
+        x = "Odds ratio",
+        y = NULL,
+        title = "Determinants of ranking outcomes"
+    ) +
+    theme_classic(base_size = 11) +
+    theme(
+        axis.line.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        plot.title = element_text(face = "bold"),
+        axis.text.y = element_text(size = 9),
+        plot.margin = margin(6, 6, 6, 6)
+    )
+
+# ------ old -------
 
 ds_rank <- ds_asylum_applications %>%
     rename(
@@ -88,7 +325,6 @@ ds_rank <- ds_asylum_applications %>%
             treatment,
             c("No info", "Relative", "Absolute")
         ),
-
         age_z = scale(age)[, 1],
         trust_eu_z = scale(trust_eu)[, 1],
         asylum_applications_z = scale(asylum_applications)[, 1],
@@ -128,8 +364,8 @@ fit <- ds_rank |>
     )
 
 
-p <- tidy(fit) %>% 
-    filter(effect == "fixed", !grepl("Intercept|country", term)) %>% 
+p <- tidy(fit) %>%
+    filter(effect == "fixed", !grepl("Intercept|country", term)) %>%
     replace_terms() %>%
     bind_rows(
         data.frame(
@@ -153,7 +389,7 @@ p <- tidy(fit) %>%
                 "Absolute x asylum applications"
             )
         )
-    ) %>% 
+    ) %>%
     ggplot(
         aes(
             x = estimate,
@@ -166,7 +402,7 @@ p <- tidy(fit) %>%
     ) +
     scale_color_manual(
         values = config$palette
-    ) + 
+    ) +
     geom_vline(
         xintercept = 0, linetype = "dashed", color = "grey60"
     ) +
@@ -176,7 +412,6 @@ p <- tidy(fit) %>%
         y = NULL
     )
 
-#    plot_coef_base(palette = config$palette, title = "Effect")
 
 save_plot(
     here(config$output_figures, "main_coef.pdf"),
@@ -187,19 +422,19 @@ save_plot(
 # ----
 
 ds_grid <- expand_grid(
-        asylum_applications_z = seq(
-            min(ds_rank$asylum_applications_z, na.rm = TRUE),
-            max(ds_rank$asylum_applications_z, na.rm = TRUE),
-            length.out = 50
-        ),
-        treatment = unique(ds_rank$treatment),
-        alt = unique(ds_rank$alt),
-        country = "Germany"
-    )
+    asylum_applications_z = seq(
+        min(ds_rank$asylum_applications_z, na.rm = TRUE),
+        max(ds_rank$asylum_applications_z, na.rm = TRUE),
+        length.out = 50
+    ),
+    treatment = unique(ds_rank$treatment),
+    alt = unique(ds_rank$alt),
+    country = "Germany"
+)
 
 
-p <- predict_model(fit, ds_grid) |> 
-    filter(alt %in% c("No relocation", "Population")) |> 
+p <- predict_model(fit, ds_grid) |>
+    filter(alt %in% c("No relocation", "Population")) |>
     mutate(
         group = treatment,
         alt = replace_values(
@@ -240,10 +475,10 @@ p <- predict_model(fit, ds_grid) |>
         panel.grid.minor = element_blank(),
         panel.spacing = unit(3, "lines"),
     ) +
-    facet_grid(~ alt)
+    facet_grid(~alt)
 
 save_plot(
-    filename = here::here(config$output_figures, "asylum_applications.pdf"), 
+    filename = here::here(config$output_figures, "asylum_applications.pdf"),
     width = 7, height = 4,
     plot = p
 )
@@ -292,13 +527,13 @@ p <- df_ce %>%
     ) +
     scale_x_continuous(breaks = c(-1, 0, 1), labels = \(x) paste(x, "SD")) +
     scale_color_brewer(palette = "Dark2") +
-    scale_fill_brewer(palette = "Dark2") + 
+    scale_fill_brewer(palette = "Dark2") +
     theme(
         panel.spacing = unit(3, "lines"),
     )
 
 save_plot(
-    filename = here::here(config$output_figures, "conditiona_effects.pdf"), 
+    filename = here::here(config$output_figures, "conditiona_effects.pdf"),
     plot = p,
     width = 7 * 1.5,
     height = 3.5 * 1.5
@@ -327,11 +562,11 @@ fit_political <- fit_brm_grouped(
     )
 )
 
-# ---- 
+# ----
 
-p <- fit_political %>% 
-    lapply(tidy) %>% 
-    bind_rows(.id = "political_right") %>% 
+p <- fit_political %>%
+    lapply(tidy) %>%
+    bind_rows(.id = "political_right") %>%
     filter(
         !grepl("Intercept|country", term),
         effect == "fixed"
@@ -346,24 +581,24 @@ p <- fit_political %>%
             shape = political_right,
             color = political_right,
         )
-    ) + 
+    ) +
     geom_vline(
         xintercept = 0
-    )+
+    ) +
     geom_pointrange(
         position = position_dodge(.55)
-    ) + 
+    ) +
     scale_color_manual(
         values = config$palette
-    ) + 
-    facet_grid(grp ~ ., scales = "free", space = "free") + 
+    ) +
+    facet_grid(grp ~ ., scales = "free", space = "free") +
     labs(
         x = "Effect on fairness rankings\n(higher = perceived as less fair)",
         y = NULL
     )
 
 save_plot(
-    filename = here::here(config$output_figures, "political_right.pdf"), 
+    filename = here::here(config$output_figures, "political_right.pdf"),
     plot = p
 )
 
@@ -377,29 +612,29 @@ coef_political <- map_dfr(fit_political, tidy, .id = "group") %>%
 coef_trust <- map_dfr(fit_trust, tidy, .id = "group") %>%
     replace_terms()
 
-# ----- plot coefficients ---- 
+# ----- plot coefficients ----
 
 plot_coef(
     coef_political,
     group_levels = c("Left", "Neutral", "Right"),
     palette = c(
-            "Left"   = "#0072B2",
-            "Center" = "#666666",
-            "Right"  = "#D55E00"
-        )
+        "Left"   = "#0072B2",
+        "Center" = "#666666",
+        "Right"  = "#D55E00"
+    )
 )
 
 
 # ---- predictions grid ----
- 
+
 
 
 ce_political <- predict_models(fit_political, grid, names(fit_political))
 ce_trust <- predict_models(fit_trust, grid, names(fit_trust))
 
 
- 
-# ---- plot predictions 
+
+# ---- plot predictions
 ce_political %>%
     mutate(
         group = factor(

@@ -24,7 +24,6 @@ fit_brm_grouped <- function(data, group_var, formula, file_prefix, cores = 4) {
                 fit_brm(
                     formula = formula,
                     cores = cores,
-                    threads = threading(cores),
                     file = sprintf("%s_%s.rds", file_prefix, g),
                     file_refit = "on_change"
                 )
@@ -33,6 +32,7 @@ fit_brm_grouped <- function(data, group_var, formula, file_prefix, cores = 4) {
             fit
         })
 }
+
 
 
 make_grid <- function(data) {

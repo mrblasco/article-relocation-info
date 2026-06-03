@@ -14,25 +14,29 @@ theme_set(theme_minimal())
 # ----- Data
 ds <- fairMigrate::fairness_survey
 
-# Relocation absolute 
+# Relocation absolute
 abs_df <- data.frame(
-  country = c("Germany", "Spain", "Greece", "Bulgaria", 
-              "France", "Sweden", "Italy", "Poland"),
+  country = c(
+    "Germany", "Spain", "Greece", "Bulgaria",
+    "France", "Sweden", "Italy", "Poland"
+  ),
   no_relocation = c(264000, 66000, 41000, 11000, 103000, 36000, 76000, 6000),
   population = c(143000, 81000, 18000, 11000, 116000, 18000, 100000, 62000),
   gdp = c(185000, 66000, 10000, 4000, 126000, 24000, 93000, 34000)
 )
 
 rel_df <- data.frame(
-  country = c("Germany", "Spain", "Greece", "Bulgaria",
-              "France", "Sweden", "Italy", "Poland"),
+  country = c(
+    "Germany", "Spain", "Greece", "Bulgaria",
+    "France", "Sweden", "Italy", "Poland"
+  ),
   no_relocation = c(313, 138, 397, 178, 151, 344, 128, 16),
   population = c(169, 169, 169, 169, 169, 169, 169, 169),
   gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
 )
 
 # ----- Assignment Balance
-xtabs(~ relocation_treatment, ds)
+xtabs(~relocation_treatment, ds)
 
 # ---- % view a fair share of asylum seekers
 
@@ -53,11 +57,15 @@ ds %>%
   mutate(pc = 100 * n / sum(n), .by = country) %>%
   pivot_wider(
     values_from = c(pc, n), names_from = fair_share_lbl
-  ) %>% 
+  ) %>%
   dplyr::select(country, starts_with("pc")) %>%
-  knitr::kable(caption = fair_share_question, digits = 0, 
-               col.names = c("Country", "Too High", "Fair Share",
-                             "Too Low", "IDK", "PNA"))
+  knitr::kable(
+    caption = fair_share_question, digits = 0,
+    col.names = c(
+      "Country", "Too High", "Fair Share",
+      "Too Low", "IDK", "PNA"
+    )
+  )
 
 # ---- Relocation support
 
@@ -65,21 +73,23 @@ no_relocation_ranking_question <- "What would be a fair way to establish the num
 
 ds %>%
   mutate(
-     no_relocation_ranking = case_when(
+    no_relocation_ranking = case_when(
       grepl("1st", no_relocation_ranking) ~ "1st",
       grepl("2nd", no_relocation_ranking) ~ "2nd",
       grepl("3rd", no_relocation_ranking) ~ "3rd",
       TRUE ~ no_relocation_ranking
-     )
-  ) %>% 
-  count(no_relocation_ranking, country, wt = weight) %>% 
-  mutate(pc = 100 * n / sum(n), .by = country) %>% 
+    )
+  ) %>%
+  count(no_relocation_ranking, country, wt = weight) %>%
+  mutate(pc = 100 * n / sum(n), .by = country) %>%
   pivot_wider(
     values_from = c(pc, n), names_from = no_relocation_ranking
-  ) %>% 
+  ) %>%
   dplyr::select(country, starts_with("pc")) %>%
-  knitr::kable(caption = no_relocation_ranking_question, digits = 0,
-               col.names = c("Country", "First", "Second", "Third"))
+  knitr::kable(
+    caption = no_relocation_ranking_question, digits = 0,
+    col.names = c("Country", "First", "Second", "Third")
+  )
 
 
 
@@ -93,24 +103,30 @@ ds %>%
       grepl("1st", relocation_population_ranking) ~ "Population",
       TRUE ~ no_relocation_ranking
     )
-  ) %>% 
-  count(relocation_treatment, relocation_pref, 
-        country, wt = weight) %>% 
-  mutate(pc = 100 * n / sum(n), .by = c(relocation_treatment, country)) %>% 
-  mutate(
-    relocation_pref = factor(relocation_pref, c("No relocation", 
-                                                "GDP", "Population"))
   ) %>%
-  ggplot(aes(x = pc, y = relocation_treatment, fill = relocation_pref)) + 
-  facet_wrap(~ country) +
+  count(relocation_treatment, relocation_pref,
+    country,
+    wt = weight
+  ) %>%
+  mutate(pc = 100 * n / sum(n), .by = c(relocation_treatment, country)) %>%
+  mutate(
+    relocation_pref = factor(relocation_pref, c(
+      "No relocation",
+      "GDP", "Population"
+    ))
+  ) %>%
+  ggplot(aes(x = pc, y = relocation_treatment, fill = relocation_pref)) +
+  facet_wrap(~country) +
   geom_col() +
   geom_text(aes(label = round(pc)), position = position_stack(.5)) +
   scale_fill_manual(
     name = "Top Ranked",
-    values = c("GDP" = "gray", 
-               "Population" = "whitesmoke", 
-               "No relocation" = "orange")
-  ) + 
+    values = c(
+      "GDP" = "gray",
+      "Population" = "whitesmoke",
+      "No relocation" = "orange"
+    )
+  ) +
   theme(
     axis.title = element_blank(),
   )
@@ -128,20 +144,20 @@ for (j in unique(ds$country)) {
   fit[[j]] <- polr(model, ds_country)
 }
 
-coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>% 
+coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>%
   bind_rows(.id = "country")
 
-p1 <- coef_df %>% 
-  filter(grepl("treat", term)) %>% 
+p1 <- coef_df %>%
+  filter(grepl("treat", term)) %>%
   mutate(term = gsub("relocation_treatment", "", term)) %>%
-  ggplot(aes(x = reorder(country, estimate), y = estimate)) + 
+  ggplot(aes(x = reorder(country, estimate), y = estimate)) +
   geom_linerange(aes(ymin = conf.low, ymax = conf.high)) +
-  geom_point() + 
-  facet_grid(~term) + 
+  geom_point() +
+  facet_grid(~term) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank(),
-  ) + 
+  ) +
   geom_hline(yintercept = 0, color = "brown") +
   labs(
     y = "No relocation (prob. ranked higher)",
@@ -153,7 +169,8 @@ p2 <- rel_df %>%
   ggplot(aes(x = value / 1e3, y = name, fill = name)) +
   geom_col() +
   geom_text(aes(label = sprintf("%1.1f", value)),
-            position = position_stack(.5), size = 3) +
+    position = position_stack(.5), size = 3
+  ) +
   facet_grid(country ~ ., scales = "free") +
   theme(
     axis.title = element_blank(),
@@ -173,20 +190,20 @@ for (j in unique(ds$country)) {
   fit[[j]] <- polr(model, ds_country)
 }
 
-coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>% 
+coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>%
   bind_rows(.id = "country")
 
-p3 <- coef_df %>% 
-  filter(grepl("treat", term)) %>% 
+p3 <- coef_df %>%
+  filter(grepl("treat", term)) %>%
   mutate(term = gsub("relocation_treatment", "", term)) %>%
-  ggplot(aes(x = reorder(country, estimate), y = estimate)) + 
+  ggplot(aes(x = reorder(country, estimate), y = estimate)) +
   geom_linerange(aes(ymin = conf.low, ymax = conf.high)) +
-  geom_point() + 
-  facet_grid(~term) + 
+  geom_point() +
+  facet_grid(~term) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank(),
-  ) + 
+  ) +
   geom_hline(yintercept = 0, color = "brown") +
   labs(
     y = "Population relocation (prob. ranked higher)",
@@ -208,27 +225,27 @@ for (j in unique(ds$country)) {
   fit[[j]] <- polr(model, ds_country)
 }
 
-coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>% 
+coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>%
   bind_rows(.id = "country")
 
-p4 <- coef_df %>% 
-  filter(grepl("treat", term)) %>% 
+p4 <- coef_df %>%
+  filter(grepl("treat", term)) %>%
   mutate(term = gsub("relocation_treatment", "", term)) %>%
-  ggplot(aes(x = reorder(country, estimate), y = estimate)) + 
+  ggplot(aes(x = reorder(country, estimate), y = estimate)) +
   geom_linerange(aes(ymin = conf.low, ymax = conf.high)) +
-  geom_point() + 
-  facet_grid(~term) + 
+  geom_point() +
+  facet_grid(~term) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank(),
-  ) + 
+  ) +
   geom_hline(yintercept = 0, color = "brown") +
   labs(
     y = "Population relocation (prob. ranked higher)",
     caption = "Ordinal Logistic Regression coefficients",
   )
 
-p4 
+p4
 
 
 # ---- by-attitudes
@@ -244,28 +261,29 @@ for (j in unique(ds$country)) {
   }
 }
 
-coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>% 
+coef_df <- lapply(fit, broom::tidy, conf.int = TRUE) %>%
   bind_rows(.id = "country_attitude")
 
-p5 <- coef_df %>% 
-  filter(grepl("treat", term)) %>% 
+p5 <- coef_df %>%
+  filter(grepl("treat", term)) %>%
   mutate(term = gsub("relocation_treatment", "", term)) %>%
   mutate(attitude = gsub(".*([0-9]+.*)", "\\1", country_attitude)) %>%
   mutate(country = gsub("(.*)([0-9]+.*)", "\\1", country_attitude)) %>%
-  ggplot(aes(x = reorder(country, estimate), y = estimate, color = term)) + 
-  geom_linerange(aes(ymin = conf.low, ymax = conf.high), 
-                 position = position_dodge(.5)) +
-  geom_point(position = position_dodge(.5)) + 
+  ggplot(aes(x = reorder(country, estimate), y = estimate, color = term)) +
+  geom_linerange(aes(ymin = conf.low, ymax = conf.high),
+    position = position_dodge(.5)
+  ) +
+  geom_point(position = position_dodge(.5)) +
   facet_grid(~term) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank(),
-  ) + 
+  ) +
   geom_hline(yintercept = 0, color = "brown") +
   labs(
     y = "No relocation (prob. ranked higher)",
     caption = "Ordinal Logistic Regression coefficients",
-  ) + 
-  facet_grid(~ attitude)
+  ) +
+  facet_grid(~attitude)
 
 p5
