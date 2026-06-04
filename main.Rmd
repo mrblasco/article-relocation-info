@@ -1,0 +1,207 @@
+---
+title: >
+    Fairness or Self-Interest? 
+    An Experiment on How Communication Shapes European Perceptions 
+    of Fairness in the EU Asylum Relocation System
+
+date: |
+    This version: `r format(Sys.Date(), '%b %d, %Y')`
+
+author: 
+    - (Alphabetical Order)
+    - Andrea Blasco^[European Commission, Joint Research Centre, Brussels, Belgium]
+    - Bego&ntilde;a Cabeza Mart&iacute;nez^[European Commission, Joint Research Centre, Ispra, Italy]
+    - Rossella Icardi^[European Commission, Joint Research Centre, Ispra, Italy]
+    - Michal Krawczyk^[European Commission, Joint Research Centre, Brussels, Belgium]
+
+abstract: >
+    Despite intense political debate over reforming the EU asylum system, there is little evidence on what drives public support for alternative solutions. Using an experimental survey, we examine Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to the resident populations. By varying the information provided about the consequences of these mechanisms, we explored the extent to which public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider relocation to be the fairest option. However, there are large cross-country differences, with proportional relocation schemes perceived as fair by 58% of respondents in Germany versus 87% in Greece, which suggests a “self-serving” bias --- a tendency to rank as fairer the method that results in fewer asylum seekers for their own country. Moreover, when we communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. By varying how the information is presented, we find a stronger effect when the communication displays *absolute* figures rather than figures *relative* to the population. These findings shed new light on how public perceptions of the fairness of the EU asylum system can be shaped by information.
+
+bibliography: [refs.bib]
+csl: [assets/elsevier-harvard.csl]
+
+papersize: a4
+geometry: margin=1.5cm
+fontsize: 12pt
+linestretch: 1.15
+mainfont: "Times New Roman"
+
+always_allow_html: true
+
+link-citations: true
+colorlinks: true
+citecolor: blue
+
+description: >
+    Research paper
+
+header-includes: |
+    ```{=latex}
+    \usepackage{pdflscape}
+    \usepackage{caption}
+    \captionsetup{margin=10pt,font=small,labelfont=bf}
+    %\usepackage{endfloat}
+    ```
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    error = params$debug,
+    echo = params$debug,
+    message = params$debug,
+    warning = params$debug
+)
+set.seed(params$seed)
+```
+
+```{r setup, include = FALSE}
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(brms)
+library(broom.mixed)
+library(kableExtra)
+library(ggplot2)
+library(ggtext)
+
+source("R/helpers_data.R")
+source("R/helpers_models.R")
+source("R/helpers_plots.R")
+source("R/logger.R")
+source("R/theme.R")
+
+theme_set(theme_nice())
+```
+
+
+```{r}
+# ---- data loading ----
+ds_survey <- read_rds(params$survey_data_path)
+
+tbl_asylum_rel <- data.frame(
+    country = c(
+        "Germany", "Spain", "Greece", "Bulgaria",
+        "France", "Sweden", "Italy", "Poland"
+    ),
+    no_relocation = c(313, 138, 397, 178, 151, 344, 128, 16),
+    population = c(169, 169, 169, 169, 169, 169, 169, 169),
+    gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
+)
+ 
+# ---- data processing ----
+
+ds_long <- ds_survey %>%
+    mutate(respondent_id = seq_len(n())) %>%
+    pivot_longer(
+        cols = c(
+            no_relocation_ranking,
+            relocation_population_ranking,
+            relocation_GDP_ranking
+        ),
+        names_to = "alt",
+        names_pattern = "(.*)_ranking",
+        values_to = "rank",
+    ) %>%
+    select(
+        respondent_id,
+        alt,
+        rank,
+        country,
+        treatment = relocation_treatment
+    ) %>%
+    mutate(
+        rank = as.numeric(gsub("[^0-9]", "", rank)),
+        country = factor(country),
+        treatment = factor(treatment),
+        alt = factor(alt)
+    )
+
+ds_asylum_applications <- tbl_asylum_rel %>%
+    mutate(
+        country_type = case_when(
+            no_relocation > population ~ "Net sender",
+            no_relocation < population ~ "Net receiver",
+            TRUE ~ "Other"
+        )
+    ) %>%
+    pivot_longer(
+        c("population", "gdp", "no_relocation"),
+        names_to = "alt",
+        values_to = "asylum_applications"
+    ) %>%
+    mutate(
+        alt = replace_values(
+            alt,
+            "gdp" ~ "relocation_GDP",
+            "population" ~ "relocation_population",
+        )
+    ) %>%
+    right_join(
+        ds_long,
+        by = c("alt", "country")
+    ) %>%
+    mutate(
+        asylum_applications_z = scale(asylum_applications)[, 1],
+        rank = factor(rank, ordered = TRUE)
+    )
+
+# ----- model ranks ----- 
+
+base_model <- rank ~ alt +
+    country +
+    treatment +
+    asylum_applications_z +
+    treatment:asylum_applications_z
+
+
+m0 <- MASS::polr(
+    formula = base_model,
+    data = ds_asylum_applications
+)
+summary(m0)
+
+m0_coeffs <- tidy(m0, conf.int = FALSE) %>%
+    mutate(
+        conf.low = estimate - 1.96 * std.error,
+        conf.high = estimate + 1.96 * std.error,
+        OR = exp(estimate),
+        OR_low = exp(conf.low),
+        OR_high = exp(conf.high),
+        significant = !(conf.low <= 0 & conf.high >= 0),
+        term = reorder(term, OR)
+    ) %>%
+    glimpse()
+
+ref_terms <- tibble(
+    term = c("treatment (reference)", "country (reference categories)"),
+    OR = 1,
+    OR_low = 1,
+    OR_high = 1,
+    significant = FALSE
+)
+
+m0_coeffs %>% 
+    filter(!grepl("country", term)) %>%
+    ggplot(
+        aes(
+            x = estimate,
+            y = term,
+            xmin = conf.low,
+            xmax = conf.high
+        )
+    ) +
+    geom_pointrange()
+```
+
+
+```{r sections, child = list.files("chapters", full = TRUE, pattern = "0[124].*.Rmd")}
+```
+
+```{r, child = list.files("appendices", full = TRUE, pattern = "*.Rmd"), eval = FALSE}
+``` 
+
+
+# References {-}
+
+::: {#refs}
+:::

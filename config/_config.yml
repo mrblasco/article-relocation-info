@@ -4,6 +4,10 @@ output_models: outputs/models
 seed: 4881
 cores: 4
 
+survey_data_path: data/processed/fair_survey_clean.rds
+
+debug: true
+
 palette: 
   - "#0072B2"
   - "#666666"

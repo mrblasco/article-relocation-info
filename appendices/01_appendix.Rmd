@@ -1,12 +1,14 @@
+\newpage
+
+# (APPENDIX) Appendix {-}
+
 ```{r, include = FALSE}
 tab_dir <- file.path("results", "tables")
 tables <- readRDS(file.path(tab_dir, "descriptives_all_tables.rds"))
 tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
 ```
-\newpage
-\appendix
 
-# Appendix
+# Supporting Materials
 
 \newpage 
 
