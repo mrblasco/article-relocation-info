@@ -1,30 +1,13 @@
 ```{r methods, include = FALSE}
 suppressMessages({
     library(dplyr)
-    library(dplyr)
     library(knitr)
     library(tidyr)
     library(stringr)
     library(kableExtra)
 })
 
-path <- file.path(
-    "data",
-    "processed",
-    "fair_survey_clean.rds"
-)
-
-ds <- readRDS(path)
-message("Loaded data from ", path)
-
-is_html_or_latex <- function() {
-    knitr::is_html_output() || knitr::is_latex_output()
-}
-
-# ----------------------------------------------------
-# Process survey data
-# ----------------------------------------------------
-ds <- ds %>%
+ds <- ds_survey %>%
     dplyr::mutate(
         relocation_treatment = relevel(factor(relocation_treatment), ref = "Control"),
         male = sex == "Male",
@@ -33,19 +16,6 @@ ds <- ds %>%
         educ_low = ISCED == "Low",
         across(where(is.logical), as.numeric)
     )
-
-# ----------------------------------------------------
-# Eurostat averages
-# ----------------------------------------------------
-tbl_asylum_rel <- data.frame(
-    country = c(
-        "Germany", "Spain", "Greece", "Bulgaria",
-        "France", "Sweden", "Italy", "Poland"
-    ),
-    no_relocation = c(313, 138, 397, 178, 151, 344, 128, 16),
-    population = c(169, 169, 169, 169, 169, 169, 169, 169),
-    gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
-)
 ```
 
 # Methods and Data

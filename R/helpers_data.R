@@ -3,7 +3,7 @@ library(dplyr)
 
 read_rds <- function(...) {
     path <- here::here(...)
-    log_info("Loading data ", path)
+    logger::log_info("Loading data {path}")
     base::readRDS(path)
 }
 

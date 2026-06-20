@@ -1,4 +1,4 @@
-```{r, include = FALSE}
+```{r results, include = FALSE}
 library(dplyr)
 library(brms)
 library(broom.mixed)
@@ -6,49 +6,22 @@ library(kableExtra)
 library(ggplot2)
 library(ggtext)
 
-readRDS <- function(...) {
-    base::readRDS(here::here(...))
-}
+# data_dir <- file.path("data", "processed")
 
-knitr::opts_chunk$set(echo = FALSE, error = TRUE)
-
-theme_set(theme_classic(base_size = 11))
-theme_update(
-    axis.ticks.length = unit(-0.2, "cm"),
-)
-
-data_dir <- file.path("data", "processed")
-ds_survey_filename <- file.path(data_dir, "fair_survey_clean.rds")
-ds_long_filename <- file.path(data_dir, "fair_survey_long.rds")
-
-tab_dir <- file.path("results", "tables")
-tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
-tbl_coeffs_hetero_raw <- readRDS(file.path(tab_dir, "rologit_coeffs_hetero.rds"))
-
-ds_survey <- readRDS(ds_survey_filename)
-ds_long <- readRDS(ds_long_filename)
-
-tbl_asylum_rel <- data.frame(
-    country = c(
-        "Germany", "Spain", "Greece", "Bulgaria",
-        "France", "Sweden", "Italy", "Poland"
-    ),
-    no_relocation = c(313, 138, 397, 178, 151, 344, 128, 16),
-    population = c(169, 169, 169, 169, 169, 169, 169, 169),
-    gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
-)
-
+# tab_dir <- file.path("results", "tables")
+# tables_rologit <- readRDS(file.path(tab_dir, "rologit_coeffs.rds"))
+# tbl_coeffs_hetero_raw <- readRDS(file.path(tab_dir, "rologit_coeffs_hetero.rds"))
 
 recode_labels <- function(df) {
     df %>%
         mutate(
-            relocation = replace_values(
-                as.character(relocation),
+            relocation = dplyr::replace_values(
+                as.character(alt),
                 "Relocation: by pop" ~ "Population",
                 "Relocation: by GDP" ~ "GDP"
             ),
-            relocation_treatment = replace_values(
-                relocation_treatment,
+            relocation_treatment = dplyr::replace_values(
+                as.character(treatment),
                 "Info: Absolute" ~ "Absolute",
                 "Info: Relative" ~ "Relative"
             )
@@ -69,133 +42,51 @@ ds_long <- ds_long %>%
     ) %>% 
     recode_labels()
 
-## Process coefficients
-tbl_coeffs_hetero <- tbl_coeffs_hetero_raw %>%
-    dplyr::select(estimate, std.error, condition, group_var, group, term) %>%
-    dplyr::mutate(
-        baseline = condition == "Absolute",
-        estimate = estimate - estimate[baseline],
-        std.error = sqrt(std.error^2 + std.error[baseline]^2),
-        .by = c(group_var, group, term)
-    )
+# tbl_coeffs_hetero <- tbl_coeffs_hetero_raw %>%
+#     dplyr::select(
+#         estimate, std.error, 
+#         condition, group_var, group, term
+#     ) %>%
+#     dplyr::mutate(
+#         baseline = condition == "Absolute",
+#         estimate = estimate - estimate[baseline],
+#         std.error = sqrt(std.error^2 + std.error[baseline]^2),
+#         .by = c(group_var, group, term)
+#     )
+```
+
+```{r, results = "asis"}
+if (params$debug) {
+    cat("\\clearpage")
+}
 ```
 
 # Results
 
 ## Perceived fairness of the relocation systems
 
+Respondents ranked three relocation mechanisms according to perceived fairness. Overall, a large majority of respondents (over 74%) ranked proportional relocation mechanisms as the fairest option. In the no-information group, the GDP-based allocation received the highest share (39%), followed closely by population-based allocation (35%), with only 26% considering no relocation as the fairest option.^[
+    A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options.
+]
 
-Respondents ranked the three relocation mechanisms according to their perceived fairness. Figure \@ref(fig:toprank) displays the top-ranked mechanism by information treatment and by countries’ status as net senders or net receivers. Overall, a clear majority of respondents (more than 74%) ranked proportional relocation mechanisms as the fairest. In the no-information group, the allocation based on GDP received the highest share (39%), followed closely by allocation based on population (35%), with only 26% considering no relocation as the fairest option. A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options.
+Figure \@ref(fig:toprank) displays the share selecting each mechanism as the fairest option, by information treatment and  by whether countries are net senders or net receivers. We observe a substantial variation across information treatments and country groups. 
 
-Figure \@ref(fig:toprank) also reveals substantial variation across information conditions and between net sender and net receiver countries. In the absolute and relative information groups, only 13% and 17% of respondents from net sender countries perceived no relocation as the fairest mechanism, compared with 27% and 24% in the no-information group. By contrast, 34% and 28% of respondents from net receiver countries perceived no relocation as the fairest option. Since the information was randomly assigned, this pattern points to a strong causal effect of information provision, as well as a pronounced divergence between net senders and net receivers, consistent with a self-serving bias.
+Among net sender countries, only 13% and 17% of respondents in the absolute and relative information groups, respectively, selected "no relocation" as the fairest option, compared to 27% in the no-information group. Thus, information provision reduces the share favouring no relocation by about 10 percentage points. 
 
-Analysis of the country-by-country differences (Figure \@ref(fig:toprank-by-country)) shows significant differences across countries, but a consistent pattern: providing information tends to influence support for relocation mechanisms differently for net sender and net receiver countries. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender) the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. These stark differences suggest that country-specific conditions, such as the political climate, refugee situation, and socio-economic differences, play a significant role in shaping public perceptions of fairness.
+By contrast, among the net receiver countries, the corresponding shares are higher (34% and 28% in the absolute and relative condition, respectively), compared to 24% in the control group. Hence, information provision increases perception of fairness for no relocation by about 10 percentage points.
 
-```{r toprank, fig.cap = full_cap, fig.scap = short_cap, fig.width = 7}
-short_cap <- "Fairest asylum-seeker allocation mechanism."
+Since the information condition was randomly assigned, these patterns provide evidence of (1) a causal effect of information provision and (2) heterogeneous effects across country groups, with  effect changes direction across country groups, with directionally opposite responses consistent with self-serving bias.
 
-full_cap <- paste(
-    "Share of respondents selecting the top-ranked relocation",
-    "mechanism across information conditions.",
-    "Countries are classified as net senders (receivers) if",
-    "asylum applications per 100,000 inhabitants are above (below)",
-    "a population-proportional relocation benchmark relative",
-    "to a no-relocation distribution."
-)
+```{r toprank, fig.width = 7, fig.height=5, fig.cap = cap}
+p_top_rank
 
-
-summarise_top_rank <- function(df, group_var) {
-    df %>%
-        count(
-            relocation_treatment,
-            relocation,
-            rank,
-            .data[[group_var]],
-            name = "n"
-        ) %>%
-        group_by(
-            relocation_treatment,
-            rank,
-            .data[[group_var]]
-        ) %>%
-        mutate(percent = 100 * n / sum(n)) %>%
-        ungroup() %>%
-        filter(rank == 1) %>%
-        rename(country_label = all_of(group_var))
-}
-
-ds_plot <- bind_rows(
-    summarise_top_rank(ds_long, "country_label"),
-    summarise_top_rank(ds_long %>% mutate(country_label = "All"), "country_label")
-)
-ds_plot_country <- summarise_top_rank(ds_long, "country")
-
-
-plot_top_rank <- function(data, dodge = 0.8, ...) {
-    data %>%
-        ggplot(
-            aes(
-                x = percent,
-                y = country_label,
-                fill = relocation,
-                label = sprintf("%.0f%%", percent)
-            )
-        ) +
-        facet_grid(
-            relocation ~ relocation_treatment,
-            scales = "free_y",
-            space = "free",
-            switch = "y"
-        ) +
-        geom_col(
-            width = 0.7,
-            position = position_dodge(dodge)
-        ) +
-        geom_text(
-            position = position_dodge(dodge),
-            hjust = 1,
-            show.legend = FALSE,
-            aes(color = relocation)
-        ) +
-        scale_fill_brewer(
-            name = "Info",
-            palette = "Blues",
-        ) +
-        scale_y_discrete(name = NULL) +
-        scale_x_continuous(
-            name = "Respondents (%)",
-            breaks = c(0, 25, 50)
-        ) +
-        scale_color_manual(
-            values = c("black", "black", "white")
-        ) +
-        theme(
-            legend.position = "none",
-            strip.text = element_text(
-                face = "bold",
-                size = 10
-            ),
-            strip.placement = "outside",
-            panel.grid.major.y = element_blank(),
-            panel.grid.minor = element_blank(),
-            axis.text.y = element_text(size = 9),
-            plot.caption = element_text(
-                hjust = 0,
-                size = 9
-            )
-        )
-}
-
-plot_top_rank(ds_plot)
+cap <- "Share of respondents selecting each relocation mechanism as the most fair across information conditions: no information (control), relative information, and absolute information about asylum seekers under each regime. Countries are classified as net senders (receivers) when asylum applications per 100,000 inhabitants exceed (fall below) a population-proportional benchmark relative to a no-relocation distribution (status quo)." # nolint
 ```
 
-```{r toprank-by-country, fig.asp = 1, fig.cap = cap}
-cap <- paste(
-    "Share of respondents selecting the top-ranked relocation",
-    "mechanism across information conditions, by country."
-)
-plot_top_rank(ds_plot_country)
-```
+ Country-by-country analysis (Figure \@ref(fig:toprank-by-cntry) in the Appendix) shows a consistent pattern, with magnitude differences across countries. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender) the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. 
+
+<!-- These stark differences suggest that country-specific conditions, such as the political climate, refugee situation, and socio-economic differences, play a significant role in shaping public perceptions of fairness. -->
+
 
 ## Average Treatment Effects on Fairness Rankings
 
@@ -203,78 +94,14 @@ Figure \@ref(fig:mean-rank) illustrates the expected fairness rankings of each r
 
 In net-receiving countries, including France, Italy, Poland, and Spain, respondents in the no-information condition perceived “no relocation” as the least fair option, with a mean rank of 2.4 out of 3. However, the perceived fairness of “no relocation” increases under both information conditions, with the largest effect observed in the absolute-information condition, where its mean rank improves from 2.4 to 2.1. By contrast, in net sender countries, such as Bulgaria, Germany, Greece, and Sweden, "no relocation" receives higher fairness rankings in the information treatments, increasing from 2.4 in the control to 2.6 in the absolute-information condition, indicating weaker perceived fairness.  Overall, these results show a strong effect of information provision, which confirms our hypotheses that individuals react more when information is presented in absolute than in relative terms.^[
     As a formal test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.
-] 
+]
 
-<!-- This effect is largest in Germany and Sweden (exceeding 0.4 points) and is statistically significant (p < 0.05) in all countries except Bulgaria. By contrast, in net receiving countries, including France, Italy, Poland, and Spain, providing this information lowers the average rank of the no-relocation option, indicating weaker perceived fairness. -->
+```{r mean-rank, fig.height = 4, fig.width = 7, fig.cap = cap}
+p_avg_rank 
 
-<!-- Figure \@ref(fig:mean-rank) also reveals remarkable differences in fairness rankings between the absolute and relative information conditions. In Spain, Poland, and Italy, for example, the difference fairness rankings between absolute information and no information is significantly larger than under relative information. Overall, these results confirm our hypotheses that individuals react more when information is presented in absolute than in relative terms.^[As a formal test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.] -->
-
-```{r m0, include = FALSE}
-library(brms)
-library(broom.mixed)
-
-m0 <- brm(
-    formula = rank ~ relocation * relocation_treatment * country_label,
-    data = ds_long,
-    file = "m0.rds",
-    file_refit = "on_change",
-    cores = 4,
-)
-```
-
-```{r mean-rank, fig.asp = .75, fig.width = 7, fig.cap = cap}
 cap <- paste(
     "Information provision and fairness rankings. Points show the expected fairness rankings (with 95\\% CI) conditional on the assigned information treatment and the country of residence being net sender or net receiver. Lower average ranks indicate higher perceived fairness. Countries are classified as net receivers if expected asylum applications are higher under relocation than under no relocation (based on GDP or population), and as net senders otherwise."
 )
-
-ce <- conditional_effects(
-    m0,
-    effects = "relocation_treatment:relocation",
-    conditions = data.frame(
-        country_label = c("Net receiver", "Net sender")
-    )
-)
-df <- ce[[1]]
-
-p <- ggplot(df, aes(
-    x = factor(relocation_treatment, c("No info", "Relative", "Absolute")),
-    y = estimate__,
-    ymin = lower__,
-    ymax = upper__,
-    group = relocation,
-    color = relocation,
-    shape = relocation
-)) +
-    geom_point(
-        size = 4,
-        position = position_dodge(0.2)
-    ) +
-    geom_errorbar(
-        position = position_dodge(0.2)
-    ) +
-    geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = relocation),
-        alpha = 0.2, color = NA,
-        position = position_dodge(width = 0.2)
-    ) +
-    facet_wrap(~country_label) +
-    theme_classic(base_size = 14) +
-    theme(
-        panel.grid.major = element_line(color = "gray", linewidth = .1),
-        strip.background = element_blank(),
-        strip.text = element_text(face = "bold"),
-        axis.title = element_text(face = "bold"),
-        axis.text = element_text(color = "black"),
-        legend.position = "bottom",
-        legend.title = element_blank()
-    ) +
-    labs(
-        x = "Information treatment",
-        y = "Fairness rank (average)"
-    ) +
-    scale_color_brewer(palette = "Dark2") +
-    scale_fill_brewer(palette = "Dark2")
-
-p
 ```
 
 ## The role of asylum seekers
@@ -468,7 +295,7 @@ m_political_right <- brm(
 )
 ```
 
-```{r}
+```{r m-conditional}
 ce <- conditional_effects(
     m_political_right,
     effects = "treatment:relocation",

@@ -7,6 +7,8 @@ cores: 4
 survey_data_path: data/processed/fair_survey_clean.rds
 
 debug: true
+echo: false
+warning: false
 
 palette: 
   - "#0072B2"

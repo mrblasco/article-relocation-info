@@ -21,9 +21,9 @@ bibliography: [refs.bib]
 csl: [assets/elsevier-harvard.csl]
 
 papersize: a4
-geometry: margin=1.5cm
+geometry: margin=2cm
 fontsize: 12pt
-linestretch: 1.15
+linestretch: 1.5
 mainfont: "Times New Roman"
 
 always_allow_html: true
@@ -47,14 +47,15 @@ header-includes: |
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = params$debug,
-    echo = params$debug,
+    echo = params$echo,
     message = params$debug,
-    warning = params$debug
+    warning = params$warning
 )
 set.seed(params$seed)
 ```
 
 ```{r setup, include = FALSE}
+library(logger)
 library(dplyr)
 library(purrr)
 library(tidyr)
@@ -67,15 +68,33 @@ library(ggtext)
 source("R/helpers_data.R")
 source("R/helpers_models.R")
 source("R/helpers_plots.R")
-source("R/logger.R")
 source("R/theme.R")
 
 theme_set(theme_nice())
 ```
 
 
-```{r}
-# ---- data loading ----
+```{r helpers}
+fit_model <- function(filename, ...) {
+    brms::brm(
+        ...,
+        file = here::here("output", "models", filename),
+        file_refit = "on_change",
+        cores = 4,
+        chains = 4,
+    )
+}
+
+is_html_or_latex <- function() {
+    knitr::is_html_output() || knitr::is_latex_output()
+}
+
+extract_conditional_effects <- function(object, ...) {
+    brms::conditional_effects(object, plot = FALSE, ...)[[1]]
+}
+```
+
+```{r data, include = FALSE}
 ds_survey <- read_rds(params$survey_data_path)
 
 tbl_asylum_rel <- data.frame(
@@ -87,7 +106,7 @@ tbl_asylum_rel <- data.frame(
     population = c(169, 169, 169, 169, 169, 169, 169, 169),
     gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
 )
- 
+
 # ---- data processing ----
 
 ds_long <- ds_survey %>%
@@ -144,60 +163,77 @@ ds_asylum_applications <- tbl_asylum_rel %>%
         asylum_applications_z = scale(asylum_applications)[, 1],
         rank = factor(rank, ordered = TRUE)
     )
-
-# ----- model ranks ----- 
-
-base_model <- rank ~ alt +
-    country +
-    treatment +
-    asylum_applications_z +
-    treatment:asylum_applications_z
+```
 
 
-m0 <- MASS::polr(
-    formula = base_model,
-    data = ds_asylum_applications
+```{r top-rank}
+```
+
+
+
+```{r avg-rank}
+model_avg_rank <- as.numeric(rank) ~ alt * treatment * country_type
+
+fit_avg_rank <- fit_model(
+    formula = model_avg_rank,
+    data = ds_asylum_applications,
+    file = "fit_avg_rank.rds",
+    seed = params$seed,
 )
-summary(m0)
 
-m0_coeffs <- tidy(m0, conf.int = FALSE) %>%
+p_avg_rank <- fit_avg_rank |>
+    extract_conditional_effects(
+        effects = "treatment:alt",
+        conditions = data.frame(
+            country_type = c("Net receiver", "Net sender")
+        )
+    ) |>
     mutate(
-        conf.low = estimate - 1.96 * std.error,
-        conf.high = estimate + 1.96 * std.error,
-        OR = exp(estimate),
-        OR_low = exp(conf.low),
-        OR_high = exp(conf.high),
-        significant = !(conf.low <= 0 & conf.high >= 0),
-        term = reorder(term, OR)
-    ) %>%
-    glimpse()
-
-ref_terms <- tibble(
-    term = c("treatment (reference)", "country (reference categories)"),
-    OR = 1,
-    OR_low = 1,
-    OR_high = 1,
-    significant = FALSE
-)
-
-m0_coeffs %>% 
-    filter(!grepl("country", term)) %>%
+        treatment = factor(
+            treatment,
+            c("Control", "Relative", "Absolute")
+        )
+    ) |>
     ggplot(
         aes(
-            x = estimate,
-            y = term,
-            xmin = conf.low,
-            xmax = conf.high
+            x = treatment,
+            y = estimate__,
+            ymin = lower__,
+            ymax = upper__,
+            group = alt,
+            color = alt,
+            shape = alt,
         )
     ) +
-    geom_pointrange()
+    geom_point(
+        size = 4,
+        position = position_dodge(0.2)
+    ) +
+    geom_errorbar(
+        position = position_dodge(0.2)
+    ) +
+    geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = alt),
+        alpha = 0.2, color = NA,
+        position = position_dodge(width = 0.2)
+    ) +
+    facet_wrap(~country_type) +
+    theme(
+        legend.position = "bottom",
+        legend.title = element_blank()
+    ) +
+    labs(
+        x = "Information treatment",
+        y = "Fairness rank (average)"
+    ) +
+    scale_color_brewer(palette = "Dark2") +
+    scale_fill_brewer(palette = "Dark2")
 ```
 
 
-```{r sections, child = list.files("chapters", full = TRUE, pattern = "0[124].*.Rmd")}
+```{r sections, child = list.files("sections", full = TRUE, pattern = "*.Rmd")}
 ```
 
-```{r, child = list.files("appendices", full = TRUE, pattern = "*.Rmd"), eval = FALSE}
+```{r, child = list.files("appendices", full = TRUE, pattern = "*.Rmd")}
 ``` 
 
 

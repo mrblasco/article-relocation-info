@@ -13,7 +13,7 @@ suppressPackageStartupMessages({
 log_layout(layout_glue_colors)
 log_appender(appender_console)
 log_threshold(INFO)
-
+log_error()
 # ---------------------------
 # Argument parser
 # ---------------------------
@@ -85,7 +85,7 @@ quiet <- tolower(args$quiet) == "true"
 # ---------------------------
 if (!is.null(args$log_file)) {
     log_appender(appender_tee(args$log_file))
-    log_info("📝 Logging to file: {args$log_file}")
+    log_info("Logging to file: {args$log_file}")
 }
 
 # ---------------------------
@@ -148,11 +148,12 @@ tryCatch(
 
 
         log_info("Render completed successfully")
-        log_info("⏱Duration: {round(as.numeric(duration), 2)}s")
+        log_info("Duration: {round(as.numeric(duration), 2)}s")
     },
     error = function(e) {
-        log_error("Render failed: {e$message}")
-        stop(e)
+        log_error("Render failed: {msg}", msg = conditionMessage(e))
+        log_error("Traceback:\n{trace}", trace = paste(capture.output(traceback(2)), collapse = "\n"))
+        rlang::abort(conditionMessage(e), parent = e)
     }
 )
 
