@@ -22,8 +22,11 @@ for all $i$ and $j$ alternatives, with $\alpha_{j}^{\tau}$ and $\beta_{j}^{\tau}
 
 ### Perceived Fairness by Country
 
-```{r toprank-by-cntry, fig.cap = cap, fig.asp = 1.75}
-p_top_rank_by_cntry
+```{r toprank-by-cntry, fig.cap = cap, out.width = "\\textwidth"}
+knitr::include_graphics(
+    here::here("output/figures/top_rank_by_cntry.png"),
+    auto_pdf = TRUE
+)
 
 cap <- "TBA" # nolint
 ```
