@@ -98,9 +98,10 @@ p_top_rank <- fit_top_rank |>
 
 img_path <- "output/figures/top_rank_by_cntry_type.png"
 ggsave(img_path,  dpi = 300)
-ggsave(gsub("png$", "pdf$", img_path))
+ggsave(gsub("png$", "pdf", img_path))
 
-if (interactive()) system(paste("open", out))
+if (interactive()) system(paste("open", img_path))
+
 
 p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
     extract_conditional_effects(
@@ -129,19 +130,23 @@ p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
         xmax = upper__
     )) +
     geom_pointrange() +
-    ggrepel::geom_text_repel(
+    geom_label(
+        border.color = NA,
+        hjust = 1,
+        vjust = 0.5,
         aes(
+            x = Inf,
             label = sprintf(
                 "%2.0f%%",
                 100 * estimate__
             )
         ),
-        direction = "x",
-        vjust = -0.5,
-        size = 4,
+        size = 3.5,
         color = "gray25"
     ) +
     scale_x_continuous(
+        limits = c(0, 1),
+        breaks = c(0, .5, 1),
         labels = scales::percent
     ) +
     scale_color_manual(
@@ -151,7 +156,7 @@ p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
         x = "Respondents (%)",
         y = NULL
     ) +
-    facet_grid(country ~ cats__, switch = "both") +
+    facet_grid(country ~ cats__, switch = "y") +
     theme(
         legend.position = "none",
         panel.grid.major = element_line(
@@ -162,4 +167,8 @@ p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
         strip.placement = "outside"
     )
 
-save_plot("top_rank_by_cntry.png", dpi = 300)
+img_path <- "output/figures/top_rank_by_cntry.png"
+ggsave(img_path,  dpi = 300, height = 10, width = 7)
+ggsave(gsub("png$", "pdf", img_path), height = 10, width = 7)
+
+if (interactive()) system(paste("open", img_path))
