@@ -1,4 +1,4 @@
-CHAPTERS := $(wildcard chapters/*) 
+CHAPTERS := $(wildcard sections/*) 
 APPENDICES := $(wildcard appendices/*)
 CONFIG := config/_config.yml
 OUTPUT := config/_output.yml
