@@ -77,10 +77,13 @@ By contrast, among the net receiver countries, the corresponding shares are high
 
 Since the information condition was randomly assigned, these patterns provide evidence of (1) a causal effect of information provision and (2) heterogeneous effects across country groups, with  effect changes direction across country groups, with directionally opposite responses consistent with self-serving bias.
 
-```{r toprank, fig.width = 7, fig.height=5, fig.cap = cap}
-p_top_rank
+```{r toprank, fig.cap = cap, out.width="\\textwidth"}
+knitr::include_graphics(
+    here::here("output/figures/top_rank_by_cntry_type.png"),
+    auto_pdf = TRUE
+)
 
-cap <- "Share of respondents selecting each relocation mechanism as the most fair across information conditions: no information (control), relative information, and absolute information about asylum seekers under each regime. Countries are classified as net senders (receivers) when asylum applications per 100,000 inhabitants exceed (fall below) a population-proportional benchmark relative to a no-relocation distribution (status quo)." # nolint
+cap <- "Share of respondents selecting each relocation mechanism as the most fair across information conditions: no information (control), relative information, and absolute information about asylum seekers under each regime. Countries are classified as net senders (receivers) when asylum applications per 100,000 inhabitants exceed (fall below) the proportional-by-population relocation relative to a no-relocation benchmark." # nolint
 ```
 
  Country-by-country analysis (Figure \@ref(fig:toprank-by-cntry) in the Appendix) shows a consistent pattern, with magnitude differences across countries. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender) the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy. 

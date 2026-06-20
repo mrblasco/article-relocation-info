@@ -99,7 +99,6 @@ tbl_asylum_rel %>%
     )
 ```
 
-
 Finally, the survey included several modules that asked respondents about their socio-demographics, perceptions of the EU asylum system, support for different migration policies, and other background questions. The full questionnaire is in the Appendix. A descriptive analysis of the responses is presented in the technical report by @blasco2025fairness. In our analysis, we included control variables such as trust or political affiliation, as these are associated with attitudes towards migration [e.g.,@canetti2016threatened;@mitchell2021social]. We also consider various socio-demographic factors, such as income and employment status, gender, age, and the parents' country of birth. Whether the respondent was born abroad may be relevant because foreigners may hold different opinions on migration issues than natives [@berlinschi2019migrants].
 
 ## Data 

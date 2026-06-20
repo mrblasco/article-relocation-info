@@ -3,18 +3,19 @@ suppressMessages({
     library(ggplot2)
 })
 
-# --- load 
+source("R/helpers.R")
+source("R/theme.R")
+
+theme_set(theme_nice())
+
+# --- load data
 filename <- here::here(
     "data", "processed",
     "fairness_survey_long.rds"
 )
 ds_asylum_applications <- readRDS(filename)
-dplyr::glimpse(ds_asylum_applications)
 
 params <- yaml::read_yaml(here::here("config", "_config.yml"))
-
-# ---- helper functions
-source(here::here("R", "helpers.R"))
 
 # ---- analysis
 ds_multinomial <- ds_asylum_applications |>
@@ -59,29 +60,32 @@ p_top_rank <- fit_top_rank |>
         xmax = upper__
     )) +
     geom_pointrange() +
-    ggrepel::geom_text_repel(
+    geom_label(
+        border.color = NA,
+        hjust = 1,
+        vjust = 0.5,
         aes(
+            x = Inf,
             label = sprintf(
                 "%2.0f%%",
                 100 * estimate__
             )
         ),
-        direction = "x",
-        vjust = -0.5,
-        size = 4,
+        size = 3.5,
         color = "gray25"
     ) +
     scale_x_continuous(
+        limits = c(0.1, 0.51),
         labels = scales::percent
     ) +
     scale_color_manual(
         values = params$palette
     ) +
     labs(
-        x = "Respondents (%)",
+        x = "Respondents per country type (%)",
         y = NULL
     ) +
-    facet_grid(cats__ ~ country_type, switch = "both") +
+    facet_grid(cats__ ~ country_type, switch = "y") +
     theme(
         legend.position = "none",
         panel.grid.major = element_line(
@@ -92,7 +96,11 @@ p_top_rank <- fit_top_rank |>
         strip.placement = "outside"
     )
 
-save_plot("top_rank_by_cntry_type.png", dpi = 300)
+img_path <- "output/figures/top_rank_by_cntry_type.png"
+ggsave(img_path,  dpi = 300)
+ggsave(gsub("png$", "pdf$", img_path))
+
+if (interactive()) system(paste("open", out))
 
 p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
     extract_conditional_effects(
