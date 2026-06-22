@@ -7,7 +7,7 @@ suppressMessages({
 ds_survey <- readRDS(
     here::here(
         "data", "processed",
-        "fairness_survey_clean.rds"
+        "fair_survey_clean.rds"
     )
 )
 
@@ -31,6 +31,7 @@ tbl_asylum_rel <- data.frame(
 
 # ---- long format
 ds_long <- ds_survey %>%
+    mutate(respondent_id=row_number())%>%
     tidyr::pivot_longer(
         cols = c(
             no_relocation_ranking,
@@ -41,11 +42,7 @@ ds_long <- ds_survey %>%
         names_pattern = "(.*)_ranking",
         values_to = "rank",
     ) %>%
-    dplyr::select(
-        respondent_id,
-        alt,
-        rank,
-        country,
+    dplyr::rename(
         treatment = relocation_treatment
     ) %>%
     dplyr::mutate(

@@ -41,18 +41,6 @@ ds_long <- ds_long %>%
         )
     ) %>% 
     recode_labels()
-
-# tbl_coeffs_hetero <- tbl_coeffs_hetero_raw %>%
-#     dplyr::select(
-#         estimate, std.error, 
-#         condition, group_var, group, term
-#     ) %>%
-#     dplyr::mutate(
-#         baseline = condition == "Absolute",
-#         estimate = estimate - estimate[baseline],
-#         std.error = sqrt(std.error^2 + std.error[baseline]^2),
-#         .by = c(group_var, group, term)
-#     )
 ```
 
 ```{r, results = "asis"}
@@ -79,7 +67,7 @@ Since the information condition was randomly assigned, these patterns provide ev
 
 ```{r toprank, fig.cap = cap, out.width="\\textwidth"}
 knitr::include_graphics(
-    here::here("output/figures/top_rank_by_cntry_type.png"),
+    here::here("output", "figures", "top_rank_by_cntry_type.png"),
     auto_pdf = TRUE
 )
 
@@ -100,10 +88,10 @@ In net-receiving countries, including France, Italy, Poland, and Spain, responde
 ]
 
 ```{r mean-rank, fig.height = 4, fig.width = 7, fig.cap = cap}
-p_avg_rank 
+p_avg_rank
 
 cap <- paste(
-    "Information provision and fairness rankings. Points show the expected fairness rankings (with 95\\% CI) conditional on the assigned information treatment and the country of residence being net sender or net receiver. Lower average ranks indicate higher perceived fairness. Countries are classified as net receivers if expected asylum applications are higher under relocation than under no relocation (based on GDP or population), and as net senders otherwise."
+    "Information provision and fairness rankings. Points show the expected fairness rankings (with 95\\% CI) conditional on the assigned information treatment and the country of residence being net sender or net receiver. Lower average ranks indicate higher perceived fairness. Countries are classified as net receivers if expected asylum applications are higher under relocation than under no relocation (based on GDP or population), and as net senders otherwise." # nolint
 )
 ```
 
@@ -118,8 +106,6 @@ Both models indicate a significant increase in fairness rankings when moving fro
 The models also consistently exhibit a self-serving bias: perceived fairness of each allocation mechanism decreases as the expected number of asylum applications increases. Specifically, a one-standard-deviation increase in expected applications raises the fairness ranking of the No relocation option by about 0.2 points, indicating that proportional allocation schemes are viewed as less fair when they entail more expected applications. 
 
 However, when we allow the information treatment to vary with the expected number of applications, we find that the effect of asylum applications is almost entirely offset in the No information treatment and is smaller in the Relative information treatment than in the Absolute information treatment. Figure XXX illustrates the implications for expected fairness rankings. A proportional-by-population allocation with a high number of expected applications (250 per 100,000 inhabitants) is ranked significantly more fair under the Absolute information treatment than under No information. In contrast, a No relocation scheme with fewer expected applications (100 per 100,000 inhabitants) is perceived as significantly fairer under Absolute information than under No information.
-
- <!-- were generally ranked as fairer, holding constant the number of asylum seekers (see Figure \@ref(fig:rologit-base) in the Appendix). This is evidenced by the positive and statistically significant intercept interactions for GDP (0.64, p < 0.05) and population (0.57, p < 0.05). In contrast, the negative coefficient for asylum seekers (−0.35, p < 0.05) suggests that schemes allocating higher numbers of asylum seekers were perceived as less fair. These results are consistent with our hypotheses and earlier analyses. -->
 
 ```{r m1}
 ds_m1  <- tbl_asylum_rel %>% 
@@ -423,7 +409,7 @@ However, the strength of these effects varied: the control group showed the larg
 
 ```{r rologit-ate, fig.cap = cap, fig.width = 5, fig.height = 3.5, out.width = "\\textwidth"}
 short_cap <- "TBA"
-cap <- "Estimates and 95% CIs from separate rank-ordered logit regressions on the probability of ranking an alternative relocation scheme as fairer, under each information treatment. $\\beta_{AS}^{\\tau}$ represents the effect of a SD change in expected asylum seekers on the probability of ranking an allocation scheme as fairer, under treatment $\\tau$. $\\alpha_{j}^{\\tau}$ represents the effect of a proportional allocation mechanism $j$ relative to the no relocation alternative (omitted), under treatment $\\tau$. This shows that the effects associated with a change in expected asylum seekers (AS) are stronger under absolute than relative information. A change in AS has a significant effect on fairness rankings even under no information, indicating some awareness of respondents beyond our intervention."
+cap <- "Estimates and 95% CIs from separate rank-ordered logit regressions on the probability of ranking an alternative relocation scheme as fairer, under each information treatment. $\\beta_{AS}^{\\tau}$ represents the effect of a SD change in expected asylum seekers on the probability of ranking an allocation scheme as fairer, under treatment $\\tau$. $\\alpha_{j}^{\\tau}$ represents the effect of a proportional allocation mechanism $j$ relative to the no relocation alternative (omitted), under treatment $\\tau$. This shows that the effects associated with a change in expected asylum seekers (AS) are stronger under absolute than relative information. A change in AS has a significant effect on fairness rankings even under no information, indicating some awareness of respondents beyond our intervention." # nolink
 
 dodge <- 0.5
 
