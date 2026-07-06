@@ -1,0 +1,96 @@
+seed: 4881
+
+paths:
+  raw_data: data/raw/fairness_survey.rds
+  figures: output/figures
+  models: output/models
+  tables: output/tables
+
+brms:
+  cores: 4
+  chains: 4
+  backend: cmdstanr
+  file_refit: on_change
+
+
+palette:
+  net_sender: "#1B9E77"
+  net_receiver: "#D95F02"
+
+alt_palette:
+  no_relocation: "#1B9E77"
+  relocation_population: "#7570B3"
+  relocation_GDP: "#E7298A"
+
+treatment_palette:
+  Control:  "#6E6E6E"
+  Absolute: "#0072B2"
+  Relative: "#D55E00"
+
+treatment_linetype:
+  Control: "solid"
+  Absolute: "longdash"
+  Relative: "dotdash"
+
+alt_labels:
+  relocation_population: "By population"
+  relocation_GDP: "By GDP"
+  no_relocation: "No relocation"
+
+
+asylum_relocation:
+  - country: Germany
+    no_relocation: 313
+    population: 169
+    gdp: 219
+    current_residents: 84000000
+    country_type: Net sender
+
+  - country: Spain
+    no_relocation: 138
+    population: 169
+    gdp: 136
+    current_residents: 49100000
+    country_type: Net receiver
+
+  - country: Greece
+    no_relocation: 397
+    population: 169
+    gdp: 95
+    current_residents: 10400000
+    country_type: Net sender
+
+  - country: Bulgaria
+    no_relocation: 178
+    population: 169
+    gdp: 65
+    current_residents: 6400000
+    country_type: Net sender
+
+  - country: France
+    no_relocation: 151
+    population: 169
+    gdp: 184
+    current_residents: 68900000
+    country_type: Net receiver
+
+  - country: Sweden
+    no_relocation: 344
+    population: 169
+    gdp: 230
+    current_residents: 10600000
+    country_type: Net sender
+
+  - country: Italy
+    no_relocation: 128
+    population: 169
+    gdp: 158
+    current_residents: 58900000
+    country_type: Net receiver
+
+  - country: Poland
+    no_relocation: 16
+    population: 169
+    gdp: 92
+    current_residents: 36500000
+    country_type: Net receiver

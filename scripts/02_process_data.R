@@ -3,13 +3,11 @@ suppressMessages({
     library(tidyr)
 })
 
+source(file.path("R", "helpers.R"))
+
 # --- load
-ds_survey <- readRDS(
-    here::here(
-        "data", "processed",
-        "fair_survey_clean.rds"
-    )
-)
+ds_survey <- file.path("data", "processed", "fair_survey_clean.rds") |>
+    read_rds()
 
 # ---- asylum stats
 tbl_asylum_rel <- data.frame(
@@ -74,13 +72,10 @@ ds_asylum_applications <- tbl_asylum_rel %>%
         rank = factor(rank, ordered = TRUE)
     )
 
-dplyr::glimpse(ds_asylum_applications)
 
-# ---- save 
-filename <- here::here(
-    "data", "processed",
-    "fairness_survey_long.rds"
-)
-saveRDS(ds_asylum_applications, filename)
+# ---- save
 
-logger::log_info("Saved long format {filename}")
+ds_asylum_applications |>
+    save_rds(
+        file.path("data", "processed", "fairness_survey_long.rds")
+    )

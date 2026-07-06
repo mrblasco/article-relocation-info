@@ -1,14 +1,10 @@
-suppressMessages({
-    library(dplyr)
-    library(here)
-})
+# ----- setup
+library(dplyr)
+source(file.path("R", "helpers.R"))
 
-# ---- load 
-ds_raw <- readRDS(
-    here::here(
-        "data", "raw", "fairness_survey.rds"
-    )
-)
+# ---- load
+ds_raw <- file.path("data", "raw", "fairness_survey.rds") |>
+    read_rds()
 
 # ---- clean
 ds_clean <- ds_raw %>%
@@ -34,7 +30,7 @@ ds_clean <- ds_raw %>%
 
         ## Order factor levels
         dplyr::across(
-            starts_with("support_"),
+            dplyr::starts_with("support_"),
             ~ factor(., c("Strongly oppose", "Oppose", "Neutral", "Support", "Strongly support"))
         ),
 
@@ -51,13 +47,6 @@ ds_clean <- ds_raw %>%
         )
     )
 
-# ---- save 
-filename <- here::here(
-    "data", "processed", 
-    "fairness_survey_clean.rds"
-)
-saveRDS(
-    ds_clean,
-    filename
-)
-logger::log_info("Cleaned data {filename}")
+# ---- save
+ds_clean %>%
+    save_rds(file.path("data", "processed", "fairness_survey_clean.rds"))

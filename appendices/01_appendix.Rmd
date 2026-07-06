@@ -1,11 +1,4 @@
-\newpage
-\renewcommand\thefigure{\thesection.\arabic{figure}}    
-
-# (APPENDIX) Appendix {-}
-
 # Supporting Materials
-
-\newpage
 
 ## Regression model for the fairness rankings
 
@@ -15,10 +8,37 @@ We used a rank-ordered logit model [e.g., @hausman1987specifying] to estimate th
 \]
 for all $i$ and $j$ alternatives, with $\alpha_{j}^{\tau}$ and $\beta_{j}^{\tau}$ set to zero for an arbitrary alternative and an arbitrary treatment condition $\tau$. We selected the no-relocation scheme as the reference alternative, and the reference treatment group is the absolute-information group, so the model yields estimates of differences between control vs absolute and absolute vs relative information.
 
+\clearpage 
 
-\clearpage
+## Additional Tables and Figures 
 
-## Additional figures 
+### Random assignment by country
+
+```{r random-assignment}
+tab <- readRDS("../output/tables/table_country_treatment.rds")
+as.data.frame.matrix(addmargins(tab, FUN = list(All = sum), quiet = TRUE)) |>
+    kableExtra::kbl(
+        caption = "Respondents by Treatment Assignment, per Country",
+        booktabs = TRUE,
+        format.args = list(big.mark = ","),
+        linesep = c(rep("", nrow(tab) - 1), "\\addlinespace")
+    ) |>
+    kableExtra::kable_classic(full_width = TRUE)
+```
+
+\clearpage 
+
+## Top Ranked Relocation Mechanisms by Perceived Fairness
+
+```{r relocation-weighted, fig.cap = cap, out.width="\\textwidth"}
+cap <- "Distribution of top-ranked asylum relocation mechanisms by perceived fairness in weighted and unweighted samples. Weights are based on Eurostat population demographics (2025)." # nolint
+knitr::include_graphics(
+    here::here("output/figures/asylum-relocation-weighted-vs-unweighted.png"),
+    auto_pdf = TRUE
+)
+```
+
+\clearpage 
 
 ### Perceived Fairness by Country
 
@@ -28,5 +48,27 @@ knitr::include_graphics(
     auto_pdf = TRUE
 )
 
-cap <- "TBA" # nolint
+cap <- "Perceived fairness (average rank) by country and information condition" # nolint
+```
+
+
+### Anova Table for Heterogenous Treatment Effects 
+
+```{r anova}
+tab <- readRDS(
+    here::here(
+        "output", "tables", "anova_table.rds"
+    )
+)
+tab |>
+    dplyr::select(-`Interaction added`, -`Base model`) |>
+    kableExtra::kbl(
+        booktabs = TRUE,
+        caption = "ANOVA: Models with vs. without treatment × moderator interactions"
+    ) |>
+    kableExtra::kable_classic() |>
+    kableExtra::footnote(
+        "ΔDf = diff. deg. of freedom; F = statistic; p = p-value; ΔR² = diff. R2",
+        "Base model: rank ~ alt * treatment * country_type + {moderator}",
+    )
 ```

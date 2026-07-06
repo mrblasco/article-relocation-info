@@ -20,6 +20,12 @@ abstract: >
 bibliography: [refs.bib]
 csl: [assets/elsevier-harvard.csl]
 
+params:
+    quiet: yes
+    debug: yes
+    seed: 4881
+    survey_data_path: data/processed/fair_survey_clean.rds
+
 papersize: a4
 geometry: margin=2cm
 fontsize: 12pt
@@ -40,16 +46,16 @@ header-includes: |
     \usepackage{pdflscape}
     \usepackage{caption}
     \captionsetup{margin=10pt,font=small,labelfont=bf}
-    %\usepackage{endfloat}
+    \usepackage[nolists]{endfloat}
     ```
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     error = params$debug,
-    echo = params$echo,
-    message = params$debug,
-    warning = params$warning
+    echo = !params$quiet,
+    message = !params$quiet,
+    warning = !params$quiet
 )
 set.seed(params$seed)
 ```
@@ -57,181 +63,25 @@ set.seed(params$seed)
 ```{r setup, include = FALSE}
 library(logger)
 library(dplyr)
-library(purrr)
-library(tidyr)
-library(brms)
-library(broom.mixed)
 library(kableExtra)
-library(ggplot2)
-library(ggtext)
-
-source("R/helpers_data.R")
-source("R/helpers_models.R")
-source("R/helpers_plots.R")
-source("R/theme.R")
-
-theme_set(theme_nice())
-```
-
-
-```{r helpers}
-fit_model <- function(filename, ...) {
-    brms::brm(
-        ...,
-        file = here::here("output", "models", filename),
-        file_refit = "on_change",
-        cores = 4,
-        chains = 4,
-    )
-}
 
 is_html_or_latex <- function() {
     knitr::is_html_output() || knitr::is_latex_output()
 }
-
-extract_conditional_effects <- function(object, ...) {
-    brms::conditional_effects(object, plot = FALSE, ...)[[1]]
-}
 ```
-
-```{r data, include = FALSE}
-ds_survey <- read_rds(params$survey_data_path)
-
-tbl_asylum_rel <- data.frame(
-    country = c(
-        "Germany", "Spain", "Greece", "Bulgaria",
-        "France", "Sweden", "Italy", "Poland"
-    ),
-    no_relocation = c(313, 138, 397, 178, 151, 344, 128, 16),
-    population = c(169, 169, 169, 169, 169, 169, 169, 169),
-    gdp = c(219, 136, 95, 65, 184, 230, 158, 92)
-)
-
-# ---- data processing ----
-
-ds_long <- ds_survey %>%
-    mutate(respondent_id = seq_len(n())) %>%
-    pivot_longer(
-        cols = c(
-            no_relocation_ranking,
-            relocation_population_ranking,
-            relocation_GDP_ranking
-        ),
-        names_to = "alt",
-        names_pattern = "(.*)_ranking",
-        values_to = "rank",
-    ) %>%
-    select(
-        respondent_id,
-        alt,
-        rank,
-        country,
-        treatment = relocation_treatment
-    ) %>%
-    mutate(
-        rank = as.numeric(gsub("[^0-9]", "", rank)),
-        country = factor(country),
-        treatment = factor(treatment),
-        alt = factor(alt)
-    )
-
-ds_asylum_applications <- tbl_asylum_rel %>%
-    mutate(
-        country_type = case_when(
-            no_relocation > population ~ "Net sender",
-            no_relocation < population ~ "Net receiver",
-            TRUE ~ "Other"
-        )
-    ) %>%
-    pivot_longer(
-        c("population", "gdp", "no_relocation"),
-        names_to = "alt",
-        values_to = "asylum_applications"
-    ) %>%
-    mutate(
-        alt = replace_values(
-            alt,
-            "gdp" ~ "relocation_GDP",
-            "population" ~ "relocation_population",
-        )
-    ) %>%
-    right_join(
-        ds_long,
-        by = c("alt", "country")
-    ) %>%
-    mutate(
-        asylum_applications_z = scale(asylum_applications)[, 1],
-        rank = factor(rank, ordered = TRUE)
-    )
-```
-
-
-```{r top-rank}
-```
-
-
-
-```{r avg-rank}
-model_avg_rank <- as.numeric(rank) ~ alt * treatment * country_type
-
-fit_avg_rank <- fit_model(
-    formula = model_avg_rank,
-    data = ds_asylum_applications,
-    file = "fit_avg_rank.rds",
-    seed = params$seed,
-)
-
-p_avg_rank <- fit_avg_rank |>
-    extract_conditional_effects(
-        effects = "treatment:alt",
-        conditions = data.frame(
-            country_type = c("Net receiver", "Net sender")
-        )
-    ) |>
-    mutate(
-        treatment = factor(
-            treatment,
-            c("Control", "Relative", "Absolute")
-        )
-    ) |>
-    ggplot(
-        aes(
-            x = treatment,
-            y = estimate__,
-            ymin = lower__,
-            ymax = upper__,
-            group = alt,
-            color = alt,
-            shape = alt,
-        )
-    ) +
-    geom_point(
-        size = 4,
-        position = position_dodge(0.2)
-    ) +
-    geom_errorbar(
-        position = position_dodge(0.2)
-    ) +
-    geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = alt),
-        alpha = 0.2, color = NA,
-        position = position_dodge(width = 0.2)
-    ) +
-    facet_wrap(~country_type) +
-    theme(
-        legend.position = "bottom",
-        legend.title = element_blank()
-    ) +
-    labs(
-        x = "Information treatment",
-        y = "Fairness rank (average)"
-    ) +
-    scale_color_brewer(palette = "Dark2") +
-    scale_fill_brewer(palette = "Dark2")
-```
-
 
 ```{r sections, child = list.files("sections", full = TRUE, pattern = "*.Rmd")}
 ```
+
+
+# (APPENDIX) Appendix {-}
+
+\newpage
+\processdelayedfloats
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\renewcommand\thefigure{\thesection.\arabic{figure}}    
+\renewcommand\thetable{\thesection.\arabic{figure}}    
 
 ```{r, child = list.files("appendices", full = TRUE, pattern = "*.Rmd")}
 ``` 

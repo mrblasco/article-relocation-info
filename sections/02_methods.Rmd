@@ -6,21 +6,11 @@ suppressMessages({
     library(stringr)
     library(kableExtra)
 })
-
-ds <- ds_survey %>%
-    dplyr::mutate(
-        relocation_treatment = relevel(factor(relocation_treatment), ref = "Control"),
-        male = sex == "Male",
-        educ_high = ISCED == "High",
-        educ_mid = ISCED == "Mid",
-        educ_low = ISCED == "Low",
-        across(where(is.logical), as.numeric)
-    )
 ```
 
 # Methods and Data
 
-## The survey 
+## The survey
 
 A sample representative of the adult population aged 18 years and over in eight EU countries (Bulgaria, France, Germany, Greece, Italy, Poland, Spain and Sweden) was drawn from Ipsos online panel by means of stratified random probability sampling. The selected countries were chosen to ensure a balanced representation of the European Union's diversity, with particular attention to coverage across macro-regions (Northern, Southern, Eastern, and Western Europe). The selection also reflects variation in key structural characteristics, including economic conditions (GDP per capita), population size, and the share of foreign-born residents.
 
@@ -51,26 +41,8 @@ A few observations can be made. First, historical asylum application rates vary 
 Third, proportional allocation rules would generate pronounced cross-country differences depending on the rule being based on population or GDP. For instance, under a GDP-proportional allocation system, Poland would still be a net receiver, but the additional inflow would be considerably smaller, decreasing from 153 applications per 100,000 inhabitants under a population-based system to 76 per 100,000 under a GDP-based system.
 
 ```{r relocation, eval = is_html_or_latex()}
-tbl_asylum_rel %>%
-    dplyr::mutate(
-        country = factor(
-            country,
-            levels = country[order(no_relocation, decreasing = TRUE)]
-        ),
-        d_pop = population - no_relocation,
-        d_gdp = gdp - no_relocation
-    ) %>%
-    dplyr::arrange(
-        dplyr::desc(no_relocation)
-    ) %>%
-    dplyr::transmute(
-        Country = country,
-        "No relocation" = no_relocation,
-        "By population" = population,
-        "By GDP" = gdp,
-        `Δ Population` = d_pop,
-        `Δ GDP` = d_gdp
-    ) %>%
+tab <- readRDS("../output/tables/table_asylum_relocation.rds")
+tab |>
     kableExtra::kbl(
         caption = paste(
             "Expected asylum applications under alternative",
@@ -80,18 +52,18 @@ tbl_asylum_rel %>%
         linesep = "",
         align = c("l", rep("r", 5)),
         escape = FALSE
-    ) %>%
+    ) |>
     kableExtra::kable_styling(
         latex_options = c("hold_position"),
         full_width = FALSE,
         position = "center",
         font_size = 10
-    ) %>%
-    kableExtra::row_spec(0, bold = TRUE) %>%
+    ) |>
+    kableExtra::row_spec(0, bold = TRUE) |>
     kableExtra::add_header_above(
         c(" " = 1, "Levels" = 3, "Differences vs. no relocation" = 2),
         bold = TRUE
-    ) %>%
+    ) |>
     kableExtra::footnote(
         general = "Entries report expected asylum applications per 100,000 inhabitants.",
         threeparttable = TRUE,
@@ -103,151 +75,43 @@ Finally, the survey included several modules that asked respondents about their 
 
 ## Data 
 
-Table \@ref(tab:assignment-summary) in the Appendix illustrates the random assignment to the three information conditions in each country and overall. Each treatment group has about one third of total respondents per country, reflecting the stratified randomisation design.
+Table \@ref(tab:random-assignment) shows that, within each country, the sample is split evenly across treatment groups, as expected under the stratified randomisation design.
 
-Table \@ref(tab:summary) illustrates the distribution of key pre-treatment characteristics, including sex, age, education, trust, and perceptions across the three treatment groups. On average, respondents were 50 years old (with 16 years SD), with about half (47%) identifying as male. For simplicity of exposition and comparability across countries, education was merged into three broad categories: high (ISCED 5-8; 32% of respondents), medium (ISCED 3-4; 48%), and low (ISCED 0-2; 19%). On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
+Table \@ref(tab:summary) presents summary statistics and assesses covariate balance across the treatment groups for key pre-treatment characteristics, including sex, age, education, political opinions, and perceptions of the asylum system. On average, respondents were approximately 50 years old (with 16 years SD), with about half (47%) identifying as male. The sample was skewed toward more highly educated individuals, with approximately 40% of respondents reporting high educational attainment (ISCED 5–8), around 50% medium attainment (ISCED 3–4), and only 10% low attainment (ISCED 0–2). On measures of trust, respondents reported moderate levels of general trust in others (M = 4.5, SD = 2.7), trust in the EU (M = 4.3, SD = 2.7), and trust in government (M = 3.7, SD = 2.9). 
 
-Knowledge of the EU asylum system averaged 2.0 (SD = 0.7) on a 1-4 scale, thus the majority expresses no or basic knowledge. Most respondents reported there were "too many" asylum seekers in their country, with a mean of 2.6 on 1-3 scale from 1 = too few and 3 = too many. Similarly, on average, respondents view an unbalanced distribution of asylum seekers in the EU, reporting an average score of 3.1 (SD = 2.4) on 0-10 scale for the question about evenness across the EU. Yet, respondents reported broad consensus on the support on the importance of burden sharing among countries, providing equal rights, equal treatment, and having an equal distribution of asylum seekers relatively high, with means ranging from 6.9 to 7.4 on 0-10 scales. 
+Respondents reported, on average, a basic knowledge of the EU asylum system, with a mean score of 2.0 (SD = 0.7) on a 1-4 scale (1 = no knowledge, 4 = expert knowledge). Most respondents perceived that there were "too many" asylum seekers in their country, with a mean of 2.6 on 1-3 scale (1 = too few and 3 = too many). Similarly, respondents generally viewed the distribution of asylum seekers across the EU as uneven, reporting an average score of 3.1 (SD = 2.4) on 0-10 scale measuring perceived evenness across the EU. Despite these perceptions, respondents expressed a broad support for burden sharing among countries, as well as for ensuring equal rights, equal treatment, and having an equal distribution of asylum seekers, with means ranging from 6.9 to 7.4 on 0-10 scales. 
 
-Table \@ref(tab:summary) also reports mean differences between the control group and the other treatment groups, with the standardised difference in parenthesis (the difference divided by the pooled standard deviation). For all these variables, the standardised differences between control and other groups is small, suggesting the distributions overlap well across treatment groups.^[
-    These differences were estimated using OLS controlling for country fixed effets, thus accounting for the stratified randomisation.
-]
+We find no evidence of imbalance in the sample across the treatment groups. As shown in Table \@ref(tab:summary), the maximum standardised mean difference across groups was below 0.1 for all variables, indicating good covariate balance, as values greater than 0.1 are generally considered as evidence of imbalance.
 
-```{r summary, eval = is_html_or_latex()}
-# -----
-# 1. Compute SMD
-# -----
-result <- lapply(names(ds), function(x) {
-    column <- ds[[x]]
-
-    if (!is.numeric(column) || all(is.na(column))) {
-        return(NULL)
-    }
-
-    formula <- reformulate(c("relocation_treatment", "country"), x)
-    fit <- lm(formula, data = ds, contrasts = list(country = "contr.sum"))
-
-    ## compute pooled SD
-    group_sds <- tapply(column, ds$relocation_treatment, sd, na.rm = TRUE)
-
-    broom::tidy(fit) |>
-        dplyr::mutate(
-            pooled_sd = sqrt(sum(group_sds^2) / length(group_sds)),
-            smd = estimate / pooled_sd,
-            variable = x
-        )
-})
-
-result <- dplyr::bind_rows(result)
-
-# -----
-# 2. Build table
-# -----
-tbl_covariates <- result %>%
-    filter(
-        str_detect(term, "relocation_treatment"),
-        !str_detect(variable, "weight|restart_count|^t[DQ]|^tIn"),
-    ) %>%
-    mutate(
-        stat = sprintf("%.2f [%.2f]", estimate, smd)
-    ) %>%
-    select(variable, term, stat) %>%
-    pivot_wider(names_from = term, values_from = stat) %>%
-    mutate(
-        variable = recode(variable,
-            age = "Age (years)",
-            male = "Male (%)",
-            educ_high = "High education (%)",
-            educ_mid = "Mid education (%)",
-            educ_low = "Low education (%)",
-            trust = "Trust others (0-10)",
-            trust_eu = "Trust in EU (0-10)",
-            trust_gov = "Trust in government (0-10)",
-            political_right = "Political right (0-10)",
-            share_legal_migrants = "Share legal migrants",
-            asylum_knowledge = "Knowledge of asylum system (1-4)",
-            asylum_fraud_detected = "Fraud detection ability (0-10)",
-            asylum_decisions_objective = "Asylum decisions are objective (0-10)",
-            asylum_distr_even = "Asylums in EU are even (0-10)",
-            fair_share =  "Asylums in own country (1 = too few, 3 = too many)",
-            burden_sharing_important = "Importance of burden sharing (0-10)",
-            equal_distribution_important = "Importance of equal distribution (0-10)",
-            equal_treatment_important =  "Importance of equal treatment (0-10)",
-            equal_rights_important = "Importance of equal rights (0-10)",
-            quick_processing_important = "Importance of quick process (0-10)",
-            Duration = "Completion time (mins)",
-            number_accepted_refugees = "Accepted refugees in own country",
-            .default = variable
-        ),
-        group = case_when(
-            variable %in% c(
-                "Age (years)", "Male (%)",
-                "High education (%)", "Mid education (%)", "Low education (%)"
-            ) ~ "Sociodemographics",
-            variable %in% c(
-                "Trust others (0-10)", "Trust in EU (0-10)",
-                "Trust in government (0-10)", "Political right (0-10)"
-            ) ~ "Political attitudes",
-            variable %in% c(
-                "Knowledge of asylum system (1-4)",
-                "Fraud detection ability (0-10)"
-            ) ~ "Knowledge",
-            variable %in% "Completion time (mins)" ~ "Survey administration",
-            TRUE ~ "Other"
-        )
-    ) %>%
-    arrange(desc(group)) %>% 
-    mutate(
-        variable = str_replace(variable, "Importance of", "Value of"),
-    ) 
-
-groups <- unique(tbl_covariates$group)
-
-tbl_covariates %>%
-    mutate(variable = gsub("_", " ", variable)) %>%
-    select(
-        Variable = variable,
-        `Relative treatment` = contains("Relative"),
-        `Absolute treatment` = contains("Absolute")
-    ) %>% 
+```{r summary}
+tab <- readRDS("../output/tables/covariate_balance.rds")
+tab |>
+    dplyr::select(
+        variable,
+        max_smd,
+        estimate_Absolute,
+        SD_Absolute,
+        estimate_Control,
+        SD_Control,
+        estimate_Relative,
+        SD_Relative,
+    ) |>
     kableExtra::kbl(
+        col.names = c("Variable", "SMD", rep(c("Mean", "SD"), 3)),
         booktabs = TRUE,
-        align = c("l", "c", "c"),
-        escape = TRUE,
-        caption = paste(
-            "Covariate balance across treatment arms.",
-            "Mean differences with respect to the control group."
-        )
-    ) %>%
-    kableExtra::kable_styling(
+        digits = 1,
+        caption = "Summary statistics and covariate balance across treatments."
+    ) |>
+    kableExtra::kable_classic(
         full_width = FALSE, 
         position = "center"
-    ) %>%
-    kableExtra::pack_rows(groups[1],
-        start_row = 1,
-        end_row = sum(tbl_covariates$group %in% groups[1])
-    ) %>%
-    kableExtra::pack_rows(groups[2],
-        start_row = sum(tbl_covariates$group %in% groups[1]) + 1,
-        end_row = sum(tbl_covariates$group %in% groups[1:2])
-    ) %>%
-    kableExtra::pack_rows(groups[3],
-        start_row = sum(tbl_covariates$group %in% groups[1:2]) + 1,
-        end_row = sum(tbl_covariates$group %in% groups[1:3])
-    ) %>% 
-    kableExtra::pack_rows(groups[4],
-        start_row = sum(tbl_covariates$group %in% groups[1:3]) + 1,
-        end_row = nrow(tbl_covariates)
-    ) %>% 
-    kableExtra::footnote(
-        general = paste(
-            "Entries report OLS coefficients from regressions", 
-            "of each covariate on treatment indicators and country fixed effects.",
-            "Standardized mean differences (SMDs) are reported in brackets."
-        ),
-        threeparttable = TRUE,
-        general_title = "Note:"
+    ) |>
+    kableExtra::row_spec(0, bold = TRUE) |>
+    kableExtra::add_header_above(
+        c(" " = 2, Absolute = 2, Control = 2, Relative = 2),
+        bold = TRUE
+    ) |>
+    footnote(
+        "SMD = standardized mean difference (max across groups); SD = standard deviation."
     )
 ```
-
-<!-- As reported in Table 3, formal tests for covariate balance within each country confirm that baseline characteristics are comparable across groups, with p values from separate tests above conventional thresholds (p > 0.05 ). We observed some imbalance across treatment groups. In the sex distribution, for example, we observe relatively more women in the "No Info" group in Poland (61%) and more men in the ‘Relative info’ group in Greece (59%), which we will account for in the analysis. Overall, however, the randomisation was generally successful. -->

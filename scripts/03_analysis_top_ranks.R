@@ -3,19 +3,16 @@ suppressMessages({
     library(ggplot2)
 })
 
-source("R/helpers.R")
-source("R/theme.R")
+params <- yaml::read_yaml(file.path("config", "_config.yml"))
+
+source(file.path("R", "helpers.R"))
+source(file.path("R", "theme.R"))
 
 theme_set(theme_nice())
 
 # --- load data
-filename <- here::here(
-    "data", "processed",
-    "fairness_survey_long.rds"
-)
-ds_asylum_applications <- readRDS(filename)
-
-params <- yaml::read_yaml(here::here("config", "_config.yml"))
+ds_asylum_applications <- file.path("data", "processed", "fairness_survey_long.rds") |>
+    read_rds()
 
 # ---- analysis
 ds_multinomial <- ds_asylum_applications |>
@@ -34,7 +31,7 @@ fit_top_rank_by_cntry <- fit_model(
 )
 
 # ---- plots
-p_top_rank <- fit_top_rank |>
+p <- fit_top_rank |>
     extract_conditional_effects(
         categorical = TRUE,
         conditions = expand.grid(
@@ -96,14 +93,11 @@ p_top_rank <- fit_top_rank |>
         strip.placement = "outside"
     )
 
-img_path <- "output/figures/top_rank_by_cntry_type.png"
-ggsave(img_path,  dpi = 300)
-ggsave(gsub("png$", "pdf", img_path))
-
-if (interactive()) system(paste("open", img_path))
+file.path("output", "figures", "top_rank_by_cntry_type.png") |>
+    save_plot(height = 5, width = 7)
 
 
-p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
+p <- fit_top_rank_by_cntry |>
     extract_conditional_effects(
         categorical = TRUE,
         plot = FALSE,
@@ -167,8 +161,5 @@ p_top_rank_by_cntry <- fit_top_rank_by_cntry |>
         strip.placement = "outside"
     )
 
-img_path <- "output/figures/top_rank_by_cntry.png"
-ggsave(img_path,  dpi = 300, height = 10, width = 7)
-ggsave(gsub("png$", "pdf", img_path), height = 10, width = 7)
-
-if (interactive()) system(paste("open", img_path))
+file.path("output", "figures", "top_rank_by_cntry.png") |>
+    save_plot(height = 10, width = 7)

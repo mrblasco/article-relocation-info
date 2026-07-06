@@ -1,11 +1,16 @@
 library(here)
 library(dplyr)
 
-read_rds <- function(...) {
-    path <- here::here(...)
-    logger::log_info("Loading data {path}")
+read_rds <- function(path) {
+    logger::log_info("Loading data from {path}")
     base::readRDS(path)
 }
+
+save_rds <- function(data, path) {
+    logger::log_info("Saving data to {path}")
+    base::saveRDS(data, path)
+}
+
 
 recode_labels <- function(df) {
     df |>

@@ -5,16 +5,11 @@ suppressMessages({
     library(broom.mixed)
 })
 
-# --- load
-filename <- here::here(
-    "data", "processed",
-    "fairness_survey_long.rds"
-)
-ds_asylum_applications <- readRDS(filename)
-dplyr::glimpse(ds_asylum_applications)
+source(file.path("R", "helpers.R"))
 
-# ---- helpers
-source(here::here("R", "helpers.R"))
+# --- load
+ds_asylum_applications <- file.path("data", "processed", "fairness_survey_long.rds") |>
+    read_rds()
 
 # ---- analysis
 model_avg_rank <- as.numeric(rank) ~ alt * treatment * country_type
@@ -171,7 +166,7 @@ ds_asylum_applications |>
 ds_asylum_applications |>
     group_by(asylum_applications, alt) |>
     reframe(
-        tidy(lm(as.numeric(rank) ~  treatment), conf.int = T)
+        tidy(lm(as.numeric(rank) ~ treatment), conf.int = T)
     ) |>
     filter(
         grepl("treat", term)
@@ -185,9 +180,9 @@ ds_asylum_applications |>
             color = alt,
             shape = alt
         )
-    ) + 
+    ) +
     facet_wrap(~term) +
-    geom_hline(yintercept = 0, linetype = "dashed") + 
+    geom_hline(yintercept = 0, linetype = "dashed") +
     geom_pointrange(
         size = 1
     )
@@ -226,18 +221,18 @@ newdata_abs$treatment <- "Absolute"
 newdata_rel <- newdata_control
 newdata_rel$treatment <- "Relative"
 
-# - predictions 
+# - predictions
 p_control <- posterior_epred(fit1, newdata = newdata_control, re.form = ~0)
-p_abs <- posterior_epred(fit1, newdata = newdata_abs, re.form=~0)
-p_rel <- posterior_epred(fit1, newdata = newdata_rel, re.form=~0)
+p_abs <- posterior_epred(fit1, newdata = newdata_abs, re.form = ~0)
+p_rel <- posterior_epred(fit1, newdata = newdata_rel, re.form = ~0)
 
-p2_control <- posterior_epred(fit2, newdata = newdata_control, re.form=~0)
-p2_abs <- posterior_epred(fit2, newdata = newdata_abs, re.form=~0)
-p2_rel <- posterior_epred(fit2, newdata = newdata_rel, re.form=~0)
+p2_control <- posterior_epred(fit2, newdata = newdata_control, re.form = ~0)
+p2_abs <- posterior_epred(fit2, newdata = newdata_abs, re.form = ~0)
+p2_rel <- posterior_epred(fit2, newdata = newdata_rel, re.form = ~0)
 
 p3_control <- 1 - p_control - p2_control
-p3_abs <- 1 - p_abs - p2_abs 
-p3_rel <- 1 - p_rel - p2_rel 
+p3_abs <- 1 - p_abs - p2_abs
+p3_rel <- 1 - p_rel - p2_rel
 
 # ---- average rank
 avg_control <- p_control + 2 * p2_control + 3 * p3_control
@@ -250,17 +245,17 @@ ate_rel <- avg_control - avg_rel
 
 alpha <- 0.05
 
-estimate <- apply(ate_abs, 2, quantile, p = c(alpha / 2, 0.5, 1 - alpha/2))
-est_abs <- data.frame(estimate = estimate[2,], conf.low = estimate[1,], conf.high = estimate[3,])
+estimate <- apply(ate_abs, 2, quantile, p = c(alpha / 2, 0.5, 1 - alpha / 2))
+est_abs <- data.frame(estimate = estimate[2, ], conf.low = estimate[1, ], conf.high = estimate[3, ])
 
-estimate <- apply(ate_rel, 2, quantile, p = c(alpha / 2, 0.5, 1 - alpha/2))
-est_rel <- data.frame(estimate = estimate[2,], conf.low = estimate[1,], conf.high = estimate[3,])
+estimate <- apply(ate_rel, 2, quantile, p = c(alpha / 2, 0.5, 1 - alpha / 2))
+est_rel <- data.frame(estimate = estimate[2, ], conf.low = estimate[1, ], conf.high = estimate[3, ])
 
 
 ds_ate <- bind_rows(
     bind_cols(newdata_abs, est_abs),
     bind_cols(newdata_rel, est_rel)
-) 
+)
 
 
 ds_ate |>
@@ -271,57 +266,56 @@ ds_ate |>
             fill = country_type,
             label = sprintf("%2.2f", estimate)
         )
-    ) + 
-    facet_grid(treatment~country_type) +
-    geom_col() + 
+    ) +
+    facet_grid(treatment ~ country_type) +
+    geom_col() +
     geom_errorbar(
         aes(xmin = conf.low, xmax = conf.high),
         width = 0.2,
         color = "gray"
     ) +
-    geom_text() 
+    geom_text()
 
 
-ds_ate %>% 
-ggplot(
-  aes(
-    x = estimate,
-    y = alt,
-    colour = country_type
-  ) 
-) + 
-
- geom_vline(
-    xintercept = 0,
-    linetype = 2,
-    colour = "grey60",
-    linewidth = 0.5
-  ) +
-  geom_errorbarh(
-    aes(xmin = conf.low, xmax = conf.high),
-    height = 0.15,
-    linewidth = 0.7
-  ) +
-  geom_point(
-    size = 2.8
-  ) +
-  facet_wrap(
-    ~ treatment,
-    nrow = 1
-  ) +
-  scale_colour_brewer(
-    palette = "Dark2",
-    name = "Country type"
-  ) +
-  labs(
-    x = "Average treatment effect on expected rank",
-    y = NULL
-  ) +
-  theme_bw(base_size = 12) +
-  theme(
-    panel.grid.minor = element_blank(),
-    panel.grid.major.y = element_blank(),
-    strip.background = element_blank(),
-    strip.text = element_text(face = "bold"),
-    legend.position = "top"
-  )
+ds_ate %>%
+    ggplot(
+        aes(
+            x = estimate,
+            y = alt,
+            colour = country_type
+        )
+    ) +
+    geom_vline(
+        xintercept = 0,
+        linetype = 2,
+        colour = "grey60",
+        linewidth = 0.5
+    ) +
+    geom_errorbarh(
+        aes(xmin = conf.low, xmax = conf.high),
+        height = 0.15,
+        linewidth = 0.7
+    ) +
+    geom_point(
+        size = 2.8
+    ) +
+    facet_wrap(
+        ~treatment,
+        nrow = 1
+    ) +
+    scale_colour_brewer(
+        palette = "Dark2",
+        name = "Country type"
+    ) +
+    labs(
+        x = "Average treatment effect on expected rank",
+        y = NULL
+    ) +
+    theme_bw(base_size = 12) +
+    theme(
+        panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_text(face = "bold"),
+        legend.position = "top"
+    )
