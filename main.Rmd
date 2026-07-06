@@ -70,6 +70,8 @@ is_html_or_latex <- function() {
 }
 ```
 
+\clearpage 
+
 ```{r sections, child = list.files("sections", full = TRUE, pattern = "*.Rmd")}
 ```
 
