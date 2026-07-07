@@ -14,7 +14,7 @@ suppressMessages({
 source("R/helpers.R")
 source("R/theme.R")
 
-params <- load_params()
+params <- load_params("config.yml")
 
 set.seed(params$seed)
 sapply(params$paths, dir.create, showWarnings = FALSE)
@@ -30,8 +30,10 @@ tbl_asylum_rel <- params$asylum_relocation |>
 
 ds_raw <- read_rds(params$paths$raw_data)
 
-ds_long <- ds_raw |>
-    clean_data() |>
+ds_clean <- ds_raw |>
+    clean_data()
+
+ds_long <- ds_clean |>
     pivot_data()
 
 ds_asylum_applications <- tbl_asylum_rel |>
@@ -55,6 +57,8 @@ ds_asylum_applications <- tbl_asylum_rel |>
         asylum_applications_z = scale(asylum_applications)[, 1]
     )
 
+# Media
+# xtabs(~ news_sources_index, ds_clean)
 
 # ------------------------------------------------------------
 # 2.1 Methods
@@ -86,14 +90,8 @@ tab <- tbl_asylum_rel %>%
     )
 
 
-save_rds(tab, file.path(params$paths$tables, "table_asylum_relocation.rds"))
+base::saveRDS(tab, file.path(params$paths$tables, "table_asylum_relocation.rds"))
 
-
-# ------------------------------------------------------------
-# Table A1: Random assignment
-# ------------------------------------------------------------
-tab <- xtabs(~ country + treatment, data = ds_clean)
-save_rds(tab, file.path(params$paths$tables, "table_country_treatment.rds"))
 
 if (interactive()) {
     tab |>
@@ -101,6 +99,17 @@ if (interactive()) {
         kableExtra::kable_classic()
 }
 
+# ------------------------------------------------------------
+# Table A1: Random assignment
+# ------------------------------------------------------------
+tab <- xtabs(~ country + treatment, data = ds_clean)
+base::saveRDS(tab, file.path(params$paths$tables, "table_country_treatment.rds"))
+
+if (interactive()) {
+    tab |>
+        kableExtra::kbl(digits = 1) |>
+        kableExtra::kable_classic()
+}
 
 # ------------------------------------------------------------
 # Table 2: Summary and covariate balance
@@ -198,7 +207,7 @@ tab <- res |>
         variable = stringr::str_replace(variable, "Importance of", "Value of"),
     )
 
-save_rds(tab, file.path(params$paths$tables, "covariate_balance.rds"))
+base::saveRDS(tab, file.path(params$paths$tables, "covariate_balance.rds"))
 
 if (interactive()) {
     tab |>
@@ -216,44 +225,20 @@ ds_multinomial <- ds_asylum_applications |>
 
 models <- list(
     m0 = alt ~ treatment * country_type,
-    m1 = alt ~ treatment * country
+    m1 = alt ~ treatment * country,
+    m2 = alt ~ treatment * country_type + news_sources_index
 )
 
 fits <- lapply(models, fit_model, data = ds_multinomial, family = brms::categorical())
 
-coeffs <- lapply(fits, broom.mixed::tidy) |>
-    dplyr::bind_rows(.id = "model") |>
-    dplyr::filter(
-        grepl("treatment", term)
-    ) |>
-    dplyr::mutate(
-        alt = case_when(
-            str_detect(term, "murelocationGDP") ~ "GDP",
-            str_detect(term, "murelocationpopulation") ~ "Population",
-            TRUE ~ NA_character_
-        ),
-        treatment = case_when(
-            str_detect(term, "_treatmentControl") ~ "Control",
-            str_detect(term, "_treatmentRelative") ~ "Relative",
-            TRUE ~ NA_character_
-        ),
-        modifier = case_when(
-            str_detect(term, "country_typeNetsender") ~ "Net sender",
-            str_detect(term, "countryFrance") ~ "France",
-            str_detect(term, "countryGermany") ~ "Germany",
-            str_detect(term, "countryGreece") ~ "Greece",
-            str_detect(term, "countryItaly") ~ "Italy",
-            str_detect(term, "countryPoland") ~ "Poland",
-            str_detect(term, "countrySpain") ~ "Spain",
-            str_detect(term, "countrySweden") ~ "Sweden",
-            TRUE ~ NA_character_
-        ),
-        readable_term = case_when(
-            is.na(modifier) ~ paste(alt, "-", treatment),
-            TRUE ~ paste(alt, "-", treatment, "×", modifier)
-        )
+ce <- lapply(
+    fits, 
+    extract_conditional_effects, 
+    categorical = TRUE, 
+    conditions = expand.grid(
+        country_type = unique(ds_multinomial$country_type)
     )
-
+)
 
 
 # ------------------------------------------------------------
@@ -261,6 +246,30 @@ coeffs <- lapply(fits, broom.mixed::tidy) |>
 # ------------------------------------------------------------
 tab <- xtabs(~ treatment + alt + country_type, ds_multinomial)
 save_rds(tab, file.path(params$paths$tables, "table_top_ranked_alternative.rds"))
+
+# ------------------------------------------------------------
+# Table A.X
+# ------------------------------------------------------------
+tab <- ce$m0 |>
+    dplyr::select(treatment, alt = cats__, country_type, estimate__, se__) |>
+    pivot_longer(
+        where(is.numeric)
+    ) |>
+    mutate(
+        value = case_when(
+            name == "se__" ~ sprintf("(%0.2f)", value),
+            TRUE ~ sprintf("%0.2f", value),
+        )
+    ) |>
+    pivot_wider(
+        names_from = c(treatment, country_type)
+    )
+
+if (interactive()) {
+    tab |>
+        kableExtra::kbl() |>
+        kableExtra::kable_classic()
+}
 
 # ------------------------------------------------------------
 # Figure A1: Effect on top rank
@@ -329,13 +338,7 @@ save_plot(
 # ------------------------------------------------------------
 # Figure 1: Treatment Effect on top rankings
 # ------------------------------------------------------------
-p <- fits[[1]] |>
-    extract_conditional_effects(
-        categorical = TRUE,
-        conditions = expand.grid(
-            country_type = unique(ds_multinomial$country_type)
-        )
-    ) |>
+p <- ce$m0 |>
     mutate(
         cats__ = factor(
             cats__,
@@ -472,6 +475,76 @@ p <- fits[[2]] |>
 
 file.path(params$paths$figures, "top_rank_by_cntry.png") |>
     save_plot(height = 10, width = 7)
+
+
+# ------------------------------------------------------------
+# Media sources
+# ------------------------------------------------------------
+
+p <- ce_m0 |>
+    mutate(
+        cats__ = factor(
+            cats__,
+            c("no_relocation", "relocation_population", "relocation_GDP"),
+            c("No relocation", "Relocation\nby population", "Relocation\nby GDP")
+        ),
+        treatment = factor(
+            treatment,
+            c("Control", "Relative", "Absolute")
+        )
+    ) |>
+    ggplot(aes(
+        x = estimate__,
+        y = treatment,
+        color = treatment,
+        xmin = lower__,
+        xmax = upper__
+    )) +
+    geom_pointrange(
+        size = 0.25
+    ) +
+    geom_label(
+        border.color = NA,
+        hjust = 0.5,
+        vjust = 0.5,
+        aes(
+            x = Inf,
+            label = sprintf(
+                "%2.0f%%",
+                100 * estimate__
+            )
+        ),
+        size = 3.5,
+        color = "gray25"
+    ) +
+    coord_cartesian(clip = "off") +
+    scale_x_continuous(
+        limits = c(0.1, .55),
+        breaks = c(0.25, 0.5),
+        labels = scales::percent
+    ) +
+    scale_color_manual(
+        values = params$treatment_palette
+    ) +
+    labs(
+        x = "Respondents per country type (%)",
+        y = NULL
+    ) +
+    facet_grid(country_type ~ cats__, switch = "y") +
+    theme(
+        legend.position = "none",
+        panel.grid.major = element_line(
+            linetype = "dashed",
+            linewidth = 0.25
+        ),
+        panel.spacing = unit(2, "lines"),
+        strip.placement = "outside"
+    )
+
+if (interactive()) {
+    print(p)
+}
+
 
 # ------------------------------------------------------------
 # 3.2 Averasge rankings
@@ -625,11 +698,11 @@ models <- list(
 fits <- lapply(models, lm, data = ds_anova)
 
 comparisons <- list(
-    "Trust in EU"      = c("m0", "m1"),
-    "Political orientation"  = c("m2", "m3"),
-    "Age"              = c("m4", "m5"),
+    "Trust in EU" = c("m0", "m1"),
+    "Political orientation" = c("m2", "m3"),
+    "Age" = c("m4", "m5"),
     "Asylum knowledge" = c("m6", "m7"),
-    "Fair share"        = c("m8", "m9")
+    "Fair share" = c("m8", "m9")
 )
 
 anova_table <- purrr::imap_dfr(comparisons, function(mods, moderator) {
