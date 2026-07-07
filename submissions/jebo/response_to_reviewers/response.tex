@@ -1,0 +1,360 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+    \setmainfont[]{Arial}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Response to reviewers: ``Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System''},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Response to reviewers: ``Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System''}
+\author{}
+\date{\vspace{-2.5em}This version: 2026-07-06}
+
+\begin{document}
+\maketitle
+
+\setstretch{1}
+\textbf{Dear Associate Editor,}
+
+We thank you and the reviewers for the careful reading of our manuscript and for the constructive feedback.
+
+Below, we provide a detailed, point-by-point response. Reviewer comments are reproduced in \textbf{bold}, followed by our responses in plain text. All changes are reflected in the revised manuscript and highlighted in the marked version.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Associate Editor:}\label{associate-editor}
+
+\begin{quote}
+\textbf{This is a very interesting paper in my opinion, and a great example of fruitful use of information treatments to inform policy makers as well as academia. Both reviewers are enthusiastic and have great suggestions about how the paper can be improved even further. I encourage the authors to take all comments into account, and to clearly explain why, if they choose to disregard any.}
+\end{quote}
+
+Thanks.
+
+\subsection{Reviewer \#1:}\label{reviewer-1}
+
+\begin{quote}
+\textbf{Summary}
+
+\textbf{This paper examines Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to population. Using an experimental survey of 8,122 respondents across eight EU countries, the authors vary the information provided about the consequences of each mechanism, no information, absolute figures, or figures relative to population, to explore how public perceptions of fairness are shaped by both principles and outcomes. The study finds that most respondents (76\%) consider some form of proportional relocation to be the fairest option, but with substantial cross-country variation (58\% in Germany vs.~87\% in Greece). These differences are consistent with a self-serving bias: respondents tend to rank as fairer the mechanism that results in fewer asylum seekers for their own country. Communicating the expected consequences of each mechanism significantly intensifies this bias. Moreover, the effect is stronger when information is presented in absolute rather than relative terms, a finding the authors attribute to denominator neglect. The heterogeneity analysis reveals that these effects are particularly pronounced among right-leaning respondents, older individuals, and those with low trust in the EU. These results are surely very informative for policy makers in this area.}
+\end{quote}
+
+\begin{quote}
+\textbf{Comments}
+\end{quote}
+
+\begin{quote}
+\textbf{I think this is an interesting paper which has several strengths. The experimental design is pre-registered, the sample is large and drawn via stratified random probability sampling across eight countries, and randomization is well-documented through detailed balance checks. The core contribution is to extend Bansak et al.~(2017) by introducing the absolute versus relative framing distinction, and a bigger focus on self-serving bias, is well motivated. The rich heterogeneity analysis across political orientation, age, trust, and perceived fair share adds substantially to the paper's contribution. On the downside, the survey-based design relies on hypothetical scenarios, creating a potential gap between stated fairness perceptions and actual policy preferences or behavior. Also, the self-serving bias interpretation rests on a cross-country correlation that could partly reflect legitimate differences in solidarity norms rather than pure self-interest. While these issues can only be acknowledged at this stage, there are some minor issues that can be fixed, mostly to do with the exposition:}
+\end{quote}
+
+Many thanks for these remarks. We agree that both issues are potential concerns. We have now expanded our Discussion section addressing these doubts (see p.~15), as reported below:
+
+\begin{quote}
+``\emph{This study has several limitations. Our results are geographically constrained: although we purposefully chose a diverse sample of eight EU countries, our findings may not generalise to the rest of the EU. For example, countries in our sample may just happen to differ in prevailing norms of fairness in ways that are difficult to distinguish from self-serving bias. However, we cannot fully disentangle these mechanisms with the current experimental design.}
+
+\emph{As with most survey experiments, our findings may also be affected by social desirability and hypothetical bias. Some respondents may have been reluctant to express views that could be perceived as anti-migrant (e.g., Carmines and Nassar 2021). However, it is unclear whether such biases would systematically affect our main findings. In particular, there is no obvious reason why stronger reactions to absolute rather than relative information would be viewed as more socially desirable. If anything, social desirability is more likely to attenuate estimates of self-serving bias, although the direction of this bias is ultimately ambiguous. Overall, while these limitations warrant caution, they are unlikely to overturn our central conclusion that fairness perceptions depend on both expected outcomes and the framing of those outcomes.}''
+\end{quote}
+
+\begin{quote}
+\textbf{1. Overlap in analysis. The paper presents both a country-level analysis of treatment effects (Section 4.2) and a rank-ordered logit model (Section 4.3) that largely confirm the same patterns. While the logit adds some precision by using the continuous asylum seeker numbers as a predictor. The OLS analysis in Section 4.2 already stratifies by net receiver and net sender status, which captures most of the same mechanism, and is easier to interpret. The authors should either consolidate the two approaches more explicitly --- making clear that Section 4.2 provides the reduced-form evidence and Section 4.3 identifies the mechanism through a continuous predictor --- or, perhaps better, consider moving one of the two to an appendix. The authors may also consider to aggregate net-sender and net-receiver countries in Figure 2, with the associated statistics.}
+\end{quote}
+
+\begin{quote}
+\textbf{I am not insisting on any particular approach, but as currently structured, the reader works through the same interpretation twice, which reduces the impact of both sections. I think overall, the paper would be more readable if it was a bit shorter, and some (overlapping) material was moved to an appendix.}
+\end{quote}
+
+We thank the reviewer for this helpful suggestion regarding potential redundancy between Sections 4.2 and 4.3. We have revised the manuscript to improve clarity and streamline the presentation
+
+Specifically, we now more clearly distinguish the two components of the analysis: Section 4.2 presents the reduced-form results comparing treatment effects across net receiver and net sender countries, while Section 4.3 explores a complementary specification using continuous asylum inflows to test whether the same pattern holds under an alternative operationalisation.
+
+We also revised Figure 2 to aggregate results across net sender and net receiver groups more clearly, reducing overlap in interpretation across sections, while moving the figure illustrating the country-by-country analysis to the Appendix.
+
+To increase consistency of the analysis, we have used linear regression replacing the rank-ordered logit analysis.
+
+\begin{quote}
+\textbf{2. Drop Table 3.1 Table 3.1 uses a simplified two-country hypothetical to illustrate the experimental design, but this artificial scenario, with round numbers and countries of equal GDP, is harder to follow than it might appear. For instance, it has some cells that seem redundant but require cognitive investment. It is not clear to me that this adds any value over the actual data already presented in Table 3.2. I suggest removing Table 3.1 and instead using one or two concrete examples drawn from the real figures in Table 3.2 (e.g., Greece as a net sender and Poland as a net receiver) to walk the reader through the logic of the design.}
+\end{quote}
+
+Many thanks for this suggestion. We have now dropped Table 3.1 with the hypothetical scenario, leaving only Table 3.2 with the actual statistics. We have then drawn statistics from this table to make a concrete example illustrating the experimental design, as reported below:
+
+\begin{quote}
+``\emph{A few observations can be made. First, historical asylum application rates vary substantially across countries, ranging from 16 per 100,000 inhabitants in Poland to 397 per 100,000 in Greece. Second, proportional allocation systems would significantly alter the current distribution of asylum applications. For example, under a population-proportional allocation scheme, Poland would receive an additional 153 applications per 100,000 inhabitants, while Greece would ''send'' 228 applications per 100,000 inhabitants to other countries. We refer to countries in this position as ``net receivers'' or ``net senders.'' Third, proportional allocation rules would generate pronounced cross-country differences depending on the rule being based on population or GDP. For instance, under a GDP-proportional allocation system, Poland would still be a net receiver, but the additional inflow would be considerably smaller, decreasing from 153 applications per 100,000 inhabitants under a population-based system to 76 per 100,000 under a GDP-based system.}''
+\end{quote}
+
+\begin{quote}
+\textbf{3. Inconsistent use of brackets in Table 3.3? The footnote to Table 3.3 states that standardized differences are in square brackets, but this description seems to only to the Diff. Rel. and Diff. Abs. columns. In the Control column, the square brackets contain the standard deviation of the variable, not a standardized difference. Or at least, that's how I understood the table, but it is not clear from the description.}
+\end{quote}
+
+Thank you for pointing out this inconsistency in the Table 3.3 (now Table 3.2) caption. We agree that the original presentation was confusing. We have revised the table to improve clarity and consistency: it now reports, for all variables and across the three groups, the group-specific means and standard deviations, and includes a separate column reporting the maximum standardized mean difference across groups. This revised format more clearly distinguishes descriptive statistics from balance diagnostics and confirms that there is no evidence of imbalance in the sample.
+
+\subsection{Reviewer \#2}\label{reviewer-2}
+
+\begin{quote}
+\textbf{Thank you for an interesting and timely paper. The implemented experimental design is careful, and the main findings of how most Europeans support proportional relocation as "fairest", and that information framing amplifies self-serving biases, are clearly communicated and empirically well-supported. The following comments are intended to strengthen the manuscript.}
+\end{quote}
+
+\begin{quote}
+\textbf{Analysis}
+\end{quote}
+
+\begin{quote}
+\textbf{1. Mechanism linking preferences to policy: The paper motivates the study by noting that "solidarity mechanisms rely on national political support." However, there is no theoretical framework explaining how individual fairness perceptions aggregate into policy outcomes, nor is there a discussion of compliance mechanisms for Member States. The paper would benefit from briefly situating individual preferences within the political economy of EU asylum governance. Relatedly, linking the collected survey data on fairness perceptions to political activity or voting behavior, even just using descriptive evidence, would strengthen the paper\textquotesingle s policy relevance.}
+\end{quote}
+
+Thank you for this comment, we have now revised the paper by adding a discussion on the theoretical framework in the Introduction. This framewrok can be used to interpret the findings of the paper on page 5. More specifically, we have explained that findings can be justified by using the Equity Theory as first presented by Adams (1965). We have also strengthened the paper's policy relevance by linking fairness perceptions to self-assessed position within a political spectrum in a descriptive manner. We present these associations in Appendix.
+
+We explain that individual preferences (e.g., fairness perceptions regarding burden-sharing) shape party competition and issue salience at both national and EU level. At the nationl level, parties aggregate these preferences into policy platforms, which may be more or less welcoming of migrants. At the EU level, these policy platforms determine whether governments support or resist EU-level solidarity instruments.
+
+\begin{itemize}
+\tightlist
+\item
+  \url{https://www.sciencedirect.com/science/article/abs/pii/S0147176716301237}
+\item
+  \url{https://onlinelibrary.wiley.com/doi/10.1111/1468-4446.70055}
+\item
+  \url{https://cadmus.eui.eu/server/api/core/bitstreams/8f3b8b2f-72ff-4401-a8b4-a43029e037c4/content}
+\end{itemize}
+
+\begin{quote}
+\textbf{2. Unpacking \textquotesingle capacity\textquotesingle{} and \textquotesingle fairness\textquotesingle: The paper treats GDP and population as proxies for "capacity," and uses a rank question to elicit "fairness." Yet "capacity" likely means very different things to different respondents --- some may think in terms of economic resources, others in terms of institutions, housing, labor market absorption, or cultural readiness. Similarly, respondents may conflate "fairness of the mechanism" with "fairness of the outcomes," or with the perceived desirability of outcomes. The paper should more clearly differentiate between these interpretations and discuss what the fairness ranking question actually captures, acknowledging the ambiguity.}
+\end{quote}
+
+Thank you for this insightful comment. We agree that both `capacity' and `fairness' are potentially interpreted in different ways by respondents. We have therefore revised the Methods section to clarify that GDP and population are used as proxies for reception and processing capacity, consistent with existing EU allocation proposals and prior research, while acknowledging that respondents may instead interpret these indicators as reflecting other dimensions of capacity (e.g., institutional capacity, housing availability, or labour market conditions). We also clarify that our fairness ranking question captures respondents' overall judgments about the fairness of alternative allocation principles, which may reflect views about both the fairness of the allocation mechanism itself and the fairness or desirability of its likely outcomes. We now explicitly acknowledge this ambiguity as a limitation of the interpretation of the fairness rankings (p.~8, footnote 3), as reported below:
+
+\begin{quote}
+``\emph{In this study, GDP and population are intended as proxies for a country's reception and processing capacity, consistent with existing EU allocation proposals and policy debates (Thielemann 2018). These indicators also provide respondents with clear and easily interpretable signals of a country's size and wealth, which research shows are commonly used when evaluating fairness in international burden-sharing (Kleider and Stoeckel 2019). Nevertheless, respondents may interpret proportionality by GDP or population as reflecting different underlying dimensions of capacity (e.g., economic resources, institutional capacity, housing availability, or labour market conditions). Likewise, respondents' rankings of the allocation principles may reflect judgments about both the fairness of the allocation mechanism and the fairness or desirability of its expected outcomes. These interpretive ambiguities should be borne in mind when interpreting the results.}''
+\end{quote}
+
+\begin{quote}
+\textbf{3. Priors about policy consequences: The paper compares informed respondents to uninformed respondents, but people are not blank slates. Respondents may hold strong prior beliefs about the consequences of relocation, especially in high-salience countries like Germany and Greece. These priors could confound the treatment effects. The authors should discuss whether the survey collected information on pre-treatment beliefs, and, if so, whether controlling for these beliefs alters the main results.}
+\end{quote}
+
+Thank you for raising this important point. We agree that respondents are unlikely to be blank slates and may hold strong prior beliefs about the consequences of refugee relocation, particularly in countries where the issue has been highly salient. Unfortunately, our survey did not collect pre-treatment measures of these beliefs, so we cannot directly examine whether they moderate the treatment effects. We have therefore added this as a limitation in the Discussion.
+
+At the same time, because treatment assignment is randomised, such prior beliefs do not confound the estimated average treatment effects unless they are systematically imbalanced across treatment groups. Rather, they may contribute to treatment effect heterogeneity. To account for this possibility, our analyses explicitly allow treatment effects to vary across countries, revealing consistent directional effects within the groups of net receiving and net sending countries, although the magnitude of the effects differs (see Section 4.2). We also examine heterogeneity by respondents' pre-treatment perceptions of whether refugees are distributed unfairly across EU countries (Section 4.4.2, p.~12), finding larger treatment effects among respondents who perceive the current distribution to be unbalanced. We now discuss these points more explicitly in the manuscript and note that collecting pre-treatment beliefs about the consequences of relocation would be a valuable direction for future research (see Discussion p.~15), as reported below:
+
+\begin{quote}
+``\emph{A further limitation is that we did not measure respondents' prior beliefs about the consequences of refugee relocation. Such beliefs are likely to differ across countries with different experiences of refugee reception and could shape how respondents respond to information treatments. Although random assignment ensures these beliefs do not bias the estimated average treatment effects, they may contribute to treatment effect heterogeneity. Our country-specific analyses and heterogeneity analyses by perceptions of the current distribution suggest that the direction of the treatment effects is consistent within groups of net receiving and net sending countries, although effect sizes vary. Future research could directly measure pre-treatment beliefs to better understand how they mediate or moderate responses to information about refugee relocation.}''
+\end{quote}
+
+\begin{quote}
+\textbf{4. Self-serving bias vs.~capacity concerns: The framing of cross-country differences in fairness rankings as evidence of self-serving bias does not sufficiently rule out the possibility that respondents in "net receiver" countries genuinely believe their country is already at capacity. If respondents think their country bears a disproportionate burden because of existing institutional or economic constraints, ranking no-relocation as fair may reflect capacity concerns rather than self-interest per se. The authors should address this alternative interpretation explicitly, perhaps by exploring whether such patterns hold after controlling for respondents\textquotesingle{} perceived integration capacity or views on institutional readiness.}
+\end{quote}
+
+Thank you for this comment, we understand your observation and we have
+added a reference to this point in the discussion. However, while
+alternative explanations exist---such as perceptions of relative
+national "capacity" or other country-specific advantages---these are
+likely less prevalent factors. A self-serving bias provides a more
+parsimonious explanation for the observed patterns and remains
+fundamentally consistent with our pre-registered hypotheses.
+
+\begin{quote}
+\textbf{5. Social desirability bias: Given the high political salience of asylum policy, the paper should more directly address the possibility that respondents in the control group rate proportional relocation as "fair" partly for social desirability reasons rather than genuine preference. The absolute information treatment, by making self-interest concrete and salient, may effectively reduce social desirability rather than increase self-serving bias per se.}
+\end{quote}
+
+Thanks for this point. A related remark was made by Reviewer 1. To address both, we have expanded discussion of potential effect of social desirability bias in the last section of the paper. We acknowledge that social desirability concerns are a plausible consideration given the high political and moral salience of asylum policy. In particular, it is possible that respondents endorse proportional relocation as ``fair'' partly because it corresponds to a socially approved norm, rather than reflecting a deeply held preference. However, it is not clear to us if providing more information (especially: absolute but not so much relative information) would tend to reduce the effect of social desirability. Moreover, if popularity of proportional relocation could be explained in terms of social desirability bias and if absolute information treatment reduced the bias, then we would expect a general shift away from proportional relocation. This is clearly not what we observe -- the treatment effects depend on the country, in a way generally consistent with self interest.
+
+\begin{quote}
+\textbf{6. Cross-country variation in the relative vs.~absolute framing effect: The paper notes that the difference between absolute and relative framing effects is concentrated among net receiver countries (Spain, Poland, Italy). This is an important asymmetry that is underexplored. What could drive this pattern? Is it that net receiver respondents react more to large absolute numbers because they find the prospect of reduction more salient? Or is there something specific about the political context of these countries during the survey period? A more structured discussion would strengthen the paper\textquotesingle s contribution.}
+\end{quote}
+
+Thanks for this comment, this is indeed a pattern that wasn't discussed in the older version of the paper. We have now revised the manuscript by adding this discussion that aligns with the perspective proposed by the Equity Theory on page 15.
+
+\begin{quote}
+\textbf{7. The paper presents heterogeneous effects by political orientation (left, center, right), but political orientation is not straightforwardly comparable across countries. In particular, mainstream right and populist right parties have followed very different migration narratives across EU countries over the past decade. The paper would benefit from a discussion of whether the political orientation variable is comparable across countries, and whether the heterogeneous effects might partly reflect country-specific political contexts rather than a general left-right divide.}
+\end{quote}
+
+Thank you for this comment. We agree that political orientation is not
+perfectly comparable across countries and that the meaning of ``left,''
+``center,'' and ``right'' can vary substantially depending on national party
+systems and migration discourses, , including differences between
+mainstream-right and populist radical-rightWe now explicitly acknowledge
+this limitation in the paper and clarify that our political orientation
+measure should be interpreted as a self-reported ideological placement
+rather than a harmonized cross-national construct.
+
+To address the concern that the heterogeneous effects may reflect
+country-specific political contexts rather than a general left--right
+divide, we have strengthened the discussion.
+
+\textbf{8. Baseline differences by political orientation: The divergent reactions to absolute information by political orientation may partly reflect differences in baseline information environments. Right-leaning respondents are, on average, more exposed to anti-immigration media framings that use large absolute numbers. If so, the treatment effect is not purely a framing effect but also an interaction with pre-existing "media diet". The paper should acknowledge this limitation and, if possible, use the available data to test for it. Thank you for this helpful comment. We agree that the stronger response to absolute information among right-leaning respondents may partly reflect differences in prior beliefs and information environments. We have revised the Discussion to acknowledge this limitation explicitly, noting that our design does not separately identify respondents' pre-treatment media exposure. We therefore interpret this heterogeneity cautiously.}
+
+\begin{quote}
+\textbf{Minor Comments}
+\end{quote}
+
+\begin{quote}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Figure 4.1 rounding: The percentages in Figure 4.1 for the control group do not sum to 100\% in all cases (e.g., the overall total appears to sum to 99\%, and Italy appears to sum to 101\%). Please verify and correct.}
+\end{itemize}
+\end{quote}
+
+TBA
+
+\begin{quote}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{The paper does not explain why these specific eight countries were selected. A brief justification, such as that they represent border vs.~non-border countries, EU North/South/East, or countries with high vs.~low historical asylum application rates, would help the reader understand the scope and generalizability of the findings.}
+\end{itemize}
+\end{quote}
+
+Thank you for this comment, an explanation for the choice of the
+countries has now been added on page 7.
+
+\begin{quote}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Figure 4.6 / 4.7 labeling: Section 4.4.3 discusses Figure 4.6 (age heterogeneity), but Section 4.4.4 also refers to "Figure 4.6" for knowledge heterogeneity. The caption labels it Figure 4.7. Please correct the cross-references consistently throughout the text.}
+\end{itemize}
+\end{quote}
+
+\begin{quote}
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Discussion of positive externalities: The paper focuses exclusively on the costs of hosting asylum seekers. It does not acknowledge that some respondents may weigh potential positive externalities of asylum seekers (e.g., labor market contributions, demographic effects). This is especially relevant for countries with ageing populations. A brief discussion of whether the survey captured such beliefs would enrich the analysis.}
+\end{itemize}
+\end{quote}
+
+Thanks for this important point. We completely agree that there are
+benefits for the host country. We are merely assuming that for large
+majority of respondents, direct, short-term costs outweigh the
+benefits. While we did not directly ask about that, we did ask
+whether ``migrants from outside the EU contribute to the economy in
+COUNTRY (for instance, by paying taxes)?'' Pooling across all
+countries, we see that almost 57\% said it was ``less than citizen''
+and only 5\% chose ``more than citizens'' (24 said ``as much as
+citizens'' and 13\% were unsure). Noting that large majority of
+migrants, but not asylum seekers, come to work, we expect the
+judgment would have been even more skewed if it was restricted to
+asylum seekers. Finally, the observed self-serving bias effects are
+consistent with perception of asylum seekers primarily in terms of
+costs, not benefits.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-carmines2021social}
+Carmines, Edward, and Rita Nassar. 2021. {``How Social Desirability Bias Affects Immigration Attitudes in a Hyperpolarized Political Environment.''} \emph{Social Science Quarterly} 102 (4): 1803--11.
+
+\bibitem[\citeproctext]{ref-kleider2019politics}
+Kleider, Hanna, and Florian Stoeckel. 2019. {``The Politics of International Redistribution: Explaining Public Support for Fiscal Transfers in the EU.''} \emph{European Journal of Political Research} 58 (1): 4--29.
+
+\bibitem[\citeproctext]{ref-thielemann2018refugee}
+Thielemann, Eiko. 2018. {``Why Refugee Burden-Sharing Initiatives Fail: Public Goods, Free-Riding and Symbolic Solidarity in the EU.''} \emph{JCMS: Journal of Common Market Studies} 56 (1): 63--82.
+
+\end{CSLReferences}
+
+\end{document}
