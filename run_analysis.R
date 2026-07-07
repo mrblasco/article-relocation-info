@@ -17,7 +17,7 @@ source("R/theme.R")
 params <- load_params()
 
 set.seed(params$seed)
-sapply(params$path, dir.create, showWarnings = FALSE)
+sapply(params$paths, dir.create, showWarnings = FALSE)
 
 theme_set(theme_nice())
 
