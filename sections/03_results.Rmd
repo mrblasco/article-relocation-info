@@ -1,12 +1,19 @@
+```{r, include = FALSE}
+fig_caption_smooth <- function(x) {
+    sprintf(
+        "Conditional average treatment effects by %s. Estimates and 95%% confidence intervals from a generalized additive model with regression splines, showing the relationship between %s and average fairness rankings, stratified by relocation mechanism and country being net sender or net receiver", # nolint
+        x, x
+    )
+}
+```
+
 # Results
 
 ## Top-ranked Perceived Fairness of Relocation Systems
 
-Respondents ranked three relocation mechanisms by perceived fairness. Figure \@ref(fig:relocation-weighted) shows that a clear majority of the sample (76%) selected proportional relocation as the fairest option, with the GDP-based relocation receiving the highest share (41%), followed closely by population-based relocation (35%). Only 24% considered no relocation as the fairest option.^[
-    A one-sample proportion test shows that this result is significantly lower (p<0.01) than the 33% expected if individuals were ranking alternatives at random or were indifferent among the options.
-] Importantly, these results are robust to population-weighting of respondents by country of residence; the weighted estimates are virtually identical to the unweighted results and do not alter any substantive conclusions.
+Respondents ranked three relocation mechanisms by perceived fairness. A clear majority of the sample (76%) ranked one of the proportional relocation mechanisms as fairest, with the GDP-based relocation receiving the highest share (41%), followed closely by population-based relocation (35%). Only 24% considered no relocation as the fairest option. Population-weighting of respondents by country of residence yields similar results, confirming the sample's representativeness, as shown in Figure \@ref(fig:relocation-weighted).
 
-Figure \@ref(fig:toprank) illustrates how the average effect of information provision on fairness perceptions varies depending on whether countries are "net senders" or "net receivers" of applications under a proportional system. Among net sender countries, only 13% and 17% of respondents selected "No relocation" as the fairest option in the absolute and relative information groups, respectively, compared to 27% in the no-information group. Thus, information provision reduces the share of respondented ranking no relocation as fairest by about 10 percentage points. Conversely, among the net receiver countries, information provision increases perception of fairness for no relocation by about 10 percentage points. These patterns provide evidence of (i) a causal effect of information provision and (ii) heterogeneous effects across country groups, with the direction of the response changing across country groups, with effects shifting sign between net sender and net receiver countries, consistent with self-serving bias.
+Figure \@ref(fig:toprank) illustrates how the average effect of information provision on fairness perceptions varies depending on whether countries are "net senders" or "net receivers" of applications under a proportional system. Among net sender countries, only 13% and 17% of respondents selected "No relocation" as the fairest option in the absolute and relative information groups, respectively, compared to 27% in the no-information group. Thus, information provision reduces the share of respondented ranking no relocation as fairest by about 10 percentage points. Conversely, among the net receiver countries, information provision increases perception of fairness for no relocation by about 10 percentage points. Because treatment was randomly assigned, these differences are consistent with causal treatment effects of information provision, with effects shifting sign between net sender and net receiver countries, consistent with a self-serving bias.
 
 ```{r toprank, fig.cap = cap, out.width="\\textwidth"}
 knitr::include_graphics(
@@ -17,12 +24,14 @@ knitr::include_graphics(
 cap <- "Estimates and 95% CIs of the share of respondents ranking each relocation mechanism as the fairest (rank = 1) across information conditions: no information (Control), relative information, and absolute information about asylum applications implied under each relocation mechanism. Countries are classified as net senders (receivers) when asylum applications per 100,000 inhabitants exceed (fall below) the proportional-by-population relocation relative to a no-relocation benchmark." # nolint
 ```
 
-Figure \@ref(fig:toprank-by-cntry) shows a consistent pattern for country-by-country analysis, with similar effects but noticeable differences in the size of these effects across countries. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender) the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy.
+Figure \@ref(fig:toprank-by-cntry) shows substantial cross-country heterogeneity. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender) the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy.
 
 ## Average Treatment Effects on Fairness Rankings
 
-Figure \@ref(fig:mean-rank) illustrates the average treatment effect on the fairness rankings of each relocation mechanism conditional on the country type (net sender vs receiver), as estimated from linear regression. Under no information (Control group), net-receiver countries perceive “no relocation” as the least fair option, with a mean rank of 2.4 out of 3. However, they perceive “no relocation” increasingly *fairer* in the Relative and Absolute groups, with the largest effect observed under absolute information, where its mean rank goes from 2.4 to 2.1. By contrast, net sender countries perceive "no relocation" as increasingly *less fair* in the information treatments, for instance, increasing the ranking from 2.4 in the control to 2.6 under absolute information. Overall, these results support our hypotheses that individuals react more when information is presented in absolute than in relative terms.^[
-    As a formal test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.
+Figure \@ref(fig:mean-rank) presents predicted mean rankings from a linear regression model, illustrating the average treatment effect on the perceived fairness for each relocation mechanism conditional on the country being net sender vs receiver. Ordinal regression models yield substantively similar results but are omitted for brevity. 
+
+Under no information (Control group), net-receiver countries perceive “no relocation” as the least fair option, with a mean rank of 2.4 out of 3. However, they perceive “no relocation” increasingly *fairer* in the Relative and Absolute groups, with the largest effect observed under absolute information, where its mean rank goes from 2.4 to 2.1. By contrast, net sender countries perceive "no relocation" as increasingly *less fair* in the information treatments, for instance, increasing the ranking from 2.4 in the control to 2.6 under absolute information. Overall, these results are consistent with our hypotheses that individuals react more when information is presented in absolute than in relative terms.^[
+    As a robustness test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.
 ]
 
 ```{r mean-rank, fig.cap = cap, out.width = "\\textwidth"}
@@ -38,7 +47,7 @@ cap <- paste(
 
 ## The Role of Implied Asylum Applications
 
-We next examine whether the expected number of asylum applications implied by each relocation mechanism influenced perceived fairness across treatment conditions. Figure \@ref(fig:implied-applications) presents fitted linear regressions of the average fairness ranking on the standardized number of implied asylum applications, interacted with the treatment indicators. An analysis of variance indicates a statistically significant interaction between implied asylum applications and treatment assignment (F(2, 73.4) = 58.18, p < 0.001), suggesting that the relationship between implied asylum applications and perceived fairness differed across the three information conditions.
+We next examine whether the expected number of asylum applications implied by each relocation mechanism influenced perceived fairness across treatment conditions. Figure \@ref(fig:implied-applications) presents fitted linear regressions of the average fairness ranking on the standardized number of implied asylum applications, interacted with the treatment indicators. A joint F-test indicates a statistically significant interaction between implied asylum applications and treatment assignment (F(2, 73.4) = 58.18, p < 0.001), suggesting that the relationship between implied asylum applications and perceived fairness differed across the three information conditions.
 
 Figure \@ref(fig:implied-applications) further shows that perceived fairness declines as the expected number of implied asylum applications increases. This relationship is weakest in the No Information treatment, as indicated by the relatively flat slope, stronger in the Relative Information treatment, and strongest in the Absolute Information treatment. These findings suggest that providing information about the consequences of relocation mechanisms increased respondents' sensitivity to the asylum application levels implied by those mechanisms when evaluating their fairness, and the sensitivity is highest when such consequences are reported in absolute numbers.^[
     These results are robust to alternative specifications. Specifically, we obtained nearly identical results using a rank-ordered logit regression, which was discussed in a previous version of this paper.
@@ -57,7 +66,7 @@ cap <- "Association between standardized asylum application rates and the percei
 
 In this section, we examine whether the effects of information provision on perceived fairness vary systematically across respondent characteristics. Understanding such heterogeneity is important for assessing not only the average treatment effects, but also the conditions under which information is more or less persuasive. We therefore explore a range of theoretically relevant moderators, including political orientation, perceptions of current migration levels, age, knowledge of the EU asylum system, and trust in the EU. 
 
-We formally test whether the inclusion of these interaction terms improves model fit using likelihood-ratio comparisons based on ANOVA tests between each pair of nested models (see Appendix Table \@ref(tab:anova)). The results indicate that the more flexible specifications with interaction terms significantly outperform their corresponding baseline models, providing statistical support for the presence of heterogeneous treatment effects. The figures below illustrate these heterogeneities in terms of conditional average treatment effects across the respective moderating variables.
+We formally test whether the inclusion of these interaction terms improves model fit using likelihood-ratio comparisons based on ANOVA tests between each pair of nested models. Table \@ref(tab:anova) in the Appendix presents the results of these tests. Overall, we find that the more flexible specifications with interaction terms significantly outperform their corresponding baseline models, providing statistical support for the presence of heterogeneous treatment effects. The figures below illustrate these heterogeneities in terms of conditional average treatment effects across the respective moderating variables.
 
 
 ### Political orientation 
@@ -71,9 +80,10 @@ knitr::include_graphics(
         "output", "figures", "political_right.png"
     )
 )
-
-cap <- "Conditional average treatment effects by political orientation. Estimates and 95% confidence intervals from a generalized additive model with regression splines, showing the relationship between left-right scale and average fairness rankings, stratified by relocation mechanism and country being net sender or net receiver." # nolint
+cap <- fig_caption_smooth("political orientation (left-right scale)")
 ```
+
+It is worth noting that our measure of political orientation is from the European Social Survey (ESS) and has been widely applied in studies on voters' positioning in Europe. Nevertheless, this measure is not perfectly comparable across EU countries because the meaning of ‘left’, ‘neutral’ and ‘right’ can vary substantially depending on national party systems and migration discourses. Hence, our political orientation measure should be interpreted as a self-identified ideological placement rather than a harmonized cross-national construct. We return to the limitations of this measure in the Discussion.
 
 ### Fair share
 
@@ -91,7 +101,7 @@ knitr::include_graphics(
     path = file.path("output", "figures", "fair_share.png")
 )
 
-cap <- "Conditional average treatment effects by perceived fairness of migrants' distribution in the EU. Estimates and 95% confidence intervals from a generalized additive model with regression splines, showing the relationship between beliefs the number of migrants in their country was too low, fair, or too high and average fairness rankings, stratified by relocation mechanism and country being net sender or net receiver." # nolint
+cap <- fig_caption_smooth("perceived fairness of migrants' distribution in the EU")
 ```
 
 ### Age
@@ -106,13 +116,12 @@ knitr::include_graphics(
         "output", "figures", "age.png"
     )
 )
-
-cap <- "Conditional average treatment effects by age. Estimates and 95% confidence intervals from a generalized additive model with regression splines, showing the relationship between the respondent's age and the fairness rankings, stratified by relocation mechanism and country being net sender or net receiver." # nolint
+cap <- fig_caption_smooth("respondent's age (years)")
 ```
 
-### Konowledge of the Asylum System
+### Knowledge of the Asylum System
 
-Figure \@ref(fig:age) illustrates the heterogeneity of effects stratified by self-reported knowledge or awareness of the rules governing the EU asylum system. Remarkably, we do not observe significant differences between individuals with basic knowledge and those with more advanced understanding.
+Figure \@ref(fig:knowledge) illustrates the heterogeneity of effects stratified by self-reported knowledge or awareness of the rules governing the EU asylum system. We observe little differences between individuals with basic knowledge and those with more advanced understanding.
 
 ```{r knowledge, fig.cap = cap, out.width = "\\textwidth"}
 knitr::include_graphics(
@@ -122,7 +131,7 @@ knitr::include_graphics(
     )
 )
 
-cap <- "Conditional average treatment effects by knowledge of the asylum System. Estimates and 95% confidence intervals from a generalized additive model with regression splines, showing the relationship between the respondent's self-reported knowledge of the asylum system (0 = no knowledge, 4 = expert) and the fairness rankings, stratified by relocation mechanism and country being net sender or net receiver" # nolint
+cap <- fig_caption_smooth("knowledge of the EU asylum system (0 = no knowledge, 4 = expert)")
 ```
 
 
@@ -138,8 +147,7 @@ knitr::include_graphics(
     )
 )
 
-cap <- "Conditional average treatment effects by trust in the EU. Coefficients and 95% confidence intervals from rank-ordered regression on the probability of ranking an alternative relocation shceme as fairer, stratified by the overall trust in the EU." # nolint
-
+cap <- fig_caption_smooth("trust in the EU (0 = low, 10 = high)")
 ```
 
 
