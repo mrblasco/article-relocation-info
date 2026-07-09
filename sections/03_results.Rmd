@@ -1,7 +1,7 @@
 ```{r, include = FALSE}
 fig_caption_smooth <- function(x) {
     sprintf(
-        "Conditional average treatment effects by %s. Estimates and 95%% confidence intervals from a generalized additive model with regression splines, showing the relationship between %s and average fairness rankings, stratified by relocation mechanism and country being net sender or net receiver", # nolint
+        "Conditional average treatment effects by %s. Estimates and 95%% confidence intervals from a generalized additive model with regression splines, showing the relationship between %s and average fairness rankings, stratified by relocation mechanism and country being a net sender or a net receiver", # nolint
         x, x
     )
 }
@@ -13,7 +13,7 @@ fig_caption_smooth <- function(x) {
 
 Respondents ranked three relocation mechanisms by perceived fairness. A clear majority of the sample (76%) ranked one of the proportional relocation mechanisms as fairest, with the GDP-based relocation receiving the highest share (41%), followed closely by population-based relocation (35%). Only 24% considered no relocation as the fairest option. Population-weighting of respondents by country of residence yields similar results, confirming the sample's representativeness, as shown in Figure \@ref(fig:relocation-weighted).
 
-Figure \@ref(fig:toprank) illustrates how the average effect of information provision on fairness perceptions varies depending on whether countries are "net senders" or "net receivers" of applications under a proportional system. Among net sender countries, only 13% and 17% of respondents selected "No relocation" as the fairest option in the absolute and relative information groups, respectively, compared to 27% in the no-information group. Thus, information provision reduces the share of respondented ranking no relocation as fairest by about 10 percentage points. Conversely, among the net receiver countries, information provision increases perception of fairness for no relocation by about 10 percentage points. Because treatment was randomly assigned, these differences are consistent with causal treatment effects of information provision, with effects shifting sign between net sender and net receiver countries, consistent with a self-serving bias.
+Figure \@ref(fig:toprank) illustrates how the average effect of information provision on fairness perceptions varies depending on whether countries are "net senders" or "net receivers" of applications under a proportional system. Among net sender countries, only 13% and 17% of respondents selected "No relocation" as the fairest option in the absolute and relative information groups, respectively, compared to 27% in the no-information group. Thus, information provision reduces the share of respondents ranking no relocation as fairest by about 10 percentage points. Conversely, among the net receiver countries, information provision increases the perception of fairness for no relocation by about 10 percentage points. Because treatment was randomly assigned, these differences are consistent with causal treatment effects of information provision, with effects shifting sign between net sender and net receiver countries, consistent with a self-serving bias.
 
 ```{r toprank, fig.cap = cap, out.width="\\textwidth"}
 knitr::include_graphics(
@@ -24,7 +24,7 @@ knitr::include_graphics(
 cap <- "Estimates and 95% CIs of the share of respondents ranking each relocation mechanism as the fairest (rank = 1) across information conditions: no information (Control), relative information, and absolute information about asylum applications implied under each relocation mechanism. Countries are classified as net senders (receivers) when asylum applications per 100,000 inhabitants exceed (fall below) the proportional-by-population relocation relative to a no-relocation benchmark." # nolint
 ```
 
-Figure \@ref(fig:toprank-by-cntry) shows substantial cross-country heterogeneity. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender) the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank range from 24% in Poland to 45% in Italy.
+Figure \@ref(fig:toprank-by-cntry) shows substantial cross-country heterogeneity. For instance, in Germany (a net receiver), 58% ranked some form of relocation as the fairest option, which is the lowest share among the selected countries, while in Greece (a net sender), the proportion was highest at 87%. Relocation by GDP was commonly perceived as the fairest in Bulgaria (53%), Greece (48%) and Spain (48%), but not in Germany (19%) or Sweden (27%). Views on relocation by population also varied: the share of respondents assigning it the top rank ranged from 24% in Poland to 45% in Italy.
 
 ## Average Treatment Effects on Fairness Rankings
 
@@ -83,7 +83,7 @@ knitr::include_graphics(
 cap <- fig_caption_smooth("political orientation (left-right scale)")
 ```
 
-It is worth noting that our measure of political orientation is from the European Social Survey (ESS) and has been widely applied in studies on voters' positioning in Europe. Nevertheless, this measure is not perfectly comparable across EU countries because the meaning of ‘left’, ‘neutral’ and ‘right’ can vary substantially depending on national party systems and migration discourses. Hence, our political orientation measure should be interpreted as a self-identified ideological placement rather than a harmonized cross-national construct. We return to the limitations of this measure in the Discussion.
+It is worth noting that our measure of political orientation is from the European Social Survey (ESS) and has been widely applied in studies on voters' positioning in Europe. Nevertheless, this measure is not perfectly comparable across EU countries because the meaning of ‘left’, ‘neutral’, and ‘right’ can vary substantially depending on national party systems and migration discourses. Hence, our political orientation measure should be interpreted as a self-identified ideological placement rather than a harmonized cross-national construct. We return to the limitations of this measure in the Discussion.
 
 ### Fair share
 
@@ -116,12 +116,12 @@ knitr::include_graphics(
         "output", "figures", "age.png"
     )
 )
-cap <- fig_caption_smooth("respondent's age (years)")
+cap <- fig_caption_smooth("respondents' age (years)")
 ```
 
 ### Knowledge of the Asylum System
 
-Figure \@ref(fig:knowledge) illustrates the heterogeneity of effects stratified by self-reported knowledge or awareness of the rules governing the EU asylum system. We observe little differences between individuals with basic knowledge and those with more advanced understanding.
+Figure \@ref(fig:knowledge) illustrates the heterogeneity of effects stratified by self-reported knowledge or awareness of the rules governing the EU asylum system. We observe little differences between individuals with basic knowledge and those with a more advanced understanding.
 
 ```{r knowledge, fig.cap = cap, out.width = "\\textwidth"}
 knitr::include_graphics(
