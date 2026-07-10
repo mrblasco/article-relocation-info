@@ -18,9 +18,13 @@ abstract: >
     Despite intense political debate over reforming the EU asylum system, there is little evidence on what drives public support for alternative solutions. Using an experimental survey, we examine Europeans' fairness perceptions of three mechanisms for distributing asylum seekers among EU countries: no relocation, relocation proportional to GDP, and relocation proportional to the resident populations. By varying the information provided about the consequences of these mechanisms, we explored the extent to which public perceptions are driven by concerns about outcomes versus principles of fairness. We find that most respondents (76%) consider relocation to be the fairest option. However, there are large cross-country differences, with proportional relocation schemes perceived as fair by 58% of respondents in Germany versus 87% in Greece, which suggests a “self-serving” bias --- a tendency to rank as fairer the method that results in fewer asylum seekers for their own country. Moreover, when we communicate the expected number of asylum seekers for each relocation method, the self-serving bias intensifies significantly. By varying how the information is presented, we find a stronger effect when the communication displays *absolute* figures rather than figures *relative* to the population. These findings shed new light on how public perceptions of the fairness of the EU asylum system can be shaped by information.
 
 bibliography: [refs.bib]
+citation_package: natbib
+bibliographystyle: elsarticle-harv
+
 #csl: [assets/elsevier-harvard.csl]
 
 params:
+    titlepage_only: yes
     quiet: yes
     debug: yes
     seed: 4881
@@ -45,7 +49,7 @@ header-includes: |
     \usepackage{pdflscape}
     \usepackage{caption}
     \captionsetup{margin=10pt,font=small,labelfont=bf}
-    \usepackage[nolists]{endfloat}
+    %\usepackage[nolists]{endfloat}
     ```
 ---
 
@@ -65,31 +69,24 @@ library(logger)
 library(dplyr)
 library(kableExtra)
 
+titlepage_only <- as.logical(params$titlepage_only == "yes")
+
 is_html_or_latex <- function() {
     knitr::is_html_output() || knitr::is_latex_output()
 }
 ```
 
-\clearpage 
+`r if (!titlepage_only) "\\newpage" else ""`
 
-```{r sections, child = list.files("sections", full = TRUE, pattern = "*.Rmd")}
+```{r sections, child = list.files("sections", full = TRUE, pattern = "*.Rmd"), eval = !titlepage_only}
 ```
 
-
-# (APPENDIX) Appendix {-}
-
-\newpage
-\processdelayedfloats
-\setcounter{figure}{0}
-\setcounter{table}{0}
-\renewcommand\thefigure{\thesection.\arabic{figure}}    
-\renewcommand\thetable{\thesection.\arabic{figure}}    
-
-```{r, child = list.files("appendices", full = TRUE, pattern = "*.Rmd")}
-``` 
-
-
-# References {-}
+`r if (!titlepage_only) "# References {-}" else ""`
 
 ::: {#refs}
 :::
+
+`r if (!titlepage_only) "\\newpage" else ""`
+
+```{r supplmentary, child = list.files("sections/supplementary_materials", full = TRUE, pattern = "*.Rmd"), eval = !titlepage_only}
+```

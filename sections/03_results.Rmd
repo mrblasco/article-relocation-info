@@ -30,9 +30,12 @@ Figure \@ref(fig:toprank-by-cntry) shows substantial cross-country heterogeneity
 
 Figure \@ref(fig:mean-rank) presents predicted mean rankings from a linear regression model, illustrating the average treatment effect on the perceived fairness for each relocation mechanism conditional on the country being net sender vs receiver. Ordinal regression models yield substantively similar results but are omitted for brevity. 
 
-Under no information (Control group), net-receiver countries perceive “no relocation” as the least fair option, with a mean rank of 2.4 out of 3. However, they perceive “no relocation” increasingly *fairer* in the Relative and Absolute groups, with the largest effect observed under absolute information, where its mean rank goes from 2.4 to 2.1. By contrast, net sender countries perceive "no relocation" as increasingly *less fair* in the information treatments, for instance, increasing the ranking from 2.4 in the control to 2.6 under absolute information. Overall, these results are consistent with our hypotheses that individuals react more when information is presented in absolute than in relative terms.^[
+Under no information (Control group), net-receiver countries perceive “no relocation” as the least fair option, with a mean rank of 2.4 out of 3. However, they perceive “no relocation” increasingly *fairer* in the Relative and Absolute groups, with the largest effect observed under absolute information, where its mean rank goes from 2.4 to 2.1. By contrast, net sender countries perceive "no relocation" as increasingly *less fair* in the information treatments, for instance, increasing the ranking from 2.4 in the control to 2.6 under absolute information.^[
     As a robustness test of the overall associations between fairness rankings and treatment assignment, we used separate Chi-squared tests within each country with Bonferroni correction for multiple testing. Even after applying Bonferroni correction, all the country-specific associations were statistically significant (p. < 0.01), confirming a robust treatment effect in most countries, as hypothesised.
-]
+] 
+
+Overall, these results are consistent with our hypotheses that individuals respond more strongly when information is presented in absolute rather than relative terms. Notably, the difference between the Absolute and Relative treatments is concentrated among respondents in net-receiver countries, including Spain, Poland, and Italy, whereas the two information treatments produce more similar effects in net-sender countries. This indicates an asymmetric framing effect across the two groups of countries.
+
 
 ```{r mean-rank, fig.cap = cap, out.width = "\\textwidth"}
 knitr::include_graphics(
@@ -49,9 +52,7 @@ cap <- paste(
 
 We next examine whether the expected number of asylum applications implied by each relocation mechanism influenced perceived fairness across treatment conditions. Figure \@ref(fig:implied-applications) presents fitted linear regressions of the average fairness ranking on the standardized number of implied asylum applications, interacted with the treatment indicators. A joint F-test indicates a statistically significant interaction between implied asylum applications and treatment assignment (F(2, 73.4) = 58.18, p < 0.001), suggesting that the relationship between implied asylum applications and perceived fairness differed across the three information conditions.
 
-Figure \@ref(fig:implied-applications) further shows that perceived fairness declines as the expected number of implied asylum applications increases. This relationship is weakest in the No Information treatment, as indicated by the relatively flat slope, stronger in the Relative Information treatment, and strongest in the Absolute Information treatment. These findings suggest that providing information about the consequences of relocation mechanisms increased respondents' sensitivity to the asylum application levels implied by those mechanisms when evaluating their fairness, and the sensitivity is highest when such consequences are reported in absolute numbers.^[
-    These results are robust to alternative specifications. Specifically, we obtained nearly identical results using a rank-ordered logit regression, which was discussed in a previous version of this paper.
-]
+Figure \@ref(fig:implied-applications) further shows that perceived fairness declines as the expected number of implied asylum applications increases. This relationship is weakest in the No Information treatment, as indicated by the relatively flat slope, stronger in the Relative Information treatment, and strongest in the Absolute Information treatment. These findings suggest that providing information about the consequences of relocation mechanisms increased respondents' sensitivity to the asylum application levels implied by those mechanisms when evaluating their fairness, and the sensitivity is highest when such consequences are reported in absolute numbers.
 
 ```{r implied-applications, fig.cap = cap, out.width = "0.7\\textwidth"}
 knitr::include_graphics(
@@ -62,9 +63,13 @@ knitr::include_graphics(
 cap <- "Association between standardized asylum application rates and the perceived fairness of alternative relocation mechanisms across treatment conditions. The figure shows fitted linear regression lines relating the z-scored number of asylum applications implied by each relocation mechanism to its average perceived fairness ranking. The y-axis displays reversed average fairness rankings, such that mechanisms judged to be more fair appear higher on the axis. Shaded bands represent 95% confidence intervals around the fitted regression lines." # nolint
 ```
 
+### Robustness
+
+These results are robust to alternative model specifications. Specifically, in a previous working paper version of this article, we estimated a rank-ordered logit model of fairness rankings, in which the latent fairness value of each relocation mechanism is modeled as a function of the standardised number of implied asylum applications, allowing the effect of implied applications to vary across treatment conditions. The model estimates the probability that a mechanism is ranked higher based on differences in this latent fairness measure across alternatives. Using the no-relocation mechanism as the reference alternative and the Absolute Information treatment as the reference group, the rank-ordered logit specification yields results that are substantively consistent with those from the linear regression approach, confirming that perceived fairness declines with the number of implied asylum applications and that this relationship is strongest when information about consequences is presented in absolute terms.
+
 ## Heterogenous effects
 
-In this section, we examine whether the effects of information provision on perceived fairness vary systematically across respondent characteristics. Understanding such heterogeneity is important for assessing not only the average treatment effects, but also the conditions under which information is more or less persuasive. We therefore explore a range of theoretically relevant moderators, including political orientation, perceptions of current migration levels, age, knowledge of the EU asylum system, and trust in the EU. 
+In this section, we examine whether the effects of information provision on perceived fairness vary systematically across respondent characteristics. Understanding such heterogeneity is important for assessing not only the average treatment effects, but also the conditions under which information is more or less persuasive. We therefore explore a range of theoretically relevant moderators, including political orientation (0 = left, 10 = right), perceptions of current migration levels in their country (1 = too low, 2 = fair; 3 = too high), age (years), knowledge of the EU asylum system (1 = no knowledge, 4 = expert), trust in the EU (0 = low, 10 = high), and perceptions of migrants vs residents contribution to the economy (1 = less, 2 = as much, 3 = more).
 
 We formally test whether the inclusion of these interaction terms improves model fit using likelihood-ratio comparisons based on ANOVA tests between each pair of nested models. Table \@ref(tab:anova) in the Appendix presents the results of these tests. Overall, we find that the more flexible specifications with interaction terms significantly outperform their corresponding baseline models, providing statistical support for the presence of heterogeneous treatment effects. The figures below illustrate these heterogeneities in terms of conditional average treatment effects across the respective moderating variables.
 
@@ -134,7 +139,6 @@ knitr::include_graphics(
 cap <- fig_caption_smooth("knowledge of the EU asylum system (0 = no knowledge, 4 = expert)")
 ```
 
-
 ### Trust in the EU
 
 Figure \@ref(fig:trust) illustrates the heterogeneity of effects stratified by individuals’ overall trust in the EU, as measured by an 11-item scale (0 = No trust, 10 = complete trust). We find that sensitivity to information is particularly pronounced among those with low levels of trust.
@@ -151,3 +155,17 @@ cap <- fig_caption_smooth("trust in the EU (0 = low, 10 = high)")
 ```
 
 
+### Perceived Economic Contributions of Migrants
+
+Figure \@ref(fig:nonEU) presents results of our analysis on whether the framing effect varied by respondents' beliefs about the economic contributions of non-EU migrants. Using a survey item asking whether migrants from outside the EU contribute to the economy less than, as much as, or more than citizens, we found that the framing effect was larger among respondents who believed that non-EU migrants contribute less than citizens. This pattern is consistent with the interpretation that the framing effect is strongest among individuals who are more skeptical about the economic benefits of immigration.
+
+```{r nonEU, fig.cap = cap, out.width = "\\textwidth"}
+knitr::include_graphics(
+    auto_pdf = TRUE,
+    path = file.path(
+        "output", "figures", "nonEU_contribute.png"
+    )
+)
+
+cap <- fig_caption_smooth("economic contributions of non-EU migrants vs residents (1 = less, 2 = as much, 3 = more)")
+```

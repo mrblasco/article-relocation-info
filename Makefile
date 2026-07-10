@@ -1,80 +1,77 @@
 SECTIONS := $(wildcard sections/*) 
-APPENDICES := $(wildcard appendices/*)
-CONFIG := config/_config.yml
-OUTPUT := config/_output.yml
+OTHER := config.yml refs.bib
 
-all: analysis draft
+DATE := $(shell date +%Y-%m-%d)
+SUBMISSION_DIR := submissions/jebo/submissions/$(DATE)
+DIFF_DIR := output/diff
 
-## -----------------------------
-## Report
-## -----------------------------
-draft: output/main.pdf
+MANUSCRIPT := output/main.pdf
+TITLEPAGE := output/titlepage.docx
+ANALYSIS_LOG := output/run_analysis.log
+DIFF_FILE := output/diff/main_diff.pdf
+RESPONSE := submissions/jebo/response_to_reviewers/response.pdf
 
-output/%.pdf output/%.docx: %.Rmd $(SECTIONS) $(APPENDICES)
-	Rscript -e 'rmarkdown::render("$<", output_format = "all", output_dir = "$(dir $@)", quiet = TRUE)'
+LATEX_EXPORT := output/latex_export
 
+all: manuscript
 
-## -----------------------------
-## Analysis pipeline logs
-## -----------------------------
-SCRIPTS := \
-	01_clean_data.R \
-	02_process_data.R \
-	03_analysis_top_ranks.R \
-	04_analysis_avg_rank.R \
-	05_conditional_ate.R
+manuscript: $(MANUSCRIPT) $(TITLEPAGE)
 
-LOGDIR := output/logs
-LOGS := $(SCRIPTS:%.R=$(LOGDIR)/%.log)
+review: $(RESPONSE)
 
-analysis: $(LOGS)
+diff: $(DIFF_FILE)
 
-$(LOGDIR)/%.log : scripts/%.R
-	@mkdir -p $(dir $@)
-	Rscript $< > $@ 2>&1 | tee $@
+latex-export: $(LATEX_EXPORT)/README.txt
 
 
-## -----------------------------
-## Diff. version 
-## -----------------------------
+$(MANUSCRIPT): main.Rmd $(SECTIONS) $(ANALYSIS_LOG) $(OTHER)
+	Rscript -e 'rmarkdown::render("$<", output_format = "all", output_dir = "$(dir $@)")'
 
-TMP := tmp
+$(TITLEPAGE) : main.Rmd
+	Rscript -e 'rmarkdown::render("$<", output_file = "$@", params = list(titlepage_only = "yes"), output_format = "bookdown::word_document2")'
 
-$(TMP):
-	mkdir -p $(TMP)/output
+$(ANALYSIS_LOG): run_analysis.R
+	Rscript $< > $@ 2>&1
 
-prepare: $(TMP)
-	cp output/main.tex submissions/manuscript/rev1/main.tex
-	cp submissions/jebo/manuscript/initial/manuscript.tex $(TMP)/old.tex
-	cp output/main.tex $(TMP)/new.tex
-	cp refs.bib $(TMP)/
-	cp -r output/figures $(TMP)/output/
-
-diff: prepare
-	cd $(TMP) && \
-	latexdiff --flatten --type=UNDERLINE old.tex new.tex > diff.tex && \
-	latexmk -f -xelatex diff.tex
-
-
-## -----------------------------
-## Response to reviewers
-## -----------------------------
-
-RESPONSE := submissions/jebo/response_to_referees/response.Rmd
-
-review: submissions/jebo/response_to_reviewers/response.pdf
-
-submissions/jebo/response_to_reviewers/response.pdf : submissions/jebo/response_to_reviewers/response.Rmd
+$(RESPONSE): $(RESPONSE:.pdf=.Rmd) refs.bib
+	cp refs.bib $(dir $@)
 	Rscript -e "rmarkdown::render('$<', output_format = 'all')"
 
-## -----------------------------
-## Cleanup
-## -----------------------------
-clean:
-	rm -r $(LOGDIR)
+
+$(DIFF_FILE):
+	mkdir -p $(dir $@)
+	cp -R output/figures $(dir $@)
+	cp output/main.tex $(dir $@)/new.tex
+	cp submissions/jebo/manuscript/initial/manuscript.tex $(dir $@)/old.tex
+	cd $(dir $@) && \
+	latexdiff \
+		--flatten \
+		--type=UNDERLINE \
+		--graphics-markup=both \
+		--exclude-textcmd="section,caption" \
+		--exclude-safecmd="multicolumn" \
+		old.tex new.tex > diff.tex && \
+	latexmk -f -xelatex -interaction=nonstopmode diff.tex
+
+
+$(LATEX_EXPORT)/README.txt: output/main.tex refs.bib
+	rm -rf $(LATEX_EXPORT)
+	mkdir -p $(LATEX_EXPORT)
+
+	cp output/main.tex $(LATEX_EXPORT)/
+	cp refs.bib $(LATEX_EXPORT)/
+
+	mkdir -p $(LATEX_EXPORT)/output
+	cp -R output/figures $(LATEX_EXPORT)/output
+
+	echo "Compile with:\nlatexmk -xelatex main.tex\n" > $@
+	echo "Folder structure:" >> $@
+	tree $(LATEX_EXPORT) >> $@
+
+latex-compile: 
+	cd $(LATEX_EXPORT); latexmk -xelatex main.tex && open main.pdf
+
 
 view:
-	open -a Skim output/main.pdf
+	open -a Skim $(MANUSCRIPT)
 
-help:
-	Rscript render.R --help

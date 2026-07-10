@@ -1,18 +1,17 @@
-# Supporting Materials
+# (APPENDIX) Appendix {-}
 
-## Regression model for the fairness rankings
+\newpage
+<!-- \processdelayedfloats -->
+\setcounter{figure}{1}
+\setcounter{table}{1}
+\renewcommand\thefigure{\thesection.\arabic{figure}}    
+\renewcommand\thetable{\thesection.\arabic{figure}}    
 
-We used a rank-ordered logit model [e.g., @hausman1987specifying] to estimate the effect of a change in the expected number of asylum seekers under a relocation scheme on the probability of ranking the scheme higher in the fairness ranking. This model allows probabilities to depend on the differences among all alternatives in a latent "fairness" variable. We assume the latent variable to be a function of the expected asylum seekers (scaled), $AS$, and we allow the coefficients to vary by treatment. This variable can be formulated as:
-\[
-    \mu_{ij}^{\tau} = \alpha_{j}^{\tau} + \beta_{j}^{\tau} \text{AS},
-\]
-for all $i$ and $j$ alternatives, with $\alpha_{j}^{\tau}$ and $\beta_{j}^{\tau}$ set to zero for an arbitrary alternative and an arbitrary treatment condition $\tau$. We selected the no-relocation scheme as the reference alternative, and the reference treatment group is the absolute-information group, so the model yields estimates of differences between control vs absolute and absolute vs relative information.
-
-\clearpage 
+# Appendix
 
 ## Additional Tables and Figures 
 
-### Random assignment by country
+<!-- ### Random assignment by country -->
 
 ```{r random-assignment}
 tab <- readRDS("../output/tables/table_country_treatment.rds")
@@ -26,21 +25,19 @@ as.data.frame.matrix(addmargins(tab, FUN = list(All = sum), quiet = TRUE)) |>
     kableExtra::kable_classic(full_width = TRUE)
 ```
 
-\clearpage 
-
-## Top Ranked Relocation Mechanisms by Perceived Fairness
+<!-- ## Top Ranked Relocation Mechanisms by Perceived Fairness -->
 
 ```{r relocation-weighted, fig.cap = cap, out.width="\\textwidth"}
-cap <- "Distribution of top-ranked asylum relocation mechanisms by perceived fairness in weighted and unweighted samples. Weights are based on Eurostat population demographics (2025)." # nolint
 knitr::include_graphics(
     here::here("output/figures/asylum-relocation-weighted-vs-unweighted.png"),
     auto_pdf = TRUE
 )
+
+cap <- "Distribution of top-ranked asylum relocation mechanisms by perceived fairness in weighted and unweighted samples. Weights are based on Eurostat population demographics (2025)." # nolint
 ```
 
-\clearpage 
 
-### Perceived Fairness by Country
+<!-- ### Perceived Fairness by Country -->
 
 ```{r toprank-by-cntry, fig.cap = cap, out.width = "\\textwidth"}
 knitr::include_graphics(
@@ -51,8 +48,7 @@ knitr::include_graphics(
 cap <- "Perceived fairness (average rank) by country and information condition" # nolint
 ```
 
-
-### Anova Table for Heterogenous Treatment Effects 
+<!-- ### Anova Table for Heterogenous Treatment Effects  -->
 
 ```{r anova}
 tab <- readRDS(
