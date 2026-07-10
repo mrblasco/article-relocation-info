@@ -14,7 +14,9 @@ suppressMessages({
 source("R/helpers.R")
 source("R/theme.R")
 
-params <- load_params("config.yml")
+params <- load_params(
+    "config.yml"
+)
 
 set.seed(params$seed)
 sapply(params$paths, dir.create, showWarnings = FALSE)
@@ -122,6 +124,14 @@ df <- ds_asylum_applications |>
         educ_high = ISCED == "High",
         educ_mid = ISCED == "Mid",
         educ_low = ISCED == "Low",
+        fair_share = factor(
+            fair_share,
+            c("No, the share is too low", "Yes", "No, the share is too high")
+        ) %>% as.numeric(),
+        nonEU_contribute = factor(
+            nonEU_contribute,
+            c("Less than citizens", "As much as citizens", "More than citizens")
+        ) %>% as.numeric(),
         dplyr::across(where(is.logical), as.numeric)
     ) |>
     dplyr::select(
@@ -174,8 +184,8 @@ tab <- res |>
             asylum_knowledge = "Knowledge of asylum system (1-4)",
             asylum_fraud_detected = "Fraud detection ability (0-10)",
             asylum_decisions_objective = "Asylum decisions are objective (0-10)",
-            asylum_distr_even = "Asylums in EU are even (0-10)",
-            fair_share = "Asylums in own country (1 = too few, 3 = too many)",
+            asylum_distr_even   = "Asylums in EU are even (0-10)",
+            fair_share          = "Asylums fair share (1-3)",
             burden_sharing_important = "Importance of burden sharing (0-10)",
             equal_distribution_important = "Importance of equal distribution (0-10)",
             equal_treatment_important = "Importance of equal treatment (0-10)",
@@ -183,6 +193,7 @@ tab <- res |>
             quick_processing_important = "Importance of quick process (0-10)",
             Duration = "Completion time (mins)",
             number_accepted_refugees = "Accepted refugees in own country",
+            nonEU_contribute = "Migrants contribute to economy (1-3)",
             .default = variable
         ),
         group = dplyr::case_when(
@@ -233,8 +244,8 @@ fits <- lapply(models, fit_model, data = ds_multinomial, family = brms::categori
 
 ce <- lapply(
     fits, 
-    extract_conditional_effects, 
-    categorical = TRUE, 
+    extract_conditional_effects,
+    categorical = TRUE,
     conditions = expand.grid(
         country_type = unique(ds_multinomial$country_type)
     )
@@ -481,7 +492,7 @@ file.path(params$paths$figures, "top_rank_by_cntry.png") |>
 # Media sources
 # ------------------------------------------------------------
 
-p <- ce_m0 |>
+p <- ce$m2 |>
     mutate(
         cats__ = factor(
             cats__,
@@ -649,6 +660,9 @@ p <- ds_asylum_applications |>
     scale_fill_manual(
         values = params$treatment_palette
     ) +
+    scale_linetype_manual(
+        values = unlist(params$treatment_linetype)
+    ) +
     theme(
         legend.key.width = unit(1.5, "cm"),
         legend.key.height = unit(.1, "cm")
@@ -662,7 +676,7 @@ if (interactive()) {
     print(p)
 }
 
-file.path(params$paths$figures, "avg_rank_asylum_applications_lm.pdf") |>
+file.path(params$paths$figures, "avg_rank_asylum_applications_lm.png") |>
     save_plot(width = 7, height = 5)
 
 # ------------------------------------------------------------
@@ -675,6 +689,10 @@ ds_anova <- ds_asylum_applications |>
         fair_share = factor(
             fair_share,
             c("No, the share is too low", "Yes", "No, the share is too high")
+        ),
+        nonEU_contribute = factor(
+            nonEU_contribute,
+            c("Less than citizens", "As much as citizens", "More than citizens")
         )
     )
 
@@ -693,8 +711,14 @@ models <- list(
     m7 = rank ~ alt * treatment * country_type * asylum_knowledge,
     # Trust EU
     m8 = rank ~ alt * treatment * country_type + fair_share,
-    m9 = rank ~ alt * treatment * country_type * fair_share
+    m9 = rank ~ alt * treatment * country_type * fair_share,
+
+    # nonEU_contribute
+    m10 = rank ~ alt * treatment * country_type + nonEU_contribute,
+    m11 = rank ~ alt * treatment * country_type * nonEU_contribute
 )
+
+
 fits <- lapply(models, lm, data = ds_anova)
 
 comparisons <- list(
@@ -702,7 +726,8 @@ comparisons <- list(
     "Political orientation" = c("m2", "m3"),
     "Age" = c("m4", "m5"),
     "Asylum knowledge" = c("m6", "m7"),
-    "Fair share" = c("m8", "m9")
+    "Fair share" = c("m8", "m9"),
+    "non-EU migrants contribute economy" = c("m10", "m11")
 )
 
 anova_table <- purrr::imap_dfr(comparisons, function(mods, moderator) {
@@ -743,7 +768,7 @@ save_rds(anova_table, file.path(params$paths$tables, "anova_table.rds"))
 #  Figure 4: Political orientation
 # ------------------------------------------------------------
 
-rank_style <- function(params, k = -1, breaks = c(0, 5, 10)) {
+rank_style <- function(params, k = 5, breaks = c(0, 5, 10)) {
     list(
         geom_smooth(
             method = "gam",
@@ -933,6 +958,39 @@ if (interactive()) {
 
 file.path(params$paths$figures, "trust_eu.png") |>
     save_plot(width = 9, height = 5)
+
+
+# ------------------------------------------------------------
+#  Figure 9: Contribute Economy
+# ------------------------------------------------------------
+
+p <- ds_anova %>%
+    ggplot(
+        aes(
+            x = as.numeric(nonEU_contribute),
+            y = as.numeric(rank),
+            fill = treatment,
+            color = treatment,
+            linetype = treatment
+        )
+    ) +
+    facet_grid(
+        country_type ~ alt,
+        labeller = labeller(alt = unlist(params$alt_labels))
+    ) + 
+    rank_style(params, k = 3, breaks = c(1, 2, 3)) +
+    labs(
+        y = "Perceived fairness\n(reversed avg. ranking)",
+        x = "Migrants vs residents contribute to economy (1 = Less, 2 = As much, 3 = More)"
+    )
+
+if (interactive()) {
+    print(p)
+}
+
+file.path(params$paths$figures, "nonEU_contribute.png") |>
+    save_plot(width = 9, height = 5)
+
 
 # ------------------------------------------------------------
 # ------------------------------------------------------------

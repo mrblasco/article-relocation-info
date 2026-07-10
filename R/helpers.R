@@ -1,3 +1,32 @@
+recode_news_sources <- function(data) {
+    variables <- c(
+        "migration_news_tele",
+        "migration_news_radio",
+        "migration_news_websites",
+        "migration_news_press",
+        "migration_news_social_media",
+        "migration_news_other"
+    )
+    news_to_numeric <- function(x) {
+        dplyr::case_when(
+            is.na(x) ~ NA_character_,
+            x == "Yes" ~ "1",
+            x == "No" ~ "0",
+            TRUE ~ NA_character_,
+        ) |> as.numeric()
+    }
+
+    data$news_sources_index <- data |>
+        dplyr::mutate(
+            dplyr::across(
+                dplyr::all_of(variables), news_to_numeric
+            )
+        ) |>
+        dplyr::select(dplyr::all_of(variables)) |>
+        rowSums(na.rm = TRUE)
+    data
+}
+
 clean_data <- function(data) {
     data |>
         dplyr::rename(
@@ -29,8 +58,11 @@ clean_data <- function(data) {
                 ),
                 to_numeric
             )
-        )
+        ) |>
+        recode_news_sources()
 }
+
+
 
 
 pivot_data <- function(data) {
