@@ -3,12 +3,13 @@ OTHER := config.yml refs.bib
 
 DATE := $(shell date +%Y-%m-%d)
 SUBMISSION_DIR := submissions/jebo/submissions/$(DATE)
-DIFF_DIR := output/diff
+DIFF_DIR := output/diff_round1
+DIFF_OLD := submissions/jebo/round1/manuscript.tex
 
 MANUSCRIPT := output/main.pdf
 TITLEPAGE := output/titlepage.docx
 ANALYSIS_LOG := output/run_analysis.log
-DIFF_FILE := output/diff/main_diff.pdf
+DIFF_FILE := $(DIFF_DIR)/diff.pdf
 RESPONSE := submissions/jebo/round2/response.pdf
 
 LATEX_EXPORT := output/latex_export
@@ -38,18 +39,20 @@ $(RESPONSE): $(RESPONSE:.pdf=.Rmd) refs.bib
 	Rscript -e "rmarkdown::render('$<', output_format = 'all')"
 
 
-$(DIFF_FILE):
+$(DIFF_FILE): output/main.tex $(DIFF_OLD) refs.bib
 	mkdir -p $(dir $@)
-	cp -R output/figures $(dir $@)
+	mkdir -p $(dir $@)output
+	cp -R output/figures $(dir $@)output/
+	cp refs.bib $(dir $@)
 	cp output/main.tex $(dir $@)/new.tex
-	cp submissions/jebo/round1/manuscript.tex $(dir $@)/old.tex
+	cp $(DIFF_OLD) $(dir $@)/old.tex
 	cd $(dir $@) && \
 	latexdiff \
 		--flatten \
 		--type=UNDERLINE \
-		--graphics-markup=both \
-		--exclude-textcmd="section,caption" \
-		--exclude-safecmd="multicolumn" \
+		--graphics-markup=none \
+		--exclude-textcmd="cmidrule,addlinespace" \
+		--config "PICTUREENV=(?:picture|DIFnomarkup|CSLReferences|tabular|longtable)" \
 		old.tex new.tex > diff.tex && \
 	latexmk -f -xelatex -interaction=nonstopmode diff.tex
 
