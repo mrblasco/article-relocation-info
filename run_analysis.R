@@ -340,7 +340,7 @@ if (interactive()) {
 }
 
 save_plot(
-    file.path(params$paths$figures, "asylum-relocation-weighted-vs-unweighted.pdf"),
+    file.path(params$paths$figures, "asylum-relocation-weighted-vs-unweighted.png"),
     width = 7,
     height = 5
 )

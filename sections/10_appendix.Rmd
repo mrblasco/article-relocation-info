@@ -22,7 +22,7 @@ as.data.frame.matrix(addmargins(tab, FUN = list(All = sum), quiet = TRUE)) |>
         format.args = list(big.mark = ","),
         linesep = c(rep("", nrow(tab) - 1), "\\addlinespace")
     ) |>
-    kableExtra::kable_classic(full_width = TRUE)
+    kableExtra::kable_classic(full_width = FALSE)
 ```
 
 <!-- ## Top Ranked Relocation Mechanisms by Perceived Fairness -->
