@@ -43,32 +43,15 @@ make all
 
 ## Journal submission workflow
 
-### Save a submission snapshot
-
-After building the PDF, save the compiled `.tex` as a tracked snapshot:
+Submission files live in `submissions/jebo/{initial,round1,round2}/` (see `submissions/README.md`).
 
 ```bash
-make submit JOURNAL=jebo REV=rev2
-# creates submissions/jebo/rev2/manuscript.tex
-git add submissions/jebo/rev2/manuscript.tex
-git commit -m "snapshot jebo rev2"
+make manuscript   # build output/main.{pdf,docx,tex}
+make diff         # marked-up diff vs submissions/jebo/round1/manuscript.tex -> output/diff/main_diff.pdf
+make review       # response to reviewers -> submissions/jebo/round2/response.{pdf,docx}
 ```
 
-### Generate a diff between revisions
-
-Produces a `diff.tex` with additions/deletions marked for the journal:
-
-```bash
-make diff JOURNAL=jebo FROM=rev1 TO=rev2
-# creates submissions/jebo/rev2/diff.tex
-
-make diff-pdf JOURNAL=jebo REV=rev2
-# compiles to submissions/jebo/rev2/diff.pdf
-git add submissions/jebo/rev2/diff.tex
-git commit -m "diff jebo rev1→rev2"
-```
-
-Only `.tex` files are tracked in git; `.pdf` files are gitignored and regenerated on demand.
+Only sources (`.tex`, `.Rmd`, `.md`) are tracked in git; `.pdf` files are gitignored and regenerated on demand.
 
 ## Branches
 

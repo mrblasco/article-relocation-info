@@ -9,7 +9,7 @@ MANUSCRIPT := output/main.pdf
 TITLEPAGE := output/titlepage.docx
 ANALYSIS_LOG := output/run_analysis.log
 DIFF_FILE := output/diff/main_diff.pdf
-RESPONSE := submissions/jebo/response_to_reviewers/response.pdf
+RESPONSE := submissions/jebo/round2/response.pdf
 
 LATEX_EXPORT := output/latex_export
 
@@ -42,7 +42,7 @@ $(DIFF_FILE):
 	mkdir -p $(dir $@)
 	cp -R output/figures $(dir $@)
 	cp output/main.tex $(dir $@)/new.tex
-	cp submissions/jebo/manuscript/initial/manuscript.tex $(dir $@)/old.tex
+	cp submissions/jebo/round1/manuscript.tex $(dir $@)/old.tex
 	cd $(dir $@) && \
 	latexdiff \
 		--flatten \

@@ -1,0 +1,75 @@
+---
+title: >
+    Response to reviewers: 
+    "Fairness or Self-Interest? An Experiment on How Communication Shapes European Views of Fairness in the EU Asylum Relocation System"
+subtitle: >
+    Ms. Ref. No.: JEBO-D-26-00364R1
+date: "`r Sys.Date()`"
+toc: false
+mainfont: Times New Roman
+fontsize: 12pt
+linestretch: 1.5
+geometry: margin=2cm
+bibliography: [refs.bib]
+---
+
+**Dear Editor,**
+
+We thank you and the reviewers for the careful reading of our manuscript and for the constructive feedback.
+
+Below, we provide a detailed, point-by-point response. Reviewer comments are reproduced in **bold**, followed by our responses in plain text. All changes are reflected in the revised manuscript and highlighted in the marked version.
+
+
+# Reviewer #1
+
+> **The authors have addressed my concerns, which were minor anyway, in a satisfactory way. I congratulate them on a fine paper.**
+
+We thank the reviewer for the positive assessment.
+
+# Reviewer #2
+
+> **I thank the authors for a thorough and constructive response to the original review. The revised manuscript addresses most of my comments substantively, and I have no major outstanding concerns about the paper's core contribution or empirical approach.**
+
+> **I'd ask the authors to (a) briefly note the political-behavior link as future work or explain its omission, (b) rephrase the self-serving-bias vs. capacity-beliefs discussion to more evenly acknowledge that the two explanations are not fully distinguishable with the current design, and (c) add a simple country-level check of the salience/dose-response story behind the framing asymmetry. Once these edits are made, I would be glad to see the paper accepted.**
+
+We thank the reviewer for raising these points, that we have now addressed as follows:
+
+
+<!-- Points well addressed:
+
+- The new Discussion paragraph (p. 23) clarifies that GDP/population proxy for "capacity" in a specific, contestable sense, and that the fairness-ranking question may conflate mechanism-fairness with outcome-fairness. This is a fair and transparent treatment of the ambiguity I raised.
+
+- The added theoretical framing around Equity Theory (Adams 1965) in the Introduction gives the paper a clearer conceptual anchor for why individual fairness perceptions matter for policy.
+
+- The discussion of the cross-country asymmetry in absolute vs. relative framing effects (p. 21) offers a plausible, well-motivated account grounded in denominator neglect and salience.
+
+- The authors appropriately caveat the political-orientation heterogeneity results given the non-harmonized nature of left-right self-placement across countries, and — usefully — report that controlling for available (if crude) media exposure measures leaves the results unchanged.
+
+- The new heterogeneity analysis by perceived economic contribution of migrants (Section 4.4.6) is a welcome addition responsive to the spirit of my comments about unmodeled respondent beliefs. -->
+
+## Mechanism linking preferences to policy behavior
+
+> Reviewer: **The added theoretical framework is helpful, but my request to connect fairness perceptions to some observable political outcome (e.g., stated vote intention, party preference, or at least discussion of how these link empirically in other datasets) was not taken up. I don't consider this essential for publication, but I'd ask the authors to either add a sentence acknowledging this as an explicit avenue for future work, or explain briefly why such a link is outside scope.**
+
+We thank the reviewer for returning to this point. Our earlier revision did indeed only address the theoretical side of this comment but not the link to an observable political outcome. Unfortunately, given that our survey did not include measures such as vote intention or party preference, we cannot establish this link directly. We have nevertheless flagged it in the Discussion as an interesting avenue for future research (see subsection "Avenue for future research"). We report the exact text below: 
+
+> "*While our design identifies how information and framing shape fairness perceptions, it does not allow us to establish whether these perceptions translate into political behaviour, such as voting behaviour or party preferences. Examining whether fairness judgments influence observable political outcomes, therefore, represents an important avenue for future research. This could be pursued within our experimental setting by eliciting voting intentions or incorporating follow-up questions on political support. Alternatively, the fairness perceptions could be examined using longitudinal, cross-national survey data, potentially linking them to electoral outcomes or changes in political preferences over time.*"^[We thank an anonymous reviewer for raising this point.]
+
+
+## Self-serving bias vs. capacity beliefs. 
+
+> Reviewer: **The manuscript still relies on an assertion that self-serving bias is the "most parsimonious" explanation for cross-country fairness differences, without a test that helps adjudicate between it and legitimate capacity concerns. Given the authors did not collect a direct capacity-perception measure, I accept this may not be resolvable with the current data — but I'd ask that the limitations paragraph be sharpened to state plainly that the two mechanisms are observationally difficult to separate here, rather than asserting one is more likely.**
+
+We how now revised the closing paragraphs, removing the claim on parsimony and explicitly acknowledging that the specific origins of systematic distortions in fairness judgments cannot be definitively established. We report the text below:
+
+> "*Perceptions of how EU countries compare along these dimensions may differ systematically across countries. For instance, some respondents may genuinely believe that their country's reception capacity is lower than what its GDP and population size would suggest, irrespective of the potential costs associated with hosting asylum seekers at the national level. If such beliefs are widespread, both mechanisms could generate similar patterns in our data. Accordingly, our study cannot fully distinguish between _motivated_ reasoning (i.e., self-serving bias) and _sincerely-held_ beliefs about national reception capacity.*"
+
+## Testing the salience explanation for the framing asymmetry. 
+
+> Reviewer: **The authors offer a plausible narrative account for why the absolute-vs-relative framing effect concentrates in net-receiver countries, but this remains an ex-post interpretation. Since the underlying data (implied change per country, framing effect per country) already exist, I'd ask for a simple country-level correlation or scatterplot showing whether the size of the implied reduction/increase predicts the size of the absolute-vs-relative gap, to give this explanation some empirical teeth rather than resting on illustrative examples.**
+
+As per our calculations, these correlations are indeed substantial: .68 for relocation by population and .47 for relocation by GDP. However, given the small sample size (n=8 countries) and the lack of pre-registration, we prefer not to include this analysis in the final paper to avoid conveying a misleading impression of precision.
+
+--- 
+
+# References 
