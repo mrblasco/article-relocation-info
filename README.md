@@ -47,7 +47,7 @@ Submission files live in `submissions/jebo/{initial,round1,round2}/` (see `submi
 
 ```bash
 make manuscript   # build output/main.{pdf,docx,tex}
-make diff         # marked-up diff vs submissions/jebo/round1/manuscript.tex -> output/diff/main_diff.pdf
+make diff         # marked-up diff vs submissions/jebo/round1/manuscript.tex -> output/diff_round1/diff.pdf
 make review       # response to reviewers -> submissions/jebo/round2/response.{pdf,docx}
 ```
 

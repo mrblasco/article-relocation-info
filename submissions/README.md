@@ -17,7 +17,7 @@ Each subfolder of `submissions/<journal>/` holds the files for one stage of the 
 make manuscript
 
 # 2. Diff against the round 1 manuscript (submissions/jebo/round1/manuscript.tex)
-make diff            # -> output/diff/main_diff.pdf
+make diff            # -> output/diff_round1/diff.pdf (override the baseline with DIFF_OLD=<file>)
 
 # 3. Build the response to reviewers
 make review          # -> submissions/jebo/round2/response.{pdf,docx}
